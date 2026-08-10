@@ -17,5 +17,21 @@ All notable changes to this project are documented here.
   each with a docstring-only placeholder under
   `src/agentic_sidecar/integrations/`.
 
+### Fixed
+
+- Audited `README.md`/`ROADMAP.md` against the original concept doc and
+  corrected two gaps: the `Planner` module was named throughout the docs
+  but had no package file, version, or repo-map entry (now
+  `evaluators/planner.py`, v0.3); the `CHALLENGE` Decision Gate outcome was
+  dropped from every enumeration while `ROADMAP.md` still claimed "all
+  seven" outcomes (now restored, v0.4). Also documented two previously
+  silent scope cuts (`LangChain` folded into the `LangGraph` adapter;
+  sampling/caching/async-advisory cost-control ideas left unscheduled)
+  instead of leaving them unexplained.
+
+### Changed
+
+- Renamed `future-plans.md` to `concept.md` and updated every reference.
+
 No functional code has shipped yet — see [ROADMAP.md](ROADMAP.md) for the
 v0.1 scope (Sidecar Runtime + Rule-Based Decision Gate).
