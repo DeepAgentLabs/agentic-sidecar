@@ -7,7 +7,7 @@
 ## Status
 
 **Concept / pre-implementation.** This repository currently contains the
-architecture proposal ([`future-plans.md`](future-plans.md)) and this README
+architecture proposal ([`concept.md`](concept.md)) and this README
 — no package code, no PyPI release, no CI yet. See
 [ROADMAP.md](ROADMAP.md) for the build plan, starting with a narrow,
 LLM-free v0.1.
@@ -172,8 +172,8 @@ Policy and Risk are largely mechanical — permission lists, thresholds,
 tool-argument patterns — and v0.1 ships them with zero LLM calls (see
 [ROADMAP.md](ROADMAP.md)). Intent is the one that requires understanding
 what the user actually meant, and it's where the project's distinctive
-value lives. Full outcome set (`ALLOW`, `WARN`, `REPLAN`, `PAUSE`, `BLOCK`,
-`ESCALATE`) and version-by-version build order are in
+value lives. Full outcome set (`ALLOW`, `WARN`, `CHALLENGE`, `REPLAN`,
+`PAUSE`, `BLOCK`, `ESCALATE`) and version-by-version build order are in
 [ROADMAP.md](ROADMAP.md#build-order).
 
 ## Sidecar modules
@@ -189,7 +189,7 @@ Agentic Sidecar
 ├── Judge                 — optional independent (and independent-model) evaluation
 ├── Risk Evaluator        — classifies an action's risk before deciding whether to escalate
 ├── Policy Advisor        — deterministic policy rules (cheapest check, runs first)
-├── Decision Gate         — turns evaluations into ALLOW / WARN / REPLAN / PAUSE / BLOCK / ESCALATE
+├── Decision Gate         — turns evaluations into ALLOW / WARN / CHALLENGE / REPLAN / PAUSE / BLOCK / ESCALATE
 ├── Budget Guardian       — cost/token ceilings per task
 ├── Status Interpreter    — translates raw tool/MCP traces into human-readable narration
 └── Human Escalation      — pauses execution and requests approval
@@ -200,6 +200,10 @@ sidecar:
   intent:
     enabled: true
     preserve_original_intent: true
+  planner:
+    enabled: false        # off by default — see cost design in ROADMAP.md
+  critic:
+    enabled: false        # off by default — see cost design in ROADMAP.md
   policy:
     enabled: true
     source: policies.yaml
@@ -225,7 +229,7 @@ as v0.1 in [ROADMAP.md](ROADMAP.md)):
 ```python
 from agentic_sidecar import Sidecar
 
-sidecar = Sidecar(roles=["intent_guardian", "policy", "risk"])
+sidecar = Sidecar(roles=["intent_guardian", "policy", "risk", "planner", "critic"])
 agent = sidecar.attach(my_agent)
 
 agent.run("Investigate the production issue but do not modify production.")
@@ -333,7 +337,7 @@ in the roadmap).
 Full build plan, version sequencing, and design constraints:
 [ROADMAP.md](ROADMAP.md).
 
-Original architecture proposal: [future-plans.md](future-plans.md).
+Original architecture proposal: [concept.md](concept.md).
 
 ## License
 

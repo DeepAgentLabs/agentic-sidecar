@@ -60,9 +60,10 @@ for the full rationale on each:
 | `src/agentic_sidecar/gate/budget.py` | Budget Guardian — cost/token ceilings | v0.4 |
 | `src/agentic_sidecar/adapters/langgraph.py` | LangGraph interception adapter | v0.1 |
 | `src/agentic_sidecar/intent/` | `IntentEnvelope`, alignment scoring, drift detection | v0.2 |
+| `src/agentic_sidecar/evaluators/planner.py` | Planner — evaluates the whole plan against intent | v0.3 |
 | `src/agentic_sidecar/evaluators/critic.py` | Critic mode — pre-decision challenge | v0.3 |
 | `src/agentic_sidecar/evaluators/judge.py` | Model-agnostic LLM Judge interface | v0.3 |
-| `src/agentic_sidecar/gate/` (full outcome set) | `WARN` / `REPLAN` / `PAUSE` / `ESCALATE`, human-in-the-loop escalation | v0.4 |
+| `src/agentic_sidecar/gate/` (full outcome set) | `WARN` / `CHALLENGE` / `REPLAN` / `PAUSE` / `ESCALATE`, human-in-the-loop escalation | v0.4 |
 | `src/agentic_sidecar/status/narrate.py` | Human-readable status narration | v0.5 |
 | `src/agentic_sidecar/cli/` | CLI entry point (`agentic-sidecar status --follow`) | v0.5 |
 | `src/agentic_sidecar/adapters/{crewai,autogen,openai_agents,google_adk}.py` | Additional framework adapters | v0.6 |
@@ -87,8 +88,8 @@ Full architecture and build order: [ROADMAP.md](ROADMAP.md).
 - `core/` must not import from `adapters/` (adapters depend on core, not the
   reverse).
 - `gate/` (Policy, Risk) must work with zero dependency on `evaluators/`
-  (Critic, Judge) — v0.1's Decision Gate has to function before Judge exists
-  at all.
+  (Planner, Critic, Judge) — v0.1's Decision Gate has to function before
+  Judge exists at all.
 - `evaluators/judge.py` must stay model-agnostic — no hardcoded provider SDK
   imports at module scope.
 

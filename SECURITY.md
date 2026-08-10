@@ -39,7 +39,7 @@ data the calling application considers sensitive:
 
 Sensitive values should be redacted before being logged, narrated (Status
 Interpreter), or sent to an external Judge model — this is a design
-requirement for those modules, not an afterthought (see `future-plans.md`
+requirement for those modules, not an afterthought (see `concept.md`
 §18).
 
 The library itself is not designed to store long-lived credentials, proxy

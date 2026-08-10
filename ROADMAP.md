@@ -5,7 +5,7 @@
 - **v0.1** 🚧 Planned — Sidecar Runtime + Rule-Based Decision Gate (no LLM required)
 - **v0.2** 🚧 Planned — Intent Guardian (Intent Envelope, drift detection)
 - **v0.2.x** 🚧 Planned — Early Validation Benchmark (narrow, deterministic — intent-drift catch rate only)
-- **v0.3** 🚧 Planned — Critic & Judge (optional, model-agnostic LLM evaluation)
+- **v0.3** 🚧 Planned — Planner, Critic & Judge (optional, model-agnostic LLM evaluation)
 - **v0.4** 🚧 Planned — Policy Advisor, Budget Guardian, full Decision Gate outcomes
 - **v0.5** 🚧 Planned — Live Status & Human-Readable Narration
 - **v0.6** 🚧 Planned — Multi-Framework Adapters (CrewAI, AutoGen, OpenAI Agents, Google ADK)
@@ -14,7 +14,7 @@
 - **v1.0** 🚧 Planned — Intent Envelope as a published interoperability schema
 
 Nothing has shipped yet — this repo currently holds the architecture proposal
-([`future-plans.md`](future-plans.md)) and this roadmap. Treat every
+([`concept.md`](concept.md)) and this roadmap. Treat every
 checkbox below as unstarted.
 
 ## Scaffold Gaps
@@ -32,7 +32,7 @@ workflows, placeholder modules) deliberately does **not** include yet:
 - **`ruff` is scoped to `src`/`tests`, not the repo root.** Current `ruff`
   versions format fenced ` ```python ` code blocks inside Markdown files by
   default, which would rewrite intentionally-abbreviated pseudocode in
-  `README.md`/`ROADMAP.md`/`future-plans.md`. `make lint` / `make format` /
+  `README.md`/`ROADMAP.md`/`concept.md`. `make lint` / `make format` /
   the CI lint job all target `src tests` explicitly for this reason —
   worth remembering if a future contributor "fixes" that back to `.`.
 - **Neither optional sibling integration has real code.** `agenticlens` and
@@ -50,16 +50,21 @@ workflows, placeholder modules) deliberately does **not** include yet:
 These four are additions to the original proposal, made explicit because
 they change how early modules must be built — not just what they do.
 
-1. **One framework adapter first, not seven.** [`future-plans.md`
-   §30](future-plans.md) lists LangGraph, CrewAI, AutoGen, OpenAI Agents,
-   Microsoft Agent Framework, Google ADK, and custom/MCP agents as equally
-   in-scope. They are not equally cheap. Build the `before_tool_call`
-   interception point against **one** framework first — LangGraph, since
-   it's the most structured of the group and gives the interception
-   abstraction the best chance of surfacing real design problems early. Do
-   not claim "framework independence" until a second adapter has actually
-   been built and the interception abstraction has survived contact with a
-   framework it wasn't designed against.
+1. **One framework adapter first, not nine.** [`concept.md`
+   §30](concept.md) lists LangGraph, LangChain, CrewAI, AutoGen, OpenAI
+   Agents, Microsoft Agent Framework, Google ADK, custom agents, and
+   MCP-based agents as equally in-scope. They are not equally cheap, and two
+   of them aren't even distinct integration surfaces: `LangChain` is
+   intentionally folded into the `LangGraph` adapter rather than getting its
+   own — LangGraph is LangChain's own agent-graph successor, and a separate
+   LangChain adapter would mostly duplicate the same interception surface
+   for older code. That leaves seven real targets. Build the
+   `before_tool_call` interception point against **one** framework first —
+   LangGraph, since it's the most structured of the group and gives the
+   interception abstraction the best chance of surfacing real design
+   problems early. Do not claim "framework independence" until a second
+   adapter has actually been built and the interception abstraction has
+   survived contact with a framework it wasn't designed against.
 2. **Rules before models.** v0.1 ships with **zero** LLM calls. Policy
    Advisor (deterministic YAML rules) and a hand-written Risk Evaluator
    (allow/deny lists, tool-name classification, threshold checks) are the
@@ -75,14 +80,18 @@ they change how early modules must be built — not just what they do.
    Decision Gate at all (if the action didn't need gating, it wouldn't be at
    a decision boundary), so treat it as the recommended default rather than
    presenting the two as neutral.
-4. **A risk classifier is not a free lunch.** [`future-plans.md`
-   §32](future-plans.md) proposes routing only "high-risk" actions to an
+4. **A risk classifier is not a free lunch.** [`concept.md`
+   §32](concept.md) proposes routing only "high-risk" actions to an
    expensive judge. The classifier that makes that routing decision is
    itself doing real evaluation work and needs the same scrutiny as the
    judge it's gating — ship it as static rules (tool name / argument
    pattern / destination) in v0.1–v0.2, and only promote it to a small
    local model in v0.3+ once there's evidence the rule-based version is
-   actually the bottleneck.
+   actually the bottleneck. `concept.md` §32 lists several other
+   cost-control ideas — sampling, caching identical evaluations, and an
+   asynchronous advisory mode — that are deliberately **not** scheduled to
+   any version yet; revisit them only if rules-first-plus-risk-based-routing
+   turns out not to be enough, rather than building them speculatively.
 5. **Policy, Risk, and Intent ask different questions — don't merge them.**
    It's tempting to implement Intent Guardian as "one more set of rules"
    inside Policy Advisor, since both are config-driven in v0.1/v0.2. Resist
@@ -103,10 +112,10 @@ any other DeepAgentLabs package. `pip install agentic-sidecar` should work
 with zero other packages required.
 
 - `ai-operations-spec`
-  Coordinate with: the Intent Envelope and Decision record ([§36](future-plans.md))
+  Coordinate with: the Intent Envelope and Decision record ([§36](concept.md))
   should be documented as artifacts against the shared AI Operations
   Specification model from the start, not retrofitted at v1.0 the way
-  `future-plans.md` §36 suggests — a schema retrofitted after consumers
+  `concept.md` §36 suggests — a schema retrofitted after consumers
   already exist is expensive to change out from under them.
 - `agenticlens`
   Validate in: Sidecar decisions (allow/warn/replan/block, intent-alignment
@@ -118,7 +127,7 @@ with zero other packages required.
   Coordinate with: an interesting integration once both are past v0.1 —
   inject faults into the *agent's* recovery attempt and have the Sidecar
   evaluate whether the recovery decision itself is appropriate
-  ([`future-plans.md` §26](future-plans.md)). Also worth chaos-testing the
+  ([`concept.md` §26](concept.md)). Also worth chaos-testing the
   Sidecar's own gate: what happens to the Main Agent when the Sidecar times
   out or returns garbage? That is exactly what `on_sidecar_failure` (design
   constraint 3, above) exists to make deterministic. An
@@ -128,7 +137,7 @@ with zero other packages required.
   interface still needs designing before it's implemented).
 - `mcp-server` (`deep-agentic-core-mcp`)
   Validate in: MCP tool calls are a natural decision boundary
-  ([`future-plans.md` §27](future-plans.md)). A useful end-to-end check once
+  ([`concept.md` §27](concept.md)). A useful end-to-end check once
   v0.1's Decision Gate exists is gating a real MCP tool call through it.
 
 For roadmap planning, treat ecosystem links as:
@@ -200,7 +209,8 @@ agentic-sidecar/
       policy.py            # Policy Advisor — deterministic YAML rules
       risk.py               # Risk Evaluator — rule-based, then pluggable
       budget.py             # Budget Guardian (v0.4)
-    evaluators/            # Critic & Judge (v0.3)
+    evaluators/            # Planner, Critic & Judge (v0.3)
+      planner.py           # independently evaluates the whole plan
       critic.py
       judge.py              # model-agnostic judge interface
     status/                 # Status Interpreter (v0.5)
@@ -234,7 +244,7 @@ against a real framework.
 - `Sidecar.attach(agent)` + `@sidecar.before_tool_call` interception,
   LangGraph adapter only (see Design Constraint 1)
 - `Decision(status, risk, reason)` with `status` in `ALLOW | BLOCK`
-  (the smallest useful subset of [`future-plans.md` §15](future-plans.md)'s
+  (the smallest useful subset of [`concept.md` §15](concept.md)'s
   seven outcomes)
 - Policy Advisor: deterministic YAML allow/deny rules
 - Risk Evaluator: static rules only (tool name, argument pattern) — no model
@@ -254,14 +264,14 @@ against a real framework.
 ### v0.2 — Intent Guardian
 
 **Scope:**
-- Structured `IntentEnvelope` ([`future-plans.md` §6](future-plans.md)):
+- Structured `IntentEnvelope` ([`concept.md` §6](concept.md)):
   goal, requester, constraints, authority granted/not granted, expiry
-- Intent injection at decision boundaries ([§7](future-plans.md))
+- Intent injection at decision boundaries ([§7](concept.md))
 - Drift detection: is the current proposed action still consistent with the
-  envelope? ([§8](future-plans.md))
+  envelope? ([§8](concept.md))
 - Constraint validation (e.g. `maximum_refund: 500` vs. a proposed `850`)
   as the first concrete semantic-authorization check
-  ([§9](future-plans.md))
+  ([§9](concept.md))
 - Govern mode becomes available: Decision Gate can now `BLOCK` for real,
   gated behind `on_sidecar_failure` from v0.1
 
@@ -270,7 +280,7 @@ against a real framework.
 - [ ] Constraint validation against numeric/enum/allow-list fields
 - [ ] Intent-drift `WARN`/`BLOCK` wired into the v0.1 Decision Gate
 - [ ] README section + example reproducing the refund-limit scenario from
-      [`future-plans.md` §22](future-plans.md)
+      [`concept.md` §22](concept.md)
 
 ### v0.2.x — Early Validation Benchmark (narrow)
 
@@ -283,8 +293,8 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
 "unsafe decision" and "task success" measurable in the first place.
 
 **Scope:**
-- 3–5 scenario fixtures reusing [`future-plans.md`
-  §22](future-plans.md)'s pattern: a refund exceeding its authorized limit,
+- 3–5 scenario fixtures reusing [`concept.md`
+  §22](concept.md)'s pattern: a refund exceeding its authorized limit,
   a DEV-scoped cleanup that drifts into production resources, plus 1–2 new
   ones covering an unauthorized data-export and a scope-creep delegation
 - Each fixture run twice: Intent Guardian off vs. on
@@ -298,13 +308,20 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
 - [ ] README section publishing the numbers, explicitly scoped as
       "Intent Guardian only" — not a general Sidecar effectiveness claim
 
-### v0.3 — Critic & Judge
+### v0.3 — Planner, Critic & Judge
 
 **Scope:**
+- Planner: independently evaluates the *whole plan* against the active
+  IntentEnvelope, not just one decision — the "explain my charge" plan
+  that also cancels a subscription and issues a refund example
+  ([§10](concept.md)). Ships alongside Critic/Judge rather than earlier
+  because, like them, it needs real reasoning rather than a deterministic
+  check, so it has no place in the LLM-free v0.1/v0.2 phase (Design
+  Constraint 2)
 - Critic mode: pre-decision challenge for unsupported assumptions,
-  unnecessary actions, contradictions ([§11](future-plans.md))
+  unnecessary actions, contradictions ([§11](concept.md))
 - Model-agnostic Judge interface — Main Agent model and Sidecar Judge model
-  must be independently swappable ([§12](future-plans.md))
+  must be independently swappable ([§12](concept.md))
 - Promote the risk classifier from static rules (v0.1) to an optional small
   local model, only for teams that have evidence the rule-based version is
   the bottleneck (Design Constraint 4)
@@ -312,6 +329,7 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
   turning it on has a real cost/latency tradeoff to document
 
 **Deliverables:**
+- [ ] `agentic_sidecar.evaluators.planner`
 - [ ] `agentic_sidecar.evaluators.critic`
 - [ ] `agentic_sidecar.evaluators.judge` — provider-agnostic interface,
       at least two backends (e.g. OpenAI, Anthropic) to prove independence
@@ -322,9 +340,14 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
 ### v0.4 — Full Decision Gate & Budget Guardian
 
 **Scope:**
-- Remaining Decision Gate outcomes from [§15](future-plans.md): `WARN`,
-  `REPLAN`, `PAUSE`, `ESCALATE` (in addition to v0.1's `ALLOW`/`BLOCK`)
-- Human-in-the-loop escalation flow ([§16](future-plans.md)): pause, present
+- Remaining Decision Gate outcomes from [§15](concept.md): `WARN`,
+  `CHALLENGE`, `REPLAN`, `PAUSE`, `ESCALATE` (in addition to v0.1's
+  `ALLOW`/`BLOCK` — all seven from the original list). `CHALLENGE` is
+  Critic's (v0.3) natural output and needs its own status distinct from the
+  others: it means the Sidecar pushes back and requires the Main Agent to
+  justify or reconsider the specific decision before proceeding, without
+  forcing a full plan regeneration (`REPLAN`) or a hard stop (`BLOCK`)
+- Human-in-the-loop escalation flow ([§16](concept.md)): pause, present
   `[Approve Once] [Reject] [Modify Intent] [Ask Agent to Replan] [Stop Agent]`
 - Budget Guardian: cost/token ceilings per task, enforced through the same
   gate rather than a side channel
@@ -339,10 +362,10 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
 
 **Scope:**
 - Status Interpreter: translate raw tool/MCP traces into the narrated form
-  from [§19](future-plans.md) (`🔎 Looking up your order`, etc.)
+  from [§19](concept.md) (`🔎 Looking up your order`, etc.)
 - CLI status stream: current objective, current step, intent alignment,
   risk, budget — the non-UI subset of the Control Room from
-  [§17](future-plans.md)
+  [§17](concept.md)
 
 **Deliverables:**
 - [ ] `agentic_sidecar.status.narrate`
@@ -369,7 +392,7 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
 ### v0.7 — Control Room
 
 **Scope:**
-- The dashboard from [§20](future-plans.md): live agent state, plan, tool
+- The dashboard from [§20](concept.md): live agent state, plan, tool
   calls, intent alignment, risk, cost, and controls (`PAUSE`, `RESUME`,
   `STOP`, `INTERVENE`, `MODIFY INTENT`, `APPROVE ONCE`, `REJECT ACTION`,
   `ASK AGENT TO REPLAN`)
@@ -386,14 +409,14 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
 
 **Scope:**
 - Broadens the v0.2.x narrow benchmark into the full empirical harness from
-  [§35](future-plans.md): Agent Alone vs. Agent + Sidecar, now measuring
+  [§35](concept.md): Agent Alone vs. Agent + Sidecar, now measuring
   task success, unsafe-action rate, false-intervention rate, and
   cost/latency overhead — metrics that need Judge (v0.3) and the full
   Decision Gate (v0.4) to be meaningful, which is why they waited
-- Reuses the v0.2.x fixtures plus new ones covering Critic-catchable cases
-  (unsupported assumptions, unnecessary actions) that a deterministic
-  intent check can't detect
-- Answers the research questions in [§34](future-plans.md) with data instead
+- Reuses the v0.2.x fixtures plus new ones covering Planner/Critic-catchable
+  cases (unnecessary plan steps, unsupported assumptions) that a
+  deterministic intent check can't detect
+- Answers the research questions in [§34](concept.md) with data instead
   of architecture claims — in particular "how much reliability improvement
   per dollar of added inference cost"
 
@@ -410,7 +433,7 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
 **Scope:**
 - Publish the Intent Envelope and Decision record as a versioned schema in
   `ai-operations-spec`, not just an internal Sidecar structure
-  ([§36–37](future-plans.md))
+  ([§36–37](concept.md))
 - Cross-project intent propagation: an envelope created by one Sidecar
   instance stays valid and inspectable if the task hands off to a
   sub-agent, a different MCP host, or a different Sidecar instance
@@ -431,7 +454,7 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
 | 2 | PyPI release v0.1, README, initial adoption push | ongoing |
 | 3 | v0.2 — Intent Guardian | 2–4 weeks |
 | 4 | PyPI release v0.2, v0.2.x narrow validation benchmark + published numbers | 1–2 weeks |
-| 5 | v0.3 — Critic & Judge | 3–5 weeks |
+| 5 | v0.3 — Planner, Critic & Judge | 3–5 weeks |
 | 6 | PyPI release v0.3 | ongoing |
 | 7 | v0.4 — Full Decision Gate & Budget Guardian | 2–4 weeks |
 | 8 | PyPI release v0.4 | ongoing |

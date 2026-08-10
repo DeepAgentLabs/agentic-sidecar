@@ -33,7 +33,7 @@ jobs:
 
       # Scoped to src/tests, not "." -- ruff >=0.16 formats fenced ```python
       # blocks inside Markdown by default, and this repo's docs (README.md,
-      # ROADMAP.md, future-plans.md) intentionally use abbreviated pseudocode
+      # ROADMAP.md, concept.md) intentionally use abbreviated pseudocode
       # in those fences that isn't meant to be reformatted as real source.
       - name: Format check (ruff format)
         run: uv run ruff format --check src tests
