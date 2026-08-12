@@ -1,5 +1,61 @@
 ## agentic-sidecar Development Reference
 
+## Ecosystem Context
+
+### Role in DeepAgentLabs
+
+`agentic-sidecar` is the decision-supervision layer in DeepAgentLabs. It sits
+alongside an autonomous agent runtime and evaluates whether the next action is
+still aligned with user intent, policy, risk tolerance, and escalation rules
+before the action is allowed to proceed.
+
+### Owns
+
+- Decision Gate behavior, policy/risk evaluation, and intent-preservation
+  boundaries
+- Framework adapters that intercept agent decisions and route them through the
+  sidecar runtime
+- Sidecar-specific decision artifacts that can later be represented through the
+  shared specification
+
+### Does Not Own
+
+- The shared operational contract or normative object model — that belongs in
+  `ai-operations-spec`
+- Core workflow instrumentation, profiling, or retrospective evaluation — those
+  belong in `agenticlens`
+- Failure injection and resilience experiments — those belong in
+  `agentic-chaos`
+- The main ecosystem control surface or remote tool interface — that belongs in
+  `deep-agentic-core-mcp`
+
+### Integrates With
+
+- `ai-operations-spec` for export-compatible decision artifacts and shared
+  terminology
+- `agenticlens` when sidecar decisions should appear in traces, analysis, or
+  evidence workflows
+- `agentic-chaos` when testing whether agent supervision still behaves
+  correctly under induced failures or degraded conditions
+- `deep-agentic-core-mcp` if sidecar capabilities are later exposed through a
+  unified MCP surface
+
+### Current Roadmap Focus
+
+The current build focus is the v0.1 runtime: LangGraph adapter first, then the
+deterministic policy/risk Decision Gate. Work in this repo should reinforce
+that sequencing rather than jumping ahead to later judge- or multi-framework
+features.
+
+### Before You Build Here
+
+- Ask whether the feature is a pre-action governance concern; if it is
+  retrospective analysis, it likely belongs in `agenticlens` instead
+- Keep v0.1 deterministic where the roadmap says it should be deterministic;
+  do not solve early gate behavior with model-based evaluators
+- Avoid designing sidecar abstractions as if all frameworks are already
+  supported; the first real adapter is still shaping the boundary
+
 ## Status
 
 This repository is a **scaffold** — directory layout, tooling config, and
