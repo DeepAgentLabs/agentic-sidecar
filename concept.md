@@ -5,6 +5,13 @@
 **Status:** Concept / Architecture Proposal
 **Proposed Package:** `agentic-sidecar`
 
+> This document describes the long-term architecture vision — including
+> framework independence, the full seven-outcome Decision Gate, and a
+> published Intent Envelope schema. None of that is scoped to the first
+> release. For the phased, currently-committed build plan — starting with a
+> single LangGraph adapter, zero LLM calls, and `ALLOW`/`BLOCK` only — see
+> [ROADMAP.md](ROADMAP.md).
+
 ---
 
 # 1. Overview
@@ -30,7 +37,7 @@ Instead, it independently helps the primary agent:
 
 The fundamental architectural principle is:
 
-> **The Main Agent acts. The Sidecar observes, thinks, advises, and governs.**
+> **The Main Agent acts. The Sidecar observes, thinks, advises, injects the relevant intent at each decision point, and governs.**
 
 This creates separation between **task execution** and **decision supervision**.
 
@@ -884,7 +891,115 @@ Execution continues.
 
 ---
 
-# 23. Sidecar vs. Multi-Agent Systems
+# 23. Sidecar vs. Agent Harness
+
+An Agent Harness provides the control and execution environment in which an agent operates — managing the agent loop, tools, state, context, retries, and execution lifecycle.
+
+Agentic Sidecar does not replace the harness. It strengthens it.
+
+```text
+Agent Harness   = control and execution loop.
+Agentic Sidecar = decision-time supervision layer for that loop.
+```
+
+The harness helps the agent execute. The Sidecar helps ensure that what gets executed is still aligned with what the human originally intended.
+
+## Why This Matters for Multi-Agent Systems
+
+As an agentic task moves through a chain of agents, sub-agents, MCP servers, and tools, the original user intent can become increasingly distant from the component making the next decision.
+
+```text
+Human Intent
+     │
+     ▼
+Agent A
+     │ delegates
+     ▼
+Agent B
+     │ delegates
+     ▼
+Agent C
+     │
+     ▼
+MCP / Tool
+```
+
+Each downstream agent may receive the immediate task it needs to perform without necessarily retaining the full context, constraints, authority, and boundaries of the original request.
+
+Agentic Sidecar addresses this through the Intent Envelope (Section 6).
+
+Instead of relying on every downstream agent to reconstruct the user's intent from conversation history, the Sidecar can make the relevant intent available again at decision boundaries:
+
+```text
+Human
+  │
+  └── Intent Envelope
+          │
+          ▼
+       Agent A
+          │
+       [Intent]
+          ▼
+       Agent B
+          │
+       [Intent]
+          ▼
+       Agent C
+          │
+       [Intent]
+          ▼
+      MCP / Tool
+```
+
+The goal is not to repeatedly inject the entire conversation. The goal is to propagate the minimum structured intent necessary to make the next decision safely — for example:
+
+* original goal;
+* constraints;
+* authority granted;
+* authority explicitly not granted;
+* delegated scope;
+* relevant policy boundaries;
+* expiry or task lifetime.
+
+This gives downstream decision makers a consistent answer to:
+
+> "What was the human actually trying to accomplish, and is this action still within that intent?"
+
+## Does Agentic Sidecar Make an Agent Harness More Efficient?
+
+Potentially — but primarily by making the harness more controlled and reliable, rather than by making the underlying model faster.
+
+Without an independent supervision layer, a harness may discover problems only after an action fails, a plan drifts, or another agent has to reason again about missing context.
+
+The Sidecar introduces decision-time checks that can catch those problems earlier:
+
+```text
+Plan → Act → Fail → Recover → Replan
+
+             vs.
+
+Plan → Sidecar Check → Act
+          │
+          ├── ALLOW
+          ├── CHALLENGE
+          ├── REPLAN
+          ├── BLOCK
+          └── ESCALATE
+```
+
+This can reduce unnecessary actions, repeated reasoning, unsafe retries, and context reconstruction while keeping execution aligned with the original request.
+
+The Sidecar therefore complements the harness:
+
+```text
+Harness: How do I execute this agentic workflow?
+
+Sidecar: Should this decision happen, given what the human originally asked for?
+```
+
+---
+
+# 24. Sidecar vs. Multi-Agent Systems
 
 Agentic Sidecar should be explicitly differentiated from normal multi-agent architectures.
 
@@ -920,7 +1035,7 @@ It accompanies the executor throughout its lifecycle.
 
 ---
 
-# 24. Sidecar vs. LLM-as-a-Judge
+# 25. Sidecar vs. LLM-as-a-Judge
 
 LLM-as-a-Judge is one possible Sidecar capability.
 
@@ -944,7 +1059,7 @@ This distinction is important for positioning.
 
 ---
 
-# 25. Sidecar vs. AgenticLens
+# 26. Sidecar vs. AgenticLens
 
 There should be a clean separation between AgenticLens and Agentic Sidecar.
 
@@ -1006,7 +1121,7 @@ AgenticLens can provide telemetry consumed by the Sidecar without the two projec
 
 ---
 
-# 26. Sidecar vs. Agentic Chaos
+# 27. Sidecar vs. Agentic Chaos
 
 Agentic Chaos intentionally introduces failures and adverse conditions to evaluate agent resilience.
 
@@ -1040,7 +1155,7 @@ This enables testing not only whether the agent survives failure, but whether it
 
 ---
 
-# 27. Sidecar vs. Agentic MCP
+# 28. Sidecar vs. Agentic MCP
 
 Agentic MCP handles connectivity and interaction with MCP environments.
 
@@ -1068,7 +1183,7 @@ The Sidecar can understand:
 
 ---
 
-# 28. DeepAgentLabs Ecosystem
+# 29. DeepAgentLabs Ecosystem
 
 The projects can represent different layers of the agent lifecycle.
 
@@ -1113,7 +1228,7 @@ GUIDE + GOVERN
 
 ---
 
-# 29. Potential Python API
+# 30. Potential Python API
 
 A simple developer experience could look like:
 
@@ -1161,7 +1276,7 @@ Decision(
 
 ---
 
-# 30. Framework Independence
+# 31. Framework Independence
 
 A major design objective should be framework independence.
 
@@ -1191,7 +1306,7 @@ This would make Sidecar an infrastructure layer rather than another agent framew
 
 ---
 
-# 31. Model Independence
+# 32. Model Independence
 
 Main Agent and Sidecar should not need to use the same model.
 
@@ -1222,7 +1337,7 @@ The cheapest appropriate evaluator can handle each decision.
 
 ---
 
-# 32. Cost and Token Optimization
+# 33. Cost and Token Optimization
 
 A naive Sidecar that invokes another LLM for every operation could approximately double inference cost and increase latency.
 
@@ -1259,7 +1374,7 @@ Possible strategies:
 
 ---
 
-# 33. Operating Modes
+# 34. Operating Modes
 
 Agentic Sidecar could support several modes.
 
@@ -1305,7 +1420,7 @@ This makes adoption easier because organizations can gradually increase Sidecar 
 
 ---
 
-# 34. Potential Research Questions
+# 35. Potential Research Questions
 
 The project creates several research directions.
 
@@ -1335,7 +1450,7 @@ Can selective Sidecar invocation achieve similar reliability improvements to con
 
 ---
 
-# 35. Evaluation Framework
+# 36. Evaluation Framework
 
 The Sidecar should eventually be evaluated empirically.
 
@@ -1382,7 +1497,7 @@ This evidence would make the project substantially stronger than relying only on
 
 ---
 
-# 36. Potential New Primitive: Intent Envelope
+# 37. Potential New Primitive: Intent Envelope
 
 The Intent Envelope could eventually become independently useful.
 
@@ -1426,7 +1541,7 @@ This could eventually evolve into a broader interoperability specification rathe
 
 ---
 
-# 37. Future Direction: Intent-Aware Agent Infrastructure
+# 38. Future Direction: Intent-Aware Agent Infrastructure
 
 Longer term, Agentic Sidecar could enable:
 
@@ -1454,7 +1569,7 @@ This creates an **intent-aware execution chain** for autonomous systems.
 
 ---
 
-# 38. Product Positioning
+# 39. Product Positioning
 
 Avoid positioning Agentic Sidecar simply as:
 
@@ -1476,7 +1591,7 @@ Short positioning:
 
 ---
 
-# 39. Key Differentiator
+# 40. Key Differentiator
 
 The central differentiation should be:
 
@@ -1495,7 +1610,7 @@ Those technologies can instead become components or integrations of the Sidecar 
 
 ---
 
-# 40. Initial MVP
+# 41. Initial MVP
 
 The first version should remain focused.
 
@@ -1556,48 +1671,49 @@ This sequence avoids trying to build every Sidecar capability immediately.
 
 ---
 
-# 41. Long-Term Vision
+# 42. Long-Term Vision
 
 Agentic Sidecar can evolve from a Python library into an architectural layer for autonomous systems.
+
+This is the harness relationship described in Section 23, extended to its full form: the Sidecar living inside the harness boundary as the decision-time supervision layer for the executor's loop.
 
 The long-term model becomes:
 
 ```text
-              USER / ORGANIZATION
-                      │
-                   INTENT
-                      │
-                      ▼
-               ┌─────────────┐
-               │ MAIN AGENT  │
-               └──────┬──────┘
-                      ↕
-               ┌─────────────┐
-               │   SIDECAR   │
-               │             │
-               │ Think       │
-               │ Challenge   │
-               │ Preserve    │
-               │ Evaluate    │
-               │ Explain     │
-               │ Govern      │
-               └──────┬──────┘
-                      │
-                      ▼
-                MCP / Agents
-                      │
-                      ▼
-                    Tools
-                      │
-                      ▼
-               REAL-WORLD ACTION
+┌──────────────────── AGENT HARNESS ───────────────────┐
+│                                                      │
+│   User Intent                                        │
+│      ↓                                               │
+│  ┌─────────────┐                                     │
+│  │ MAIN AGENT  │ Plan → Act → Observe → Refine       │
+│  └──────┬──────┘                                     │ 
+│         │                                            │
+│         │                                            │
+│         │ proposed decisions                         │
+│         ▼                                            │
+│  ┌──────────── AGENTIC SIDECAR ─────────────┐        │
+│  │ Intent Guardian                          │        │
+│  │ Planner / Critic / Judge                 │        │
+│  │ Policy + Risk                            │        │
+│  │ Decision Gate                            │        │
+│  │ Human Escalation                         │        │
+│  └─────────────────┬────────────────────────┘        │
+│                    │                                 │
+│             allow / challenge /                      │
+│             replan / block                           │
+│                    ↓                                 │
+│       Another Agent / Tools / MCP                    │
+│                    ↓                                 │
+│             External Systems                         │
+└──────────────────────────────────────────────────────┘
 ```
+
 
 The Sidecar becomes the companion intelligence sitting between **autonomous reasoning and consequential action**.
 
 ---
 
-# 42. DeepAgentLabs Vision
+# 43. DeepAgentLabs Vision
 
 Together, the ecosystem can address four fundamental questions about autonomous AI systems:
 

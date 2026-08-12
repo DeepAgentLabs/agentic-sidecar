@@ -17,6 +17,7 @@ LLM-free v0.1.
 - [Why](#why)
 - [What it is not](#what-it-is-not)
 - [Architecture](#architecture)
+- [Sidecar vs. Agent Harness](#sidecar-vs-agent-harness)
 - [Main Agent vs. Sidecar](#main-agent-vs-sidecar)
 - [How the Decision Gate evaluates a decision](#how-the-decision-gate-evaluates-a-decision)
 - [Sidecar modules](#sidecar-modules)
@@ -47,8 +48,11 @@ Three things go wrong in that chain that permission checks alone don't catch:
 - **No live visibility** — long-running agents act for minutes at a time
   with no answer to "what is it doing right now, and can I stop it?"
 
-`agentic-sidecar` attaches to an existing agent (any framework) and answers a
-different question than permission checks or observability tools do:
+`agentic-sidecar` is designed to attach to any agent framework, but the first
+release proves that against one framework only — LangGraph — before claiming
+the rest (see [Design Constraints](ROADMAP.md#design-constraints-read-before-building-v01)
+in ROADMAP.md). Either way, it answers a different question than permission
+checks or observability tools do:
 
 > **Not** "can this agent call this tool?" — **"should it, right now, given
 > what the user actually asked for?"**
@@ -73,6 +77,10 @@ different question than permission checks or observability tools do:
   should never reach an LLM at all — see [Operating
   modes](#operating-modes) and the cost-control design in
   [ROADMAP.md](ROADMAP.md).
+- **Not an agent harness.** It doesn't run the agent loop, manage tools, or
+  handle retries — that's LangGraph's, CrewAI's, or your custom loop's job.
+  The Sidecar attaches to whatever harness is already running the agent; see
+  [Sidecar vs. Agent Harness](#sidecar-vs-agent-harness).
 
 ## Architecture
 
@@ -117,6 +125,59 @@ different question than permission checks or observability tools do:
 
 The Sidecar is attached to the execution lifecycle. It does not own the
 user's task and is never a second worker in the plan.
+
+## Sidecar vs. Agent Harness
+
+An **agent harness** (LangGraph, a custom loop, OpenAI Agents SDK, Microsoft
+Agent Framework, ...) is the control and execution environment: it runs the
+agent loop and manages tools, state, context, retries, and lifecycle.
+`agentic-sidecar` doesn't replace that — it attaches to it as a decision-time
+supervision layer:
+
+```text
+Agent Harness   = control and execution loop.
+Agentic Sidecar = decision-time supervision layer for that loop.
+```
+
+The harness answers *"how do I execute this workflow?"* The Sidecar answers
+*"should this decision happen, given what the human originally asked for?"*
+
+This distinction matters most once a task fans out across a delegation
+chain — Agent A → Agent B → Agent C → MCP/Tool — where each hop tends to
+receive only the sub-task it needs to perform, not the original constraints
+and authority behind it:
+
+```text
+Human Intent → Agent A → delegates → Agent B → delegates → Agent C → MCP/Tool
+```
+
+The Sidecar's Intent Envelope (§ [Sidecar modules](#sidecar-modules)) is
+designed to travel with the task through that chain instead of being
+reconstructed from conversation history at every hop — see [Long-term: an
+intent propagation layer](#long-term-an-intent-propagation-layer).
+
+Where it pays for itself: without a supervision layer, a harness typically
+discovers a bad decision only after acting on it —
+
+```text
+Plan → Act → Fail → Recover → Replan
+```
+
+— versus catching it before execution:
+
+```text
+Plan → Sidecar Check → Act
+          ├── ALLOW
+          ├── CHALLENGE
+          ├── REPLAN
+          ├── BLOCK
+          └── ESCALATE
+```
+
+That's primarily a reliability and control win, not a speed win — the
+Sidecar doesn't make the underlying model faster, it reduces unnecessary
+actions, unsafe retries, and repeated context reconstruction. Full treatment:
+[concept.md § 23](concept.md#23-sidecar-vs-agent-harness).
 
 ## Main Agent vs. Sidecar
 
@@ -172,9 +233,14 @@ Policy and Risk are largely mechanical — permission lists, thresholds,
 tool-argument patterns — and v0.1 ships them with zero LLM calls (see
 [ROADMAP.md](ROADMAP.md)). Intent is the one that requires understanding
 what the user actually meant, and it's where the project's distinctive
-value lives. Full outcome set (`ALLOW`, `WARN`, `CHALLENGE`, `REPLAN`,
-`PAUSE`, `BLOCK`, `ESCALATE`) and version-by-version build order are in
-[ROADMAP.md](ROADMAP.md#build-order).
+value lives.
+
+The diagram above shows the target outcome set. **v0.1 ships a narrower
+slice**: only `ALLOW`/`BLOCK`, in Observe mode — the Sidecar logs what it
+*would* have decided but cannot yet stop an action in practice. `WARN`,
+`CHALLENGE`, `REPLAN`, `PAUSE`, and `ESCALATE` arrive across v0.2–v0.4 as
+Intent Guardian and the full Decision Gate ship. Version-by-version build
+order is in [ROADMAP.md](ROADMAP.md#build-order).
 
 ## Sidecar modules
 

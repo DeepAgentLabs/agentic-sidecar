@@ -2,11 +2,11 @@
 
 ## Release Status
 
-- **v0.1** 🚧 Planned — Sidecar Runtime + Rule-Based Decision Gate (no LLM required)
+- **v0.1** 🚧 Planned — Sidecar Runtime, Policy Advisor & Rule-Based Decision Gate (no LLM required)
 - **v0.2** 🚧 Planned — Intent Guardian (Intent Envelope, drift detection)
 - **v0.2.x** 🚧 Planned — Early Validation Benchmark (narrow, deterministic — intent-drift catch rate only)
 - **v0.3** 🚧 Planned — Planner, Critic & Judge (optional, model-agnostic LLM evaluation)
-- **v0.4** 🚧 Planned — Policy Advisor, Budget Guardian, full Decision Gate outcomes
+- **v0.4** 🚧 Planned — Full Decision Gate outcomes, Human Escalation, Budget Guardian
 - **v0.5** 🚧 Planned — Live Status & Human-Readable Narration
 - **v0.6** 🚧 Planned — Multi-Framework Adapters (CrewAI, AutoGen, OpenAI Agents, Google ADK)
 - **v0.7** 🚧 Planned — Control Room (dashboard: pause/resume/approve/reject)
@@ -51,7 +51,7 @@ These four are additions to the original proposal, made explicit because
 they change how early modules must be built — not just what they do.
 
 1. **One framework adapter first, not nine.** [`concept.md`
-   §30](concept.md) lists LangGraph, LangChain, CrewAI, AutoGen, OpenAI
+   §31](concept.md) lists LangGraph, LangChain, CrewAI, AutoGen, OpenAI
    Agents, Microsoft Agent Framework, Google ADK, custom agents, and
    MCP-based agents as equally in-scope. They are not equally cheap, and two
    of them aren't even distinct integration surfaces: `LangChain` is
@@ -81,13 +81,13 @@ they change how early modules must be built — not just what they do.
    a decision boundary), so treat it as the recommended default rather than
    presenting the two as neutral.
 4. **A risk classifier is not a free lunch.** [`concept.md`
-   §32](concept.md) proposes routing only "high-risk" actions to an
+   §33](concept.md) proposes routing only "high-risk" actions to an
    expensive judge. The classifier that makes that routing decision is
    itself doing real evaluation work and needs the same scrutiny as the
    judge it's gating — ship it as static rules (tool name / argument
    pattern / destination) in v0.1–v0.2, and only promote it to a small
    local model in v0.3+ once there's evidence the rule-based version is
-   actually the bottleneck. `concept.md` §32 lists several other
+   actually the bottleneck. `concept.md` §33 lists several other
    cost-control ideas — sampling, caching identical evaluations, and an
    asynchronous advisory mode — that are deliberately **not** scheduled to
    any version yet; revisit them only if rules-first-plus-risk-based-routing
@@ -112,11 +112,17 @@ any other DeepAgentLabs package. `pip install agentic-sidecar` should work
 with zero other packages required.
 
 - `ai-operations-spec`
-  Coordinate with: the Intent Envelope and Decision record ([§36](concept.md))
-  should be documented as artifacts against the shared AI Operations
-  Specification model from the start, not retrofitted at v1.0 the way
-  `concept.md` §36 suggests — a schema retrofitted after consumers
-  already exist is expensive to change out from under them.
+  Coordinate with: two distinct phases, not one. The Intent Envelope and
+  Decision record ([§37](concept.md)) should be *designed* against the
+  shared AI Operations Specification model's conventions starting at v0.2,
+  when `IntentEnvelope` is first built — not left unaligned until v1.0
+  forces a redesign; this is what the Definition of Done's "AIOS alignment
+  is documented" line applies to from v0.2 onward. Formal *publication* as
+  a versioned schema inside the `ai-operations-spec` repo itself stays a
+  v1.0 milestone (see Build Order) — that's the point where the schema is
+  stable enough to make a cross-repo compatibility promise, not before.
+  `concept.md` §37 undersells the first phase by describing the whole
+  thing as something that "could eventually" happen.
 - `agenticlens`
   Validate in: Sidecar decisions (allow/warn/replan/block, intent-alignment
   score) are exactly the kind of event AgenticLens's `Workflow` schema
@@ -127,7 +133,7 @@ with zero other packages required.
   Coordinate with: an interesting integration once both are past v0.1 —
   inject faults into the *agent's* recovery attempt and have the Sidecar
   evaluate whether the recovery decision itself is appropriate
-  ([`concept.md` §26](concept.md)). Also worth chaos-testing the
+  ([`concept.md` §27](concept.md)). Also worth chaos-testing the
   Sidecar's own gate: what happens to the Main Agent when the Sidecar times
   out or returns garbage? That is exactly what `on_sidecar_failure` (design
   constraint 3, above) exists to make deterministic. An
@@ -137,7 +143,7 @@ with zero other packages required.
   interface still needs designing before it's implemented).
 - `mcp-server` (`deep-agentic-core-mcp`)
   Validate in: MCP tool calls are a natural decision boundary
-  ([`concept.md` §27](concept.md)). A useful end-to-end check once
+  ([`concept.md` §28](concept.md)). A useful end-to-end check once
   v0.1's Decision Gate exists is gating a real MCP tool call through it.
 
 For roadmap planning, treat ecosystem links as:
@@ -279,6 +285,9 @@ against a real framework.
 - [ ] `agentic_sidecar.intent` — `IntentEnvelope`, alignment scoring
 - [ ] Constraint validation against numeric/enum/allow-list fields
 - [ ] Intent-drift `WARN`/`BLOCK` wired into the v0.1 Decision Gate
+- [ ] `IntentEnvelope` field shapes documented against `ai-operations-spec`
+      conventions (informal alignment only — formal publication is v1.0,
+      see Cross-Project Dependencies)
 - [ ] README section + example reproducing the refund-limit scenario from
       [`concept.md` §22](concept.md)
 
@@ -409,14 +418,14 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
 
 **Scope:**
 - Broadens the v0.2.x narrow benchmark into the full empirical harness from
-  [§35](concept.md): Agent Alone vs. Agent + Sidecar, now measuring
+  [§36](concept.md): Agent Alone vs. Agent + Sidecar, now measuring
   task success, unsafe-action rate, false-intervention rate, and
   cost/latency overhead — metrics that need Judge (v0.3) and the full
   Decision Gate (v0.4) to be meaningful, which is why they waited
 - Reuses the v0.2.x fixtures plus new ones covering Planner/Critic-catchable
   cases (unnecessary plan steps, unsupported assumptions) that a
   deterministic intent check can't detect
-- Answers the research questions in [§34](concept.md) with data instead
+- Answers the research questions in [§35](concept.md) with data instead
   of architecture claims — in particular "how much reliability improvement
   per dollar of added inference cost"
 
@@ -433,7 +442,7 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
 **Scope:**
 - Publish the Intent Envelope and Decision record as a versioned schema in
   `ai-operations-spec`, not just an internal Sidecar structure
-  ([§36–37](concept.md))
+  ([§37–38](concept.md))
 - Cross-project intent propagation: an envelope created by one Sidecar
   instance stays valid and inspectable if the task hands off to a
   sub-agent, a different MCP host, or a different Sidecar instance
