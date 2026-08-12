@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.0.1] - 2026-08-12
+
 ### Added
 
 - Initial repository scaffold: proposed package layout under

@@ -10,6 +10,6 @@ rule-based, LLM-free v0.1 Decision Gate, and README.md for the architecture
 and planned Python API.
 """
 
-__version__ = "0.1.0.dev0"
+__version__ = "0.0.1"
 
 __all__ = ["__version__"]
