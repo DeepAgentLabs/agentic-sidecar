@@ -108,8 +108,11 @@ they change how early modules must be built — not just what they do.
 ## Cross-Project Dependencies
 
 `agentic-sidecar` should stay standalone at runtime — no hard dependency on
-any other DeepAgentLabs package. `pip install agentic-sidecar` should work
-with zero other packages required.
+any other DeepAgentLabs package, or on any other project referenced below.
+`pip install agentic-sidecar` should work with zero other packages required.
+Entries below mix DeepAgentLabs siblings (which this project coordinates
+release timing with) and independent third-party projects (which get an
+optional integration surface only, never a coordinated release).
 
 - `ai-operations-spec`
   Coordinate with: two distinct phases, not one. The Intent Envelope and
@@ -129,6 +132,21 @@ with zero other packages required.
   already models. An optional `agentic_sidecar.integrations.agenticlens`
   adapter lets `agenticlens analyze` surface Sidecar interventions alongside
   cost/latency data. Optional extra, not a core dependency.
+- `semantica` (independent third-party project, not DeepAgentLabs)
+  Coordinate with: Sidecar owns decision/governance export to Semantica —
+  the v0.4 audit/export shape (`decision_point`, `trigger`, `rationale`,
+  causal links) is what an `agentic_sidecar.integrations.semantica`
+  adapter (v0.6, see Package Layout) would map into a Semantica-backed
+  context graph. AgenticLens separately owns trace/evidence export to
+  Semantica — the two adapters are independent (neither depends on the
+  other at runtime) but must agree on a shared compatibility shape (a
+  common ID/correlation convention linking a decision to the trace that
+  triggered it) so records from both projects can be joined inside
+  Semantica without drifting apart. This isn't left as prose-only intent:
+  the v0.6 deliverable below gates graduating the adapter from placeholder
+  to real on that contract being defined, versioned, and tested against
+  `agenticlens`. Keep both artifact-oriented and optional — never a core
+  runtime dependency.
 - `agentic-chaos`
   Coordinate with: an interesting integration once both are past v0.1 —
   inject faults into the *agent's* recovery attempt and have the Sidecar
@@ -227,8 +245,11 @@ agentic-sidecar/
       autogen.py               # v0.6
       openai_agents.py          # v0.6
       google_adk.py              # v0.6
-    integrations/               # Optional adapters to sibling projects
-      agenticlens.py
+    integrations/               # Optional adapters to sibling/third-party
+                                  # projects — see Cross-Project Dependencies
+      agenticlens.py              # v0.6
+      agentic_chaos.py            # placeholder — interface still TBD
+      semantica.py                 # placeholder — decision/governance export
     cli/                         # CLI entry point (status stream, v0.5)
 ```
 
@@ -260,7 +281,11 @@ against a real framework.
   real traffic before it's given enforcement power
 
 **Deliverables:**
-- [ ] `agentic_sidecar.core` — `Sidecar`, `attach()`, `Decision`
+- [ ] `agentic_sidecar.core` — `Sidecar`, `attach()`, `Decision(status, risk,
+      reason)` exactly as scoped above — no richer audit/export shape yet;
+      that lands at v0.4 alongside the provenance/export deliverable, once
+      there are enough decision outcomes and an escalation flow worth
+      exporting
 - [ ] `agentic_sidecar.gate.policy` — YAML-driven Policy Advisor
 - [ ] `agentic_sidecar.gate.risk` — rule-based Risk Evaluator
 - [ ] `agentic_sidecar.adapters.langgraph`
@@ -283,6 +308,9 @@ against a real framework.
 
 **Deliverables:**
 - [ ] `agentic_sidecar.intent` — `IntentEnvelope`, alignment scoring
+- [ ] Lightweight `DecisionContext` snapshot type for tool call, intent,
+      constraints, risk factors, and execution history, implemented as a
+      local model
 - [ ] Constraint validation against numeric/enum/allow-list fields
 - [ ] Intent-drift `WARN`/`BLOCK` wired into the v0.1 Decision Gate
 - [ ] `IntentEnvelope` field shapes documented against `ai-operations-spec`
@@ -344,6 +372,8 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
       at least two backends (e.g. OpenAI, Anthropic) to prove independence
       from the Main Agent's own model
 - [ ] Optional local-model risk classifier, `rules` remains the default
+- [ ] Critic conflict categories covering unsupported assumption, policy
+      conflict, contradictory step, and unjustified escalation
 - [ ] README section documenting measured added latency/cost per decision
 
 ### v0.4 — Full Decision Gate & Budget Guardian
@@ -365,6 +395,16 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
 - [ ] All seven `Decision.status` values implemented and tested
 - [ ] `agentic_sidecar.gate.budget` — `max_cost`, per-task tracking
 - [ ] Human Escalation primitive (CLI prompt to start; UI comes in v0.7)
+- [ ] Provenance-friendly decision/event export shape, layered on top of
+      the runtime `Decision(status, risk, reason)` rather than replacing
+      it: `decision_point` (which boundary fired), `trigger` (tool/action
+      name + arguments), `rationale` (why the gate reached this status),
+      and causal links back to the triggering plan step and any prior
+      decision it revises. Covers approval, rejection, escalation, and
+      replanning outcomes — every Human Escalation decision needs a
+      durable, causally-linked audit record on its own merits; an external
+      governance/graph backend (see `integrations/`, v0.6) is one possible
+      consumer of this export, not the reason it exists
 - [ ] README section + example exercising `REPLAN`
 
 ### v0.5 — Live Status & Human-Readable Narration
@@ -397,6 +437,15 @@ Sidecar comparison — that stays at v0.8, where Judge and Critic make
 - [ ] `agentic_sidecar.adapters.google_adk`
 - [ ] Adapter conformance tests — same `Decision` behavior across all five
       frameworks for an identical scenario
+- [ ] Optional `agentic_sidecar.integrations.semantica` adapter placeholder:
+      export the full v0.4 audit/export shape (`decision_point`, `trigger`,
+      `rationale`, causal links, and all seven `Decision.status` outcomes —
+      not only escalation) into a Semantica-backed governance and
+      provenance layer
+- [ ] Correlation-ID contract with `agenticlens` (common convention linking
+      a Decision export to the trace/run it was made against) defined,
+      versioned, and tested by both projects — required before this
+      adapter graduates from placeholder to a real, documented integration
 
 ### v0.7 — Control Room
 
