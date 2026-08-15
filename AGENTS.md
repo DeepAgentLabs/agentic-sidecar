@@ -45,27 +45,34 @@ practice, the package covers both supervision and governance.
 
 ### Current Roadmap Focus
 
-The current build focus is the v0.1 runtime: LangGraph adapter first, then the
-deterministic policy/risk Decision Gate. Work in this repo should reinforce
-that sequencing rather than jumping ahead to later judge- or multi-framework
-features.
+v0.1 (Sidecar runtime, LangGraph adapter, deterministic policy/risk Decision
+Gate, Observe mode) and v0.2 (Intent Guardian, Govern mode) have shipped.
+The current build focus is v0.2.x, the narrow Early Validation Benchmark
+(see ROADMAP.md). Work in this repo should reinforce that sequencing rather
+than jumping ahead to Planner/Critic/Judge (v0.3) or multi-framework
+features (v0.6).
 
 ### Before You Build Here
 
 - Ask whether the feature is a pre-action governance concern; if it is
   retrospective analysis, it likely belongs in `agenticlens` instead
-- Keep v0.1 deterministic where the roadmap says it should be deterministic;
-  do not solve early gate behavior with model-based evaluators
+- Keep the Decision Gate deterministic where the roadmap says it should be
+  (`gate/`, `intent/`); do not solve that behavior with model-based
+  evaluators
 - Avoid designing sidecar abstractions as if all frameworks are already
   supported; the first real adapter is still shaping the boundary
 
 ## Status
 
-This repository is a **scaffold** — directory layout, tooling config, and
-CI/release workflows exist; `src/agentic_sidecar/` modules are placeholders
-(docstring only, `NotImplementedError` on any callable if one exists) until
-their version lands. See [ROADMAP.md](ROADMAP.md) for the build order before
-adding real logic to any module.
+v0.1 and v0.2 are implemented: `core/` (`Sidecar`, `Decision`,
+`DecisionContext`, `operators.py`, `exceptions.py`), `gate/policy.py`,
+`gate/risk.py`, `intent/` (`IntentEnvelope`, `IntentGuardian`,
+`ConstraintBinding`), and `adapters/langgraph.py` (both Observe and Govern
+mode) have real code and tests. Everything else under
+`src/agentic_sidecar/` (`evaluators/`, `status/`, `cli/`, `gate/budget.py`,
+the remaining `adapters/*.py`, `integrations/*.py`) is still a placeholder
+(docstring only) until its version lands. See [ROADMAP.md](ROADMAP.md) for
+the build order before adding real logic to any of those.
 
 ## Build and Run
 
@@ -88,15 +95,16 @@ adding real logic to any module.
 ## Design Constraints
 
 These are load-bearing, not preferences — see
-[ROADMAP.md § Design Constraints](ROADMAP.md#design-constraints-read-before-building-v01)
+[ROADMAP.md § Design Constraints](ROADMAP.md#design-constraints-read-before-building-v01v02)
 for the full rationale on each:
 
 1. **One framework adapter first.** `adapters/langgraph.py` before any of
    the other four. Do not claim framework independence until a second
    adapter has been built against real usage.
-2. **Rules before models.** v0.1's `gate/policy.py` and `gate/risk.py` must
-   work with zero LLM calls. Don't reach for `evaluators/judge.py` (v0.3)
-   to solve a v0.1 problem.
+2. **Rules before models.** `gate/policy.py`, `gate/risk.py`, and (v0.2)
+   `intent/alignment.py` must all work with zero LLM calls. Don't reach for
+   `evaluators/judge.py` (v0.3) to solve a problem these can answer
+   deterministically.
 3. **`on_sidecar_failure` has no default.** Every Decision Gate path must
    handle `fail_open` and `fail_closed` explicitly — this is a governance
    property, not an implementation detail.
@@ -111,18 +119,18 @@ for the full rationale on each:
 
 ## Repo Map
 
-| Path | Purpose | Planned version |
+| Path | Purpose | Version |
 |------|---------|------------------|
-| `src/agentic_sidecar/core/` | `Sidecar` class, `attach()`, decision-boundary interception, `Decision` type | v0.1 |
-| `src/agentic_sidecar/gate/policy.py` | Policy Advisor — deterministic YAML allow/deny rules | v0.1 |
-| `src/agentic_sidecar/gate/risk.py` | Risk Evaluator — rule-based classification | v0.1 |
+| `src/agentic_sidecar/core/` | `Sidecar` class (`evaluate()`, `before_tool_call` hook), `Decision` type, `DecisionContext`. `attach()` is *not* here — see AGENTS.md's Package Boundaries, adapters own it | v0.1 (implemented) |
+| `src/agentic_sidecar/gate/policy.py` | Policy Advisor — deterministic YAML allow/deny rules | v0.1 (implemented) |
+| `src/agentic_sidecar/gate/risk.py` | Risk Evaluator — rule-based classification | v0.1 (implemented) |
 | `src/agentic_sidecar/gate/budget.py` | Budget Guardian — cost/token ceilings | v0.4 |
-| `src/agentic_sidecar/adapters/langgraph.py` | LangGraph interception adapter | v0.1 |
-| `src/agentic_sidecar/intent/` | `IntentEnvelope`, alignment scoring, drift detection | v0.2 |
+| `src/agentic_sidecar/adapters/langgraph.py` | LangGraph interception adapter, incl. `attach(sidecar, tools)`; enforces `BLOCK` in Govern mode (v0.2) | v0.1/v0.2 (implemented) |
+| `src/agentic_sidecar/intent/` | `IntentEnvelope`, `IntentGuardian`, `ConstraintBinding` — constraint validation only, no `authority` enforcement yet | v0.2 (implemented) |
 | `src/agentic_sidecar/evaluators/planner.py` | Planner — evaluates the whole plan against intent | v0.3 |
 | `src/agentic_sidecar/evaluators/critic.py` | Critic mode — pre-decision challenge | v0.3 |
 | `src/agentic_sidecar/evaluators/judge.py` | Model-agnostic LLM Judge interface | v0.3 |
-| `src/agentic_sidecar/gate/` (full outcome set) | `WARN` / `CHALLENGE` / `REPLAN` / `PAUSE` / `ESCALATE`, human-in-the-loop escalation | v0.4 |
+| `src/agentic_sidecar/gate/` (remaining outcomes) | `CHALLENGE` / `REPLAN` / `PAUSE` / `ESCALATE`, human-in-the-loop escalation (`ALLOW`/`WARN`/`BLOCK` shipped in v0.1/v0.2) | v0.4 |
 | `src/agentic_sidecar/status/narrate.py` | Human-readable status narration | v0.5 |
 | `src/agentic_sidecar/cli/` | CLI entry point (`agentic-sidecar status --follow`) | v0.5 |
 | `src/agentic_sidecar/adapters/{crewai,autogen,openai_agents,google_adk}.py` | Additional framework adapters | v0.6 |
@@ -145,10 +153,17 @@ Full architecture and build order: [ROADMAP.md](ROADMAP.md).
 - AgenticLens integration is optional (`agentic_sidecar.integrations.agenticlens`)
   and must auto-skip in tests if `agenticlens` is not installed.
 - `core/` must not import from `adapters/` (adapters depend on core, not the
-  reverse).
+  reverse). `core/` *does* import from `gate/` and `intent/` directly
+  (`Sidecar` wires in Policy Advisor, Risk Evaluator, and Intent Guardian as
+  built-in Decision Gate modules) — that's the expected direction, not an
+  exception to this rule. The distinction: `gate/`/`intent/` are modules
+  Sidecar orchestrates itself; `adapters/` are alternate entry points into
+  Sidecar, one per framework, and core has no business knowing any of them
+  exist.
 - `gate/` (Policy, Risk) must work with zero dependency on `evaluators/`
-  (Planner, Critic, Judge) — v0.1's Decision Gate has to function before
-  Judge exists at all.
+  (Planner, Critic, Judge) or `intent/` — v0.1's Decision Gate has to
+  function before Judge or Intent Guardian exist at all, and Policy/Risk
+  answer different questions than Intent (see Design Constraint 5).
 - `evaluators/judge.py` must stay model-agnostic — no hardcoded provider SDK
   imports at module scope.
 

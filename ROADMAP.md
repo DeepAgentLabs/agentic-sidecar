@@ -2,8 +2,8 @@
 
 ## Release Status
 
-- **v0.1** 🚧 Planned — Sidecar Runtime, Policy Advisor & Rule-Based Decision Gate (no LLM required)
-- **v0.2** 🚧 Planned — Intent Guardian (Intent Envelope, drift detection)
+- **v0.1** ✅ Shipped — Sidecar Runtime, Policy Advisor & Rule-Based Decision Gate, **Observe mode only** — advisory logging, does not yet block (no LLM required)
+- **v0.2** ✅ Shipped — Intent Guardian (Intent Envelope, constraint validation), **Govern mode** — `BLOCK` is now actually enforced
 - **v0.2.x** 🚧 Planned — Early Validation Benchmark (narrow, deterministic — intent-drift catch rate only)
 - **v0.3** 🚧 Planned — Planner, Critic & Judge (optional, model-agnostic LLM evaluation)
 - **v0.4** 🚧 Planned — Full Decision Gate outcomes, Human Escalation, Budget Guardian
@@ -13,9 +13,17 @@
 - **v0.8** 🚧 Planned — Evaluation Framework & Benchmarks
 - **v1.0** 🚧 Planned — Intent Envelope as a published interoperability schema
 
-Nothing has shipped yet — this repo currently holds the architecture proposal
-([`concept.md`](concept.md)) and this roadmap. Treat every
-checkbox below as unstarted.
+v0.1 and v0.2 have shipped (see the Build Order below). v0.1 introduced
+Observe mode: the Decision Gate computes and logs every verdict but nothing
+enforces it. v0.2 adds Intent Guardian (constraint validation against an
+`IntentEnvelope`, `WARN` as a third outcome alongside `ALLOW`/`BLOCK`) and
+Govern mode, where a `BLOCK` is now actually enforced by the attached
+adapter — an action can genuinely be stopped, not just logged. Everything
+scoped to v0.2.x and later remains a placeholder (docstring-only modules
+already sit in the tree per the Package Layout below, but hold no real
+logic) — see AGENTS.md's Status section for exactly which modules are
+implemented today. This repo also holds the original architecture proposal
+([`concept.md`](concept.md)).
 
 ## Scaffold Gaps
 
@@ -45,9 +53,9 @@ workflows, placeholder modules) deliberately does **not** include yet:
   produces.** There's no `[tool.uv.sources]` override and no sibling-repo
   path dependency — the `agenticlens` extra resolves straight from PyPI.
 
-## Design Constraints (read before building v0.1)
+## Design Constraints (read before building v0.1/v0.2)
 
-These four are additions to the original proposal, made explicit because
+These five are additions to the original proposal, made explicit because
 they change how early modules must be built — not just what they do.
 
 1. **One framework adapter first, not nine.** [`concept.md`
@@ -228,16 +236,19 @@ The package should focus on these domains:
 ```
 agentic-sidecar/
   src/agentic_sidecar/
-    core/                # Sidecar runtime, attach(), decision boundaries
-      sidecar.py         # Sidecar class, attach()
-      context.py         # DecisionContext passed to every evaluator
+    core/                # Sidecar runtime, decision boundaries -- v0.1/v0.2, implemented
+      sidecar.py         # Sidecar class, evaluate(), before_tool_call hook
+      context.py         # DecisionContext, IntentSnapshot, HistoryEntry
       decision.py         # Decision(status, risk, reason, ...)
-    intent/              # Intent Guardian (v0.2)
+      operators.py         # shared comparator vocabulary (gate.risk + intent.alignment)
+      exceptions.py         # SidecarBlockedError, raised by adapters in Govern mode
+    intent/              # Intent Guardian -- v0.2, implemented (constraints only;
+                          # `authority` is a field with no binding mechanism yet)
       envelope.py         # IntentEnvelope model
-      alignment.py         # drift detection, constraint validation
-    gate/                 # Decision Gate (v0.1 rules, v0.4 full outcomes)
-      policy.py            # Policy Advisor — deterministic YAML rules
-      risk.py               # Risk Evaluator — rule-based, then pluggable
+      alignment.py         # ConstraintBinding, IntentGuardian, drift/expiry checks
+    gate/                 # Decision Gate (v0.1 rules -- implemented; v0.4 full outcomes)
+      policy.py            # Policy Advisor — deterministic YAML rules -- implemented
+      risk.py               # Risk Evaluator — rule-based, then pluggable -- implemented
       budget.py             # Budget Guardian (v0.4)
     evaluators/            # Planner, Critic & Judge (v0.3)
       planner.py           # independently evaluates the whole plan
@@ -245,17 +256,25 @@ agentic-sidecar/
       judge.py              # model-agnostic judge interface
     status/                 # Status Interpreter (v0.5)
       narrate.py
-    adapters/               # Framework adapters
-      langgraph.py           # v0.1
+    adapters/               # Framework adapters -- attach(sidecar, tools)
+                             # lives per-adapter, not on Sidecar itself
+                             # (core/ must not import adapters/)
+      langgraph.py           # v0.1 -- implemented
       crewai.py               # v0.6
       autogen.py               # v0.6
       openai_agents.py          # v0.6
       google_adk.py              # v0.6
     integrations/               # Optional adapters to sibling/third-party
                                   # projects — see Cross-Project Dependencies
-      agenticlens.py              # v0.6
-      agentic_chaos.py            # placeholder — interface still TBD
-      semantica.py                 # placeholder — decision/governance export
+      agenticlens.py              # placeholder module exists now, real
+                                    # code targets v0.6
+      agentic_chaos.py            # placeholder module exists now --
+                                    # interface still TBD
+      # semantica.py isn't created yet -- unlike the two placeholders
+      # above, it has no reserved pyproject.toml extra either. It's a v0.6
+      # deliverable (see Cross-Project Dependencies' `semantica` entry and
+      # the v0.6 Build Order entry below), listed here to show its target
+      # location, not its current state.
     cli/                         # CLI entry point (status stream, v0.5)
 ```
 
@@ -287,16 +306,20 @@ against a real framework.
   real traffic before it's given enforcement power
 
 **Deliverables:**
-- [ ] `agentic_sidecar.core` — `Sidecar`, `attach()`, `Decision(status, risk,
-      reason)` exactly as scoped above — no richer audit/export shape yet;
-      that lands at v0.4 alongside the provenance/export deliverable, once
-      there are enough decision outcomes and an escalation flow worth
-      exporting
-- [ ] `agentic_sidecar.gate.policy` — YAML-driven Policy Advisor
-- [ ] `agentic_sidecar.gate.risk` — rule-based Risk Evaluator
-- [ ] `agentic_sidecar.adapters.langgraph`
-- [ ] `on_sidecar_failure` required setting, both paths tested
-- [ ] README section + 1 runnable example (plain LangGraph agent, Observe mode)
+- [x] `agentic_sidecar.core` — `Sidecar`, `Decision(status, risk, reason)`
+      exactly as scoped above — no richer audit/export shape yet; that lands
+      at v0.4 alongside the provenance/export deliverable, once there are
+      enough decision outcomes and an escalation flow worth exporting.
+      `attach()` itself lives per-adapter (`adapters.langgraph.attach`), not
+      on `Sidecar`, so `core/` has zero dependency on `adapters/` (see
+      AGENTS.md's Package Boundaries) — the generic `Sidecar.attach(agent)`
+      shape in README.md's Planned Python API is the target once a second
+      adapter has proven the abstraction generalizes (Design Constraint 1)
+- [x] `agentic_sidecar.gate.policy` — YAML-driven Policy Advisor
+- [x] `agentic_sidecar.gate.risk` — rule-based Risk Evaluator
+- [x] `agentic_sidecar.adapters.langgraph`
+- [x] `on_sidecar_failure` required setting, both paths tested
+- [x] README section + 1 runnable example (plain LangGraph agent, Observe mode)
 
 ### v0.2 — Intent Guardian
 
@@ -313,17 +336,39 @@ against a real framework.
   gated behind `on_sidecar_failure` from v0.1
 
 **Deliverables:**
-- [ ] `agentic_sidecar.intent` — `IntentEnvelope`, alignment scoring
-- [ ] Lightweight `DecisionContext` snapshot type for tool call, intent,
-      constraints, risk factors, and execution history, implemented as a
-      local model
-- [ ] Constraint validation against numeric/enum/allow-list fields
-- [ ] Intent-drift `WARN`/`BLOCK` wired into the v0.1 Decision Gate
-- [ ] `IntentEnvelope` field shapes documented against `ai-operations-spec`
+- [x] `agentic_sidecar.intent` — `IntentEnvelope`, `IntentGuardian` +
+      `evaluate_alignment()` (alignment scoring). Scope note: `authority`
+      (concept.md §6's granted/not-granted flags) is a field on the
+      envelope but has no binding/enforcement mechanism yet — only
+      `constraints` does (via `ConstraintBinding`, below). Concept.md §9
+      itself frames constraint validation as the *first* concrete
+      semantic-authorization check, not the only one; authority-based
+      blocking is deferred until a real scenario motivates its binding
+      shape, the same reasoning Design Constraint 4 applies to the risk
+      classifier
+- [x] Lightweight `DecisionContext` snapshot type for tool call, intent,
+      constraints, and execution history, implemented as a local model:
+      `core/context.py`'s `IntentSnapshot` (goal + constraints only, not
+      the full `IntentEnvelope` -- see `IntentEnvelope.to_snapshot()`) and
+      `HistoryEntry`, auto-populated by `Sidecar.evaluate()` from its own
+      decision log. No separate "risk factors" field was added -- nothing
+      in v0.1 or v0.2 needed one distinct from what `RiskResult` already
+      carries
+- [x] Constraint validation against numeric/enum/allow-list fields:
+      `intent.alignment.ConstraintBinding` binds one `constraints` entry to
+      a specific tool argument and comparison op (reusing `core.operators`,
+      the same comparator vocabulary `gate.risk.RiskRule` uses, refactored
+      out to avoid duplicating it)
+- [x] Intent-drift `WARN`/`BLOCK` wired into the v0.1 Decision Gate: an
+      expired envelope produces `WARN`; a violated `ConstraintBinding`
+      produces `WARN` or `BLOCK` per its own `severity`
+- [x] `IntentEnvelope` field shapes documented against `ai-operations-spec`
       conventions (informal alignment only — formal publication is v1.0,
-      see Cross-Project Dependencies)
-- [ ] README section + example reproducing the refund-limit scenario from
-      [`concept.md` §22](concept.md)
+      see Cross-Project Dependencies) — see `intent/envelope.py`'s module
+      docstring
+- [x] README section + example reproducing the refund-limit scenario from
+      [`concept.md` §9](concept.md) (not §22, which is the DEV/production
+      cleanup scenario used by the v0.2.x benchmark below instead)
 
 ### v0.2.x — Early Validation Benchmark (narrow)
 

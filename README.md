@@ -6,11 +6,14 @@
 
 ## Status
 
-**Concept / pre-implementation.** This repository currently contains the
-architecture proposal ([`concept.md`](concept.md)) and this README
-— no package code, no PyPI release, no CI yet. See
-[ROADMAP.md](ROADMAP.md) for the build plan, starting with a narrow,
-LLM-free v0.1.
+**v0.1 and v0.2 implemented.** The Sidecar runtime, a rule-based Decision
+Gate (Policy Advisor + Risk Evaluator), and Intent Guardian (`IntentEnvelope`
++ constraint validation) are real code, attached via the LangGraph adapter.
+Observe mode (v0.1, logs only) and Govern mode (v0.2, a `BLOCK` is actually
+enforced) both work today — see [Python API
+(implemented)](#python-api-implemented) below and [`examples/`](examples/)
+for two runnable scripts. No PyPI release yet. See [ROADMAP.md](ROADMAP.md)
+for the full build plan (v0.2.x onward).
 
 ## Contents
 
@@ -21,6 +24,7 @@ LLM-free v0.1.
 - [Main Agent vs. Sidecar](#main-agent-vs-sidecar)
 - [How the Decision Gate evaluates a decision](#how-the-decision-gate-evaluates-a-decision)
 - [Sidecar modules](#sidecar-modules)
+- [Python API (implemented)](#python-api-implemented)
 - [Planned Python API](#planned-python-api)
 - [Operating modes](#operating-modes)
 - [Long-term: an intent propagation layer](#long-term-an-intent-propagation-layer)
@@ -50,7 +54,7 @@ Three things go wrong in that chain that permission checks alone don't catch:
 
 `agentic-sidecar` is designed to attach to any agent framework, but the first
 release proves that against one framework only — LangGraph — before claiming
-the rest (see [Design Constraints](ROADMAP.md#design-constraints-read-before-building-v01)
+the rest (see [Design Constraints](ROADMAP.md#design-constraints-read-before-building-v01v02)
 in ROADMAP.md). Either way, it answers a different question than permission
 checks or observability tools do:
 
@@ -231,15 +235,20 @@ one generic "policy engine":
 
 Policy and Risk are largely mechanical — permission lists, thresholds,
 tool-argument patterns — and v0.1 ships them with zero LLM calls (see
-[ROADMAP.md](ROADMAP.md)). Intent is the one that requires understanding
-what the user actually meant, and it's where the project's distinctive
-value lives.
+[ROADMAP.md](ROADMAP.md)). Intent (v0.2) is still deterministic, not
+LLM-based, but is the one that gets closest to "what the user actually
+meant" so far, via structured `IntentEnvelope` constraints rather than
+free-form judgment — full semantic understanding is further out on the
+roadmap.
 
-The diagram above shows the target outcome set. **v0.1 ships a narrower
-slice**: only `ALLOW`/`BLOCK`, in Observe mode — the Sidecar logs what it
-*would* have decided but cannot yet stop an action in practice. `WARN`,
-`CHALLENGE`, `REPLAN`, `PAUSE`, and `ESCALATE` arrive across v0.2–v0.4 as
-Intent Guardian and the full Decision Gate ship. Version-by-version build
+The diagram above shows the target outcome set. **v0.1 shipped a narrower
+slice** (`ALLOW`/`BLOCK` only, Observe mode: the Sidecar logs what it
+*would* have decided but cannot stop an action in practice). **v0.2 adds
+`WARN`** (an Intent Guardian finding worth surfacing but not severe enough
+to block, e.g. a stale envelope) **and Govern mode**, where a `BLOCK` is
+actually enforced by the attached adapter — see
+`agentic_sidecar.core.exceptions.SidecarBlockedError`. `CHALLENGE`,
+`REPLAN`, `PAUSE`, and `ESCALATE` remain v0.4. Version-by-version build
 order is in [ROADMAP.md](ROADMAP.md#build-order).
 
 ## Sidecar modules
@@ -287,10 +296,104 @@ sidecar:
   on_sidecar_failure: fail_closed   # or fail_open — see ROADMAP.md
 ```
 
+## Python API (implemented)
+
+v0.1 (Policy Advisor + Risk Evaluator, Observe mode):
+
+```python
+from agentic_sidecar import Sidecar
+from agentic_sidecar.adapters.langgraph import attach
+from agentic_sidecar.gate.policy import PolicyAdvisor, PolicyRule
+from agentic_sidecar.gate.risk import RiskEvaluator, RiskRule
+
+sidecar = Sidecar(
+    on_sidecar_failure="fail_closed",  # required, no default -- see Design Constraints
+    policy=PolicyAdvisor([PolicyRule(tool="delete_*", effect="deny")]),
+    risk=RiskEvaluator(
+        [RiskRule(tool="issue_refund", arg_name="amount", arg_op="gt", arg_value=500, risk="HIGH")]
+    ),
+)
+
+# Wrap the tools you'd otherwise pass straight to
+# langgraph.prebuilt.create_react_agent(model, tools=...) -- every call is
+# evaluated by the Sidecar first.
+tools = attach(sidecar, [read_order, issue_refund, delete_customer_record])
+agent = create_react_agent(model, tools=tools)
+
+# mode="observe" is the default: agent.invoke(...) still executes every
+# tool call. Nothing is enforced -- inspect what the Sidecar would have
+# decided:
+for context, decision in sidecar.decisions:
+    print(decision.status, decision.risk, context.tool_name, decision.reason)
+```
+
+v0.2 adds Intent Guardian and Govern mode, where `BLOCK` is actually
+enforced -- the refund-limit scenario from concept.md §9:
+
+```python
+from agentic_sidecar import Sidecar, SidecarBlockedError
+from agentic_sidecar.adapters.langgraph import attach
+from agentic_sidecar.intent.alignment import ConstraintBinding, IntentGuardian
+from agentic_sidecar.intent.envelope import IntentEnvelope, Requester
+
+envelope = IntentEnvelope(
+    goal="refund_customer",
+    requested_by=Requester(type="human", id="user123"),
+    constraints={"maximum_refund": 500},
+)
+binding = ConstraintBinding(
+    constraint="maximum_refund", tool="issue_refund", arg_name="amount", op="lte"
+)
+
+sidecar = Sidecar(
+    on_sidecar_failure="fail_closed",
+    roles=["policy", "risk", "intent_guardian"],
+    intent=IntentGuardian(envelope, [binding]),
+    mode="govern",  # a BLOCK now actually stops the call
+)
+tools = attach(sidecar, [issue_refund])
+agent = create_react_agent(model, tools=tools)
+
+try:
+    agent.invoke({"messages": [("user", "Refund order A100 for $850.")]})
+except SidecarBlockedError as exc:
+    print(exc)  # "Sidecar blocked 'issue_refund'(...): Intent Guardian: ..."
+```
+
+`sidecar.set_intent(guardian)` swaps the active envelope between tasks --
+`IntentEnvelope`s are meant to be per-task (concept.md §6), not fixed for a
+Sidecar's whole lifetime.
+
+`Sidecar.before_tool_call` registers a custom hook that fully replaces the
+default Policy + Risk + Intent Guardian evaluation:
+
+```python
+@sidecar.before_tool_call
+def evaluate_action(context):
+    if context.tool_name == "delete_customer_record":
+        return Decision(status="BLOCK", risk="HIGH", reason="never allowed")
+    return Decision(status="ALLOW", risk="LOW", reason="ok")
+```
+
+Note the shape: `agentic_sidecar.adapters.langgraph.attach(sidecar, tools)`,
+not `sidecar.attach(my_agent)`. `core/` intentionally has zero dependency on
+`adapters/` (see AGENTS.md's Package Boundaries), so wrapping a specific
+framework's decision boundaries is the adapter's job, not a generic method
+on `Sidecar`. The "Planned Python API" below is the longer-term target this
+is expected to grow toward once framework independence has actually been
+proven (ROADMAP.md's Design Constraint 1) — not a regression.
+
 ## Planned Python API
 
-This is the target developer experience — **not yet implemented** (tracked
-as v0.1 in [ROADMAP.md](ROADMAP.md)):
+This is the longer-term target developer experience once a second framework
+adapter exists and `roles` covers Planner/Critic too (v0.3) —
+**not yet implemented**. `roles=["intent_guardian", "policy", "risk"]` and
+`Sidecar(...)` construction already work today (see [Python API
+(implemented)](#python-api-implemented) above); what's still aspirational
+here is specifically `sidecar.attach(my_agent)` wrapping the *whole* agent
+generically (today it's per-adapter, e.g.
+`agentic_sidecar.adapters.langgraph.attach`) and `sidecar.evaluate(intent=,
+action=, risk=)`'s keyword-argument call shape:
 
 ```python
 from agentic_sidecar import Sidecar
@@ -323,10 +426,10 @@ Decision(
 
 | Mode | Behavior |
 | --- | --- |
-| **Observe** | Sidecar monitors and logs; cannot affect execution. |
+| **Observe** | Sidecar monitors and logs; cannot affect execution. **Implemented (v0.1).** |
 | **Advise** | Sidecar returns a recommendation; the agent decides whether to follow it. |
-| **Govern** | Sidecar's Decision Gate can allow, warn, replan, pause, or block. |
-| **Human-supervised** | High-risk decisions route to a human for approve/reject. |
+| **Govern** | Sidecar's Decision Gate can allow, warn, or block for real. **Implemented (v0.2)** — `replan`/`pause` outcomes arrive at v0.4. |
+| **Human-supervised** | High-risk decisions route to a human for approve/reject. Planned v0.4. |
 
 Modes are meant to be adopted in that order — organizations start in Observe
 and move to Govern once they trust the signal.
