@@ -3,7 +3,8 @@
 Thanks for helping make `agentic-sidecar` better for everyone building
 governable autonomous AI agents.
 
-`agentic-sidecar` is currently a **scaffold** — see
+`agentic-sidecar` has v0.1 (Sidecar Runtime + Rule-Based Decision Gate)
+implemented; everything from v0.2 onward is still a **scaffold** — see
 [ROADMAP.md](ROADMAP.md) for what's planned and in what order before
 starting on a module.
 
