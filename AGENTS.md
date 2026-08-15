@@ -197,13 +197,32 @@ Run `make check` before every push. It runs: lint → format-check → typecheck
 
 ## Release
 
-1. Bump version in `pyproject.toml`, `src/agentic_sidecar/__init__.py`, and `CHANGELOG.md`
-2. Commit: `git commit -am "release: vX.Y.Z"`
-3. Tag: create an annotated `vX.Y.Z` tag and use the latest `CHANGELOG.md`
-   release section as the tag description
-4. Push: `git push origin main --tags`
+Two phases, split by the merge to `main` — bumping happens before, tagging
+and releasing happen after:
 
-The `release-pypi.yml` workflow triggers on the tag push and publishes to
-PyPI via Trusted Publishing (OIDC) — no API token/secret required, but the
-`pypi` GitHub Environment must exist and be configured as a Trusted
-Publisher on PyPI before the first release.
+**1. Pre-release (on the feature branch, before merge):** Bump version in
+`pyproject.toml`, `src/agentic_sidecar/__init__.py`, and `CHANGELOG.md`
+(a dated release section under `[Unreleased]`). Commit as part of the
+branch's normal history; goes in with the rest of the PR.
+
+**2. Release (on `main`, once that branch has merged):**
+
+1. Pull the merge commit on `main`.
+2. Tag: create an annotated `vX.Y.Z` tag pointing at the merge commit,
+   using the CHANGELOG's release section as the tag message:
+   `git tag -a vX.Y.Z -F <file-with-that-section> --cleanup=verbatim`.
+   `--cleanup=verbatim` is required — git's default cleanup silently strips
+   lines starting with `#`, which would eat the CHANGELOG's `###` headers.
+3. Push the tag: `git push origin vX.Y.Z`.
+4. Create the GitHub Release: `gh release create vX.Y.Z --title vX.Y.Z
+   --notes-file <same content>`. A pushed tag alone does **not** appear in
+   the Releases tab — this step is what does, and it's easy to skip since
+   nothing in step 3 fails without it.
+
+`release-pypi.yml` triggers on *both* the tag push (step 3) and the
+Release being published (step 4), and publishes to PyPI via Trusted
+Publishing (OIDC) — no API token/secret required, but the `pypi` GitHub
+Environment must exist and be configured as a Trusted Publisher on PyPI
+before the first release. Doing both steps 3 and 4 means the workflow runs
+twice; that's expected, not a bug — PyPI accepts the second, identical
+upload as a no-op.
