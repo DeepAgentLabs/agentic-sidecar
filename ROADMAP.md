@@ -163,6 +163,12 @@ optional integration surface only, never a coordinated release).
   Validate in: MCP tool calls are a natural decision boundary
   ([`concept.md` §28](concept.md)). A useful end-to-end check once
   v0.1's Decision Gate exists is gating a real MCP tool call through it.
+- `agenticops-control-tower`
+  Coordinate with: Control Tower is the future operator-facing layer above the
+  ecosystem. Once Sidecar emits stable runtime status and decision artifacts,
+  Control Tower should be able to summarize governance posture, intervention
+  counts, and escalation state centrally without taking ownership of the
+  Sidecar runtime.
 
 For roadmap planning, treat ecosystem links as:
 

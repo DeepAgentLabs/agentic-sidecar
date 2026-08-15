@@ -9,6 +9,9 @@ alongside an autonomous agent runtime and evaluates whether the next action is
 still aligned with user intent, policy, risk tolerance, and escalation rules
 before the action is allowed to proceed.
 
+At the ecosystem-role level, the preferred keyword is **SUPERVISE**. In
+practice, the package covers both supervision and governance.
+
 ### Owns
 
 - Decision Gate behavior, policy/risk evaluation, and intent-preservation
@@ -167,6 +170,9 @@ Full architecture and build order: [ROADMAP.md](ROADMAP.md).
   `examples/`.
 - When a roadmap item or milestone meaningfully changes status, update
   `README.md` and `ROADMAP.md` in the same change.
+- If that milestone or release changes the public ecosystem story, also update
+  the shared org-profile docs in the `.github` repository:
+  `profile/README.md` and, when relevant, `profile/ROADMAP.md`.
 - When work is packaged as a release-ready change, also update
   `pyproject.toml`, `src/agentic_sidecar/__init__.py`, and `CHANGELOG.md`.
 
@@ -178,7 +184,8 @@ Run `make check` before every push. It runs: lint → format-check → typecheck
 
 1. Bump version in `pyproject.toml`, `src/agentic_sidecar/__init__.py`, and `CHANGELOG.md`
 2. Commit: `git commit -am "release: vX.Y.Z"`
-3. Tag: `git tag vX.Y.Z`
+3. Tag: create an annotated `vX.Y.Z` tag and use the latest `CHANGELOG.md`
+   release section as the tag description
 4. Push: `git push origin main --tags`
 
 The `release-pypi.yml` workflow triggers on the tag push and publishes to

@@ -392,6 +392,7 @@ even though nothing consumes it across process boundaries yet.
 | [AgenticLens](https://github.com/DeepAgentLabs/agenticlens) | What did the agent do, and what happened? |
 | [Agentic Chaos](https://github.com/DeepAgentLabs/agentic-chaos) | How does the agent behave when things go wrong? |
 | [Agentic MCP](https://github.com/DeepAgentLabs/mcp-server) | How does the agent interact with tools and external capabilities? |
+| [AgenticOps Control Tower](https://github.com/DeepAgentLabs/agenticops-control-tower) | What is deployed, what governance posture exists across agents, and how do operators manage it centrally? |
 | **Agentic Sidecar** | Should the agent continue with this decision, and is it still acting according to intent? |
 
 Each project is independently installable; none requires another as a hard
