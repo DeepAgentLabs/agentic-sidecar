@@ -205,7 +205,8 @@ and releasing happen after:
 (a dated release section under `[Unreleased]`). Commit as part of the
 branch's normal history; goes in with the rest of the PR.
 
-**2. Release (on `main`, once that branch has merged):**
+**2. Release (on `main`, once that branch has merged):** plain `git`, no
+`gh` CLI required.
 
 1. Pull the merge commit on `main`.
 2. Tag: create an annotated `vX.Y.Z` tag pointing at the merge commit,
@@ -214,15 +215,15 @@ branch's normal history; goes in with the rest of the PR.
    `--cleanup=verbatim` is required — git's default cleanup silently strips
    lines starting with `#`, which would eat the CHANGELOG's `###` headers.
 3. Push the tag: `git push origin vX.Y.Z`.
-4. Create the GitHub Release: `gh release create vX.Y.Z --title vX.Y.Z
-   --notes-file <same content>`. A pushed tag alone does **not** appear in
-   the Releases tab — this step is what does, and it's easy to skip since
-   nothing in step 3 fails without it.
 
-`release-pypi.yml` triggers on *both* the tag push (step 3) and the
-Release being published (step 4), and publishes to PyPI via Trusted
-Publishing (OIDC) — no API token/secret required, but the `pypi` GitHub
-Environment must exist and be configured as a Trusted Publisher on PyPI
-before the first release. Doing both steps 3 and 4 means the workflow runs
-twice; that's expected, not a bug — PyPI accepts the second, identical
-upload as a no-op.
+That's the whole release: `release-pypi.yml` triggers on the tag push and
+publishes to PyPI via Trusted Publishing (OIDC) — no API token/secret
+required, but the `pypi` GitHub Environment must exist and be configured
+as a Trusted Publisher on PyPI before the first release.
+
+Note this deliberately does not create a GitHub Release object (that's a
+`gh`/API-only action, not a `git` one) — the tag alone is enough to
+publish to PyPI, but it means the repo's Releases tab stays empty unless
+someone creates one by hand later (GitHub UI: Releases → Draft a new
+release → pick the existing tag). That's an accepted tradeoff here, not
+an oversight.
