@@ -427,7 +427,7 @@ Decision(
 | Mode | Behavior |
 | --- | --- |
 | **Observe** | Sidecar monitors and logs; cannot affect execution. **Implemented (v0.1).** |
-| **Advise** | Sidecar returns a recommendation; the agent decides whether to follow it. |
+| **Advise** | Sidecar returns a recommendation; the agent decides whether to follow it. **Not implemented, no target version yet** (see [`concept.md`](concept.md#advise-mode)) — Observe and Govern are the two modes v0.1/v0.2 actually ship. |
 | **Govern** | Sidecar's Decision Gate can allow, warn, or block for real. **Implemented (v0.2)** — `replan`/`pause` outcomes arrive at v0.4. |
 | **Human-supervised** | High-risk decisions route to a human for approve/reject. Planned v0.4. |
 
@@ -511,5 +511,4 @@ Original architecture proposal: [concept.md](concept.md).
 
 ## License
 
-MIT (planned — `LICENSE` file to be added alongside the first code commit,
-matching sibling DeepAgentLabs projects).
+MIT — see [`LICENSE`](LICENSE).

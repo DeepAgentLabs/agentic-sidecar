@@ -1,5 +1,14 @@
 # agentic-sidecar — Roadmap & Architecture
 
+> **Audited 2026-09-11.** [ROADMAP_AUDIT.md](ROADMAP_AUDIT.md) independently
+> verified every checkbox and status marker below against the actual source,
+> tests, and examples. Result: the checkbox state here was already accurate
+> — v0.1/v0.2 are implemented exactly as scoped, and every `[ ]` item from
+> v0.2.x onward is confirmed docstring-only with no executable logic. See the
+> audit for file-level evidence, the test-suite verification caveat (the
+> audit environment could not execute `pytest`), and a short list of minor
+> documentation staleness issues found in README.md (not this file).
+
 ## Release Status
 
 - **v0.1** ✅ Shipped — Sidecar Runtime, Policy Advisor & Rule-Based Decision Gate, **Observe mode only** — advisory logging, does not yet block (no LLM required)
@@ -49,9 +58,9 @@ workflows, placeholder modules) deliberately does **not** include yet:
   path and package boundary exist, but `pip install
   agentic-sidecar[agenticlens]` (or `[agentic-chaos]`) currently installs a
   dependency that nothing imports yet.
-- **No `uv.lock` committed intentionally beyond what a plain `uv sync`
-  produces.** There's no `[tool.uv.sources]` override and no sibling-repo
-  path dependency — the `agenticlens` extra resolves straight from PyPI.
+- **`uv.lock` is committed, but only what a plain `uv sync` produces.**
+  There's no `[tool.uv.sources]` override and no sibling-repo path
+  dependency — the `agenticlens` extra resolves straight from PyPI.
 
 ## Design Constraints (read before building v0.1/v0.2)
 
