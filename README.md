@@ -6,7 +6,31 @@
 
 ## Status
 
-**v0.1, v0.2, v0.4, and v0.5 implemented and on PyPI.**
+**v0.1, v0.2, v0.3, v0.4, and v0.5 implemented and on PyPI.**
+
+### v0.3.0 (Evaluators: Planner, Critic, Judge)
+- **Planner**: Plan-level intent alignment evaluation
+  - Detects unnecessary steps (cancel, refund, delete not in original request)
+  - Identifies contradictions (create + delete, enable + disable patterns)
+  - Checks against `IntentEnvelope` constraints
+  - Returns ALLOW or REPLAN decisions
+- **Critic**: Challenges decisions for assumptions and risks
+  - Detects risky operations (delete, refund, cancel without supporting context)
+  - Flags large financial amounts (> $1000)
+  - Identifies contradictions with prior actions
+  - Identifies unsupported assumptions (refund without policy check)
+  - Validates reasoning completeness (backup before delete)
+  - Returns CHALLENGE when issues found
+- **Judge**: LLM-based decision evaluation (model-agnostic)
+  - Pluggable provider interface (OpenAI, Anthropic, future implementations)
+  - Model-agnostic design: Main Agent Model A ≠ Sidecar Judge Model B
+  - Confidence scoring from LLM evaluation
+  - Async/sync LLM evaluation paths
+  - Cost tracking integrated with BudgetGuardian
+  - Provider implementations: OpenAI (GPT-4, GPT-3.5), Anthropic (Claude 3)
+- Composable, optional evaluators (don't impact existing v0.4 agents)
+- Seven-outcome Decision Gate: ALLOW, WARN, BLOCK, CHALLENGE, REPLAN, PAUSE, ESCALATE
+- Example: `examples/v0_3_planner_critic_judge.py`, `examples/v0_3_judge_providers.py`
 
 ### v0.4.0 (Decision Gate + Budget + Escalation)
 - Sidecar runtime with rule-based Decision Gate (Policy Advisor + Risk Evaluator)
