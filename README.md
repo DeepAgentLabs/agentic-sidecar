@@ -6,16 +6,50 @@
 
 ## Status
 
-**v0.1, v0.2, and v0.4 implemented and on PyPI.** The Sidecar runtime, a 
-rule-based Decision Gate (Policy Advisor + Risk Evaluator), Intent Guardian 
-(`IntentEnvelope` + constraint validation), Budget Guardian (cost/token ceilings), 
-and Human Escalation (PAUSE/ESCALATE outcomes) are real code, attached via the 
-LangGraph adapter. Observe mode (v0.1, logs only) and Govern mode (v0.2, a 
-`BLOCK` is enforced) both work today. v0.4 adds Budget Guardian tracking and 
-human-in-the-loop escalation workflows for paused decisions. See [Python API 
-(implemented)](#python-api-implemented) below and [`examples/`](examples/) 
-for runnable scripts. Install: `pip install agentic-sidecar[langgraph]`. See 
-[ROADMAP.md](ROADMAP.md) for the full build plan (v0.3 coming next).
+**v0.1, v0.2, v0.4, and v0.5 implemented and on PyPI.**
+
+### v0.4.0 (Decision Gate + Budget + Escalation)
+- Sidecar runtime with rule-based Decision Gate (Policy Advisor + Risk Evaluator)
+- Intent Guardian (`IntentEnvelope` + constraint validation)
+- Budget Guardian (cost/token ceilings with PAUSE escalation)
+- Human Escalation flow (structured approval workflows)
+- Decision Provenance (audit trails with JSON serialization)
+- Seven-outcome decision system: ALLOW, WARN, BLOCK, CHALLENGE, REPLAN, PAUSE, ESCALATE
+- Observe mode (logs only) and Govern mode (BLOCK enforcement) both operational
+- LangGraph adapter integration
+- Example: `examples/v0_4_budget_and_escalation.py`
+
+### v0.5.0 (Live Status Narration + CLI)
+- **StatusNarrator**: Translates raw tool calls into human-readable narration
+  - Emoji-based narration patterns for 12+ common tool types (search, retrieve, refund, etc.)
+  - Tracks objectives, decisions, risk levels, and intent compliance
+  - Complete status snapshots with budget/token remaining
+- **CLI with Rich formatting**: `agentic-sidecar` command-line tool
+  - `status` command: live agent monitoring with `--follow`, `--json`, `--interval` options
+  - `demo` command: interactive StatusNarrator showcase
+  - `version` command: display package version
+- Dependencies: `typer>=0.9` (CLI framework), `rich>=13.0` (terminal formatting)
+- Integration: StatusNarrator exported in main module for easy API access
+- Example: `examples/v0_5_status_narration.py`
+
+### Installation & Usage
+```bash
+# Core package
+pip install agentic-sidecar
+
+# With LangGraph adapter (v0.4 features)
+pip install agentic-sidecar[langgraph]
+
+# CLI usage (v0.5)
+agentic-sidecar status              # Single status snapshot
+agentic-sidecar status --follow     # Live stream (Ctrl+C to stop)
+agentic-sidecar status --json       # JSON output
+agentic-sidecar demo                # Interactive demo
+agentic-sidecar version             # Show version
+```
+
+See [Python API (implemented)](#python-api-implemented) below and [`examples/`](examples/) 
+for runnable scripts. See [ROADMAP.md](ROADMAP.md) for the full build plan.
 
 ## Contents
 
