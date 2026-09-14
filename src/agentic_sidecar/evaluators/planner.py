@@ -23,7 +23,7 @@ class PlanStep:
     sequence: int
     tool_name: str
     description: str
-    arguments: dict[str, Any] = None
+    arguments: dict[str, Any] | None = None
     rationale: str = ""
 
 
@@ -104,7 +104,7 @@ class PlanEvaluator(EvaluatorBase):
         goal: str,
     ) -> list[dict[str, Any]]:
         """Analyze plan for alignment issues."""
-        issues = []
+        issues: list[dict[str, Any]] = []
 
         if not isinstance(plan, list):
             return issues

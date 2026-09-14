@@ -384,7 +384,7 @@ class Sidecar:
             judge_result = self.judge.evaluate(eval_context)
             if judge_result.status in ("BLOCK", "CHALLENGE", "WARN", "PAUSE"):
                 return Decision(
-                    status=judge_result.status,
+                    status=judge_result.status,  # type: ignore[arg-type]
                     risk=risk_result.risk if risk_result else None,
                     reason=f"Judge: {judge_result.rationale}",
                     decision_point="tool_call",
