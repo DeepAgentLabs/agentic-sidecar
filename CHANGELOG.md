@@ -4,6 +4,39 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-14
+
+### Added
+
+- Status Narration (`agentic_sidecar.status.narrate`): `StatusNarrator` class
+  tracks agent execution and generates human-readable narration. Records
+  objectives, tool calls, decisions (ALLOW/WARN/BLOCK/PAUSE), risk levels,
+  and intent compliance status. `ToolCallNarrative` dataclass captures each
+  tool invocation with emoji-based narration (e.g., "🔍 Searching for
+  information"). `StatusNarrative` dataclass provides complete status snapshot
+  with metrics (tool calls made, decisions blocked/paused, max risk, budget
+  remaining, token remaining). Heuristic narration patterns for 12+ common
+  tool names; fallback to generic "⚙️ Executing X" for unknown tools.
+- CLI with status monitoring (`agentic_sidecar.cli.main`): Typer-based CLI
+  with Rich terminal formatting. `status` command displays live agent
+  execution with `--follow` (streaming updates), `--json` (JSON output), and
+  `--interval` (refresh rate in seconds). `demo` command shows interactive
+  StatusNarrator usage with progress bar. `version` command displays package
+  version. Entry point: `agentic-sidecar` script installed via setup.py.
+- Dependencies: `typer>=0.9,<1` (CLI framework), `rich>=13.0,<14` (terminal
+  formatting with color, tables, progress bars).
+- Comprehensive CLI tests (`tests/test_cli_main.py`): 13 tests covering
+  version command, status display (once/json/streaming), demo, and
+  StatusNarrator integration with decision tracking. All tests passing with
+  91% CLI module coverage.
+- Exports: `StatusNarrator`, `ToolCallNarrative`, `StatusNarrative` added to
+  main `agentic_sidecar` module for easy access.
+
+### Changed
+
+- `pyproject.toml`: Added typer and rich to dependencies and
+  `[project.scripts]` entry point for `agentic-sidecar` CLI command.
+
 ## [0.4.0] - 2026-09-14
 
 ### Added
