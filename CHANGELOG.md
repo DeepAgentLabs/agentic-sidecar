@@ -4,6 +4,57 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-14
+
+### Added
+
+- Budget Guardian (`agentic_sidecar.gate.budget`): `BudgetGuardian`
+  (tracks cumulative cost and token usage per task), `BudgetResult`
+  (evaluation outcome with exceeded flag and remaining budget). Enforces
+  per-task cost/token ceilings through the same Decision Gate as Policy and
+  Risk, returning a PAUSE decision to escalate to human for approval before
+  continuing over budget. Zero LLM calls, per Design Constraint 2.
+- Human Escalation flow (`agentic_sidecar.gate.escalation`): `EscalationRequest`
+  (pause reason, context, available actions), `ApprovalResponse` (human's
+  decision), `ApprovalAction` enum (APPROVE_ONCE, REJECT, MODIFY_INTENT,
+  ASK_AGENT_TO_REPLAN, STOP_AGENT), and `EscalationHandler` interface for
+  custom approval workflows. v0.4 implements data structures; CLI (v0.5) and
+  Control Room dashboard (v0.7) integration deferred.
+- Decision Provenance (`agentic_sidecar.core.provenance`): `DecisionTrigger`
+  (boundary type, tool name, arguments), `DecisionRationale` (policy/risk/intent/budget
+  findings), `CausalLink` (parent decision correlation), and `AuditRecord`
+  (complete decision audit trail with timestamp, trigger, rationale, execution
+  context). Serializable to JSON for audit and compliance logging.
+- Extended `Decision.status` from ["ALLOW", "WARN", "BLOCK"] to full seven-outcome
+  set: added CHALLENGE, REPLAN, PAUSE, ESCALATE. Added `decision_point`,
+  `trigger_details`, `escalation_required`, and `causal_link` fields to
+  `Decision` dataclass for richer audit context.
+- `Sidecar` now accepts `budget` parameter and `escalation_handler` in `__init__`.
+  `"budget"` is now a supported role (previously in `_KNOWN_FUTURE_ROLES`).
+  New hook: `@sidecar.on_escalation_required()` for registering custom
+  escalation handlers.
+- Budget Guardian integration in `_default_evaluate()`: when budget is exceeded,
+  returns PAUSE decision with `escalation_required=True` for human approval
+  workflow.
+- Interactive web demos: `demo_web_server.py` (stdlib-based, no dependencies)
+  and `demo_server.py` (Flask alternative) showcase Budget Guardian tracking,
+  Policy blocking, and Intent Guardian validation with live dashboards and JSON
+  API endpoints.
+- Example: `examples/v0_4_budget_and_escalation.py` demonstrating Budget
+  Guardian, Escalation, and Provenance workflows end-to-end.
+- Comprehensive test suite: `test_budget.py` (12 tests, 100% coverage of
+  BudgetGuardian), `test_escalation.py` (6 tests, 100% coverage of Escalation
+  primitives), `test_provenance.py` (8 tests, 100% coverage of Provenance),
+  plus new Decision tests for v0.4 statuses and provenance fields.
+  `test_v0_4_locally.py` provides 6 end-to-end scenarios (151 total tests, 97%
+  coverage).
+
+### Changed
+
+- `Sidecar._default_evaluate()` extended to evaluate Budget Guardian after
+  Policy, Risk, and Intent checks, returning PAUSE (not BLOCK) when limits
+  exceeded to enable human-in-the-loop escalation workflows.
+
 ## [0.2.0] - 2026-08-15
 
 ### Added
