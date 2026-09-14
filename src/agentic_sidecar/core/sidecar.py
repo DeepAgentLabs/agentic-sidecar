@@ -21,6 +21,9 @@ from typing import Literal
 
 from agentic_sidecar.core.context import DecisionContext, HistoryEntry
 from agentic_sidecar.core.decision import Decision, DecisionStatus, RiskLevel
+from agentic_sidecar.evaluators.critic import CriticEvaluator
+from agentic_sidecar.evaluators.judge import JudgeEvaluator
+from agentic_sidecar.evaluators.planner import PlanEvaluator
 from agentic_sidecar.gate.budget import BudgetGuardian
 from agentic_sidecar.gate.escalation import ApprovalResponse, EscalationHandler
 from agentic_sidecar.gate.policy import PolicyAdvisor
@@ -34,18 +37,24 @@ SidecarMode = Literal["observe", "govern"]
 DecisionHook = Callable[[DecisionContext], Decision]
 EscalationHook = Callable[..., ApprovalResponse]
 
-_SUPPORTED_ROLES = frozenset({"policy", "risk", "intent_guardian", "budget"})
-_KNOWN_FUTURE_ROLES: dict[str, str] = {
-    "planner": "v0.3",
-    "critic": "v0.3",
-    "judge": "v0.3",
-}
+_SUPPORTED_ROLES = frozenset(
+    {
+        "policy",
+        "risk",
+        "intent_guardian",
+        "budget",
+        "planner",
+        "critic",
+        "judge",
+    }
+)
+_KNOWN_FUTURE_ROLES: dict[str, str] = {}
 
 
 class Sidecar:
     """Owns the Decision Gate: Policy Advisor, Risk Evaluator, Intent Guardian
-    (v0.2), and Budget Guardian (v0.4), combined into a single `Decision` per
-    proposed action.
+    (v0.2), Budget Guardian (v0.4), and Evaluators (v0.3: Planner, Critic, Judge),
+    combined into a single `Decision` per proposed action.
 
     `on_sidecar_failure` is a required keyword argument with no default --
     pick `"fail_closed"` unless you have a specific reason to fail open (see
@@ -73,6 +82,9 @@ class Sidecar:
         risk: RiskEvaluator | None = None,
         intent: IntentGuardian | None = None,
         budget: BudgetGuardian | None = None,
+        planner: PlanEvaluator | None = None,
+        critic: CriticEvaluator | None = None,
+        judge: JudgeEvaluator | None = None,
         escalation_handler: EscalationHandler | None = None,
         risk_block_threshold: RiskLevel = "HIGH",
         mode: SidecarMode = "observe",
@@ -105,6 +117,9 @@ class Sidecar:
         self.policy = policy or PolicyAdvisor()
         self.risk = risk or RiskEvaluator()
         self.budget = budget
+        self.planner = planner
+        self.critic = critic
+        self.judge = judge
         self.escalation_handler = escalation_handler
         self.risk_block_threshold = risk_block_threshold
         self.mode = mode
@@ -305,11 +320,89 @@ class Sidecar:
                     escalation_required=True,
                 )
 
+        planner_result = None
+        if "planner" in self.roles and self.planner is not None and self.planner.enabled:
+            eval_context = {
+                "tool_name": context.tool_name,
+                "arguments": context.tool_args,
+                "history": context.history,
+                "intent": context.intent,
+            }
+            planner_result = self.planner.evaluate(eval_context)
+            if planner_result.status == "REPLAN":
+                return Decision(
+                    status="REPLAN",
+                    risk=risk_result.risk if risk_result else None,
+                    reason=f"Planner: {planner_result.rationale}",
+                    decision_point="tool_call",
+                    trigger_details={
+                        "tool_name": context.tool_name,
+                        "arguments": context.tool_args,
+                    },
+                )
+            if planner_result.status == "BLOCK":
+                return Decision(
+                    status="BLOCK",
+                    risk=risk_result.risk if risk_result else None,
+                    reason=f"Planner: {planner_result.rationale}",
+                    decision_point="tool_call",
+                    trigger_details={
+                        "tool_name": context.tool_name,
+                        "arguments": context.tool_args,
+                    },
+                )
+
+        critic_result = None
+        if "critic" in self.roles and self.critic is not None and self.critic.enabled:
+            eval_context = {
+                "tool_name": context.tool_name,
+                "arguments": context.tool_args,
+                "history": context.history,
+                "intent": context.intent,
+            }
+            critic_result = self.critic.evaluate(eval_context)
+            if critic_result.status == "CHALLENGE":
+                return Decision(
+                    status="CHALLENGE",
+                    risk=risk_result.risk if risk_result else None,
+                    reason=f"Critic: {critic_result.rationale}",
+                    decision_point="tool_call",
+                    trigger_details={
+                        "tool_name": context.tool_name,
+                        "arguments": context.tool_args,
+                    },
+                )
+
+        judge_result = None
+        if "judge" in self.roles and self.judge is not None and self.judge.enabled:
+            eval_context = {
+                "tool_name": context.tool_name,
+                "arguments": context.tool_args,
+                "history": context.history,
+                "intent": context.intent,
+            }
+            judge_result = self.judge.evaluate(eval_context)
+            if judge_result.status in ("BLOCK", "CHALLENGE", "WARN", "PAUSE"):
+                return Decision(
+                    status=judge_result.status,  # type: ignore[arg-type]
+                    risk=risk_result.risk if risk_result else None,
+                    reason=f"Judge: {judge_result.rationale}",
+                    decision_point="tool_call",
+                    trigger_details={
+                        "tool_name": context.tool_name,
+                        "arguments": context.tool_args,
+                    },
+                    escalation_required=(judge_result.status == "PAUSE"),
+                )
+
         reasons = [
             f"Policy Advisor: {policy_result.reason}" if policy_result else None,
             f"Risk Evaluator: {risk_result.reason}" if risk_result else None,
             f"Intent Guardian: {alignment_result.reason}" if alignment_result else None,
             f"Budget Guardian: {budget_result.reason}" if budget_result else None,
+            f"Planner: {planner_result.rationale}" if planner_result else None,
+            f"Critic: {critic_result.rationale}" if critic_result else None,
+            f"Judge: {judge_result.rationale}" if judge_result else None,
         ]
         reason = "; ".join(r for r in reasons if r) or (
             "No Decision Gate modules enabled in `roles`; defaulting to ALLOW."

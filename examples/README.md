@@ -56,6 +56,60 @@ Key features:
 python examples/v0_4_budget_and_escalation.py
 ```
 
+## v0.3 — Evaluators: Planner, Critic, Judge
+
+### Python API Examples
+
+[`v0_3_planner_critic_judge.py`](v0_3_planner_critic_judge.py) --
+comprehensive demo of the three evaluators working together:
+
+- **Planner**: Assesses plan alignment with user intent
+  - Detects unnecessary steps (cancel, refund, delete)
+  - Identifies contradictions (create + delete patterns)
+  - Returns ALLOW or REPLAN
+- **Critic**: Challenges decisions for flaws and risks
+  - Detects risky operations (delete, refund, cancel)
+  - Flags large financial amounts
+  - Identifies unsupported assumptions
+  - Returns CHALLENGE when issues found
+- **Judge**: LLM-based decision evaluation
+  - Model-agnostic provider interface
+  - Pluggable backends (OpenAI, Anthropic)
+  - Confidence scoring from LLM
+  - Returns ALLOW/WARN/BLOCK/CHALLENGE
+
+Five comprehensive examples:
+1. Planner alignment evaluation
+2. Critic challenge detection
+3. Judge LLM-based evaluation
+4. All three evaluators together
+5. Cost tracking
+
+```bash
+python examples/v0_3_planner_critic_judge.py
+```
+
+[`v0_3_judge_providers.py`](v0_3_judge_providers.py) --
+demonstrates Judge provider swapping and cost comparison:
+
+- **OpenAI Judge**: GPT-4, GPT-3.5-turbo support
+- **Anthropic Judge**: Claude 3 Opus, Sonnet support
+- **Provider swapping**: Swap implementations without changing Sidecar
+- **Cost tracking**: Per-provider cost accounting
+- **Validation**: Provider configuration checks
+
+Six comprehensive examples:
+1. OpenAI provider usage
+2. Anthropic provider usage
+3. Provider swapping
+4. Cost comparison across providers
+5. Provider validation
+6. Different models within providers
+
+```bash
+python examples/v0_3_judge_providers.py
+```
+
 ## v0.5 — Status Narration + CLI
 
 ### Python API Example

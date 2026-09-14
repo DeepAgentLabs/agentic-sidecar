@@ -188,11 +188,6 @@ def test_unknown_role_rejected() -> None:
         Sidecar(on_sidecar_failure="fail_closed", roles=["not_a_role"])
 
 
-def test_future_role_raises_not_implemented() -> None:
-    with pytest.raises(NotImplementedError, match="v0.3"):
-        Sidecar(on_sidecar_failure="fail_closed", roles=["planner"])
-
-
 def test_disabling_policy_role_skips_it() -> None:
     sidecar = Sidecar(
         on_sidecar_failure="fail_closed",

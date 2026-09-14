@@ -23,6 +23,18 @@ from agentic_sidecar.core.provenance import (
     DecisionTrigger,
 )
 from agentic_sidecar.core.sidecar import Sidecar
+from agentic_sidecar.evaluators import (
+    AnthropicJudge,
+    CriticChallenge,
+    CriticEvaluator,
+    EvaluatorBase,
+    EvaluatorResult,
+    JudgeEvaluator,
+    JudgeProvider,
+    OpenAIJudge,
+    PlanEvaluator,
+    PlanStep,
+)
 from agentic_sidecar.gate import (
     ApprovalAction,
     ApprovalResponse,
@@ -40,12 +52,15 @@ from agentic_sidecar.status import (
 __version__ = "0.5.0"
 
 __all__ = [
+    "AnthropicJudge",
     "ApprovalAction",
     "ApprovalResponse",
     "AuditRecord",
     "BudgetGuardian",
     "BudgetResult",
     "CausalLink",
+    "CriticChallenge",
+    "CriticEvaluator",
     "Decision",
     "DecisionContext",
     "DecisionRationale",
@@ -53,6 +68,13 @@ __all__ = [
     "DecisionTrigger",
     "EscalationHandler",
     "EscalationRequest",
+    "EvaluatorBase",
+    "EvaluatorResult",
+    "JudgeEvaluator",
+    "JudgeProvider",
+    "OpenAIJudge",
+    "PlanEvaluator",
+    "PlanStep",
     "RiskLevel",
     "Sidecar",
     "SidecarBlockedError",

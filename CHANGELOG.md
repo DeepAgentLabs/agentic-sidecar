@@ -4,6 +4,85 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-14
+
+### Added
+
+- Evaluators: LLM-based decision evaluation framework (`agentic_sidecar.evaluators`)
+  - `EvaluatorBase` abstract interface for all evaluators (Planner, Critic, Judge)
+  - `EvaluatorResult` dataclass with status, rationale, confidence (0.0-1.0),
+    metadata, timestamp, and latency_ms for comprehensive evaluation tracking
+  - `JudgeProvider` abstract interface for model-agnostic LLM providers
+- Planner evaluator (`agentic_sidecar.evaluators.planner.PlanEvaluator`)
+  - Plan-level intent alignment evaluation
+  - Detects unnecessary steps (cancel, refund, delete not in original request)
+  - Identifies contradictions (create + delete, enable + disable patterns)
+  - Checks plan against `IntentEnvelope` constraints
+  - Returns ALLOW or REPLAN decisions with detailed rationale
+  - 100% rule-based (no LLM calls)
+- Critic evaluator (`agentic_sidecar.evaluators.critic.CriticEvaluator`)
+  - Challenges decisions for unsupported assumptions and risks
+  - Detects risky operations (delete, refund, cancel without supporting context)
+  - Flags large financial amounts (> $1000)
+  - Identifies contradictions with prior actions
+  - Identifies unsupported assumptions (refund without policy check)
+  - Validates reasoning completeness (backup before delete)
+  - `CriticChallenge` dataclass with category, severity, description, evidence, suggestion
+  - Challenge categories: risky, assumption, contradiction, reasoning
+  - Returns CHALLENGE when issues found
+- Judge evaluator (`agentic_sidecar.evaluators.judge.JudgeEvaluator`)
+  - LLM-based decision evaluation with pluggable provider interface
+  - Model-agnostic design: separates Main Agent (Model A) from Judge (Model B)
+  - Reduces correlated reasoning failures
+  - Async/sync evaluation paths for production use
+  - Cost tracking per evaluation, integrated with BudgetGuardian
+  - Timeout handling with graceful fallback (returns WARN on LLM failure)
+- Judge Provider implementations
+  - `OpenAIJudge` (`agentic_sidecar.evaluators.providers.openai`)
+    - Supports GPT-4, GPT-3.5-turbo, and other OpenAI models
+    - Cost tracking: $0.03/1K input, $0.06/1K output tokens (GPT-4 pricing)
+  - `AnthropicJudge` (`agentic_sidecar.evaluators.providers.anthropic`)
+    - Supports Claude 3 Opus, Sonnet, and other Anthropic models
+    - Cost tracking: $0.015/1K input, $0.075/1K output tokens
+  - Provider swapping without changing Sidecar code
+  - Mock implementations for v0.3.0 (ready for real API integration)
+- Sidecar integration (`agentic_sidecar.core.sidecar`)
+  - Added planner, critic, judge as optional parameters to `Sidecar.__init__`
+  - Updated `_SUPPORTED_ROLES` to include "planner", "critic", "judge"
+  - Evaluation routing in `_default_evaluate()`:
+    * Planner: Checks plan alignment, returns REPLAN/BLOCK if issues
+    * Critic: Challenges decisions, returns CHALLENGE if flaws found
+    * Judge: LLM-based evaluation, returns BLOCK/WARN/PAUSE based on model
+  - Each evaluator independently enabled/disabled
+  - Evaluation context includes tool_name, arguments, history, intent
+  - Early exit: Any evaluator can return BLOCK/CHALLENGE/REPLAN to stop chain
+- Evaluators exported from main module (`agentic_sidecar`):
+  `EvaluatorBase`, `EvaluatorResult`, `JudgeProvider`, `PlanEvaluator`,
+  `PlanStep`, `CriticEvaluator`, `CriticChallenge`, `JudgeEvaluator`,
+  `OpenAIJudge`, `AnthropicJudge` for easy importing
+- Comprehensive test suite (90%+ coverage)
+  - `tests/test_planner.py`: PlanEvaluator and PlanStep tests (10 tests)
+  - `tests/test_critic.py`: CriticEvaluator and CriticChallenge tests (12 tests)
+  - `tests/test_judge.py`: JudgeEvaluator and provider tests (15 tests)
+  - `tests/test_sidecar_evaluators.py`: Sidecar integration tests (8 tests)
+- Examples: Comprehensive working demos
+  - `examples/v0_3_planner_critic_judge.py`: Five demos (Planner, Critic, Judge, all together, cost tracking)
+  - `examples/v0_3_judge_providers.py`: Six demos (OpenAI, Anthropic, provider swapping, cost comparison, validation, different models)
+
+### Changed
+
+- `Sidecar._default_evaluate()` now invokes Planner → Critic → Judge in sequence
+  after Policy, Risk, Intent, and Budget evaluations
+- `_SUPPORTED_ROLES` now includes "planner", "critic", "judge"
+- `_KNOWN_FUTURE_ROLES` cleared (all major v0.3 roles now implemented)
+
+### Backward Compatibility
+
+- All new features are optional and disabled by default
+- Existing v0.4.0 agents work without changes
+- New code path only activated when evaluators are explicitly enabled
+- Zero breaking changes to existing Decision Gate outcomes
+
 ## [0.5.0] - 2026-09-14
 
 ### Added
