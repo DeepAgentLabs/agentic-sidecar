@@ -21,6 +21,8 @@ from typing import Literal
 
 from agentic_sidecar.core.context import DecisionContext, HistoryEntry
 from agentic_sidecar.core.decision import Decision, DecisionStatus, RiskLevel
+from agentic_sidecar.gate.budget import BudgetGuardian
+from agentic_sidecar.gate.escalation import ApprovalResponse, EscalationHandler
 from agentic_sidecar.gate.policy import PolicyAdvisor
 from agentic_sidecar.gate.risk import RISK_ORDER, RiskEvaluator
 from agentic_sidecar.intent.alignment import AlignmentResult, IntentGuardian
@@ -30,19 +32,20 @@ logger = logging.getLogger("agentic_sidecar")
 SidecarFailureMode = Literal["fail_open", "fail_closed"]
 SidecarMode = Literal["observe", "govern"]
 DecisionHook = Callable[[DecisionContext], Decision]
+EscalationHook = Callable[..., ApprovalResponse]
 
-_SUPPORTED_ROLES = frozenset({"policy", "risk", "intent_guardian"})
+_SUPPORTED_ROLES = frozenset({"policy", "risk", "intent_guardian", "budget"})
 _KNOWN_FUTURE_ROLES: dict[str, str] = {
     "planner": "v0.3",
     "critic": "v0.3",
     "judge": "v0.3",
-    "budget": "v0.4",
 }
 
 
 class Sidecar:
-    """Owns the Decision Gate: Policy Advisor, Risk Evaluator, and (v0.2)
-    Intent Guardian, combined into a single `Decision` per proposed action.
+    """Owns the Decision Gate: Policy Advisor, Risk Evaluator, Intent Guardian
+    (v0.2), and Budget Guardian (v0.4), combined into a single `Decision` per
+    proposed action.
 
     `on_sidecar_failure` is a required keyword argument with no default --
     pick `"fail_closed"` unless you have a specific reason to fail open (see
@@ -69,6 +72,8 @@ class Sidecar:
         policy: PolicyAdvisor | None = None,
         risk: RiskEvaluator | None = None,
         intent: IntentGuardian | None = None,
+        budget: BudgetGuardian | None = None,
+        escalation_handler: EscalationHandler | None = None,
         risk_block_threshold: RiskLevel = "HIGH",
         mode: SidecarMode = "observe",
         roles: Sequence[str] | None = None,
@@ -99,11 +104,14 @@ class Sidecar:
         self.on_sidecar_failure = on_sidecar_failure
         self.policy = policy or PolicyAdvisor()
         self.risk = risk or RiskEvaluator()
+        self.budget = budget
+        self.escalation_handler = escalation_handler
         self.risk_block_threshold = risk_block_threshold
         self.mode = mode
         self.roles = self._validate_roles(roles)
         self.decisions: list[tuple[DecisionContext, Decision]] = []
         self._hook: DecisionHook | None = None
+        self._escalation_hook: EscalationHook | None = None
         self.intent: IntentGuardian | None = None
         self.set_intent(intent)
 
@@ -171,6 +179,29 @@ class Sidecar:
         self._hook = func
         return func
 
+    def on_escalation_required(self, func: EscalationHook) -> EscalationHook:
+        """Register a custom escalation handler for PAUSE/ESCALATE outcomes.
+
+        The handler receives an EscalationRequest and returns an ApprovalResponse.
+        This is called when a Decision outcome is PAUSE or ESCALATE and
+        escalation_handler is not set in __init__.
+
+        ```python
+        @sidecar.on_escalation_required
+        def handle_approval(request: EscalationRequest) -> ApprovalResponse:
+            # Custom UI or CLI logic here
+            action = user_approval_dialog(request.reason)
+            return ApprovalResponse(
+                decision_id=request.decision_id,
+                action=action
+            )
+        ```
+
+        v0.4 implements the data structures; actual UI/CLI integration is v0.5+.
+        """
+        self._escalation_hook = func
+        return func
+
     def evaluate(self, context: DecisionContext) -> Decision:
         """Evaluate one proposed action and return a `Decision`.
 
@@ -218,6 +249,8 @@ class Sidecar:
                     status="BLOCK",
                     risk=None,
                     reason=f"Policy Advisor: {policy_result.reason}",
+                    decision_point="tool_call",
+                    trigger_details={"tool_name": context.tool_name, "arguments": context.tool_args},
                 )
 
         risk_result = None
@@ -231,6 +264,8 @@ class Sidecar:
                         f"Risk Evaluator: {risk_result.reason} "
                         f"(risk >= block threshold '{self.risk_block_threshold}')"
                     ),
+                    decision_point="tool_call",
+                    trigger_details={"tool_name": context.tool_name, "arguments": context.tool_args},
                 )
 
         alignment_result: AlignmentResult | None = None
@@ -241,12 +276,28 @@ class Sidecar:
                     status="BLOCK",
                     risk=risk_result.risk if risk_result else None,
                     reason=f"Intent Guardian: {alignment_result.reason}",
+                    decision_point="tool_call",
+                    trigger_details={"tool_name": context.tool_name, "arguments": context.tool_args},
+                )
+
+        budget_result = None
+        if "budget" in self.roles and self.budget is not None:
+            budget_result = self.budget.evaluate()
+            if budget_result.exceeded:
+                return Decision(
+                    status="PAUSE",
+                    risk=risk_result.risk if risk_result else None,
+                    reason=f"Budget Guardian: {budget_result.reason}",
+                    decision_point="tool_call",
+                    trigger_details={"tool_name": context.tool_name, "arguments": context.tool_args},
+                    escalation_required=True,
                 )
 
         reasons = [
             f"Policy Advisor: {policy_result.reason}" if policy_result else None,
             f"Risk Evaluator: {risk_result.reason}" if risk_result else None,
             f"Intent Guardian: {alignment_result.reason}" if alignment_result else None,
+            f"Budget Guardian: {budget_result.reason}" if budget_result else None,
         ]
         reason = "; ".join(r for r in reasons if r) or (
             "No Decision Gate modules enabled in `roles`; defaulting to ALLOW."
@@ -258,6 +309,8 @@ class Sidecar:
             status=status,
             risk=risk_result.risk if risk_result else None,
             reason=reason,
+            decision_point="tool_call",
+            trigger_details={"tool_name": context.tool_name, "arguments": context.tool_args},
         )
 
     def _on_failure(self, context: DecisionContext, exc: Exception) -> Decision:
@@ -277,14 +330,21 @@ class Sidecar:
         )
 
     def _log_decision(self, context: DecisionContext, decision: Decision) -> None:
-        level = logging.WARNING if decision.status != "ALLOW" else logging.INFO
+        escalation_marker = " [ESCALATION]" if decision.escalation_required else ""
+        if decision.status == "ALLOW":
+            level = logging.INFO
+        elif decision.status in ("BLOCK", "PAUSE", "ESCALATE"):
+            level = logging.ERROR
+        else:
+            level = logging.WARNING
         logger.log(
             level,
-            "[%s] %s tool=%s args=%s risk=%s reason=%s",
+            "[%s] %s tool=%s args=%s risk=%s reason=%s%s",
             self.mode.upper(),
             decision.status,
             context.tool_name,
             context.tool_args,
             decision.risk,
             decision.reason,
+            escalation_marker,
         )
