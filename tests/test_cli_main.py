@@ -41,6 +41,7 @@ def test_status_command_json() -> None:
 
 def test_status_command_with_follow_flag() -> None:
     """Test --follow flag terminates properly on KeyboardInterrupt."""
+
     def mock_sleep(interval: int) -> None:
         # Raise KeyboardInterrupt to simulate Ctrl+C on first call
         raise KeyboardInterrupt()
@@ -56,6 +57,7 @@ def test_status_command_with_follow_flag() -> None:
 
 def test_status_command_with_interval() -> None:
     """Test --interval flag."""
+
     def mock_sleep(interval: int) -> None:
         # Verify interval is passed correctly then exit
         raise KeyboardInterrupt()
@@ -71,6 +73,7 @@ def test_status_command_with_interval() -> None:
 
 def test_status_command_combined_flags() -> None:
     """Test --follow --json combination."""
+
     def mock_sleep(interval: int) -> None:
         raise KeyboardInterrupt()
 

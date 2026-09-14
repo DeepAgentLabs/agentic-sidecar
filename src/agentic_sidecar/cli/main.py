@@ -23,22 +23,13 @@ console = Console()
 @app.command()
 def status(
     follow: bool = typer.Option(
-        False,
-        "--follow",
-        "-f",
-        help="Follow live status stream (refresh every second)"
+        False, "--follow", "-f", help="Follow live status stream (refresh every second)"
     ),
     json_output: bool = typer.Option(
-        False,
-        "--json",
-        "-j",
-        help="Output as JSON instead of human-readable format"
+        False, "--json", "-j", help="Output as JSON instead of human-readable format"
     ),
     interval: int = typer.Option(
-        1,
-        "--interval",
-        "-i",
-        help="Refresh interval in seconds (when --follow is enabled)"
+        1, "--interval", "-i", help="Refresh interval in seconds (when --follow is enabled)"
     ),
 ) -> None:
     """Display sidecar status: current objective, decisions, risk, and budget.
@@ -94,11 +85,7 @@ def _display_status_once(narrator: StatusNarrator, json_output: bool) -> None:
         _print_status_table(status)
 
 
-def _display_status_stream(
-    narrator: StatusNarrator,
-    json_output: bool,
-    interval: int
-) -> None:
+def _display_status_stream(narrator: StatusNarrator, json_output: bool, interval: int) -> None:
     """Display a live status stream with periodic updates."""
     console.print("[bold cyan]🔴 Live Status Stream[/bold cyan]")
     console.print(f"Refreshing every {interval}s — Press Ctrl+C to stop\n")
@@ -189,6 +176,7 @@ def _print_status_table(status) -> None:
 def version() -> None:
     """Show agentic-sidecar version."""
     from agentic_sidecar import __version__
+
     console.print(f"agentic-sidecar {__version__}")
 
 
@@ -222,7 +210,7 @@ def demo() -> None:
     status = narrator.get_status(
         current_objective="Booking hotel...",
         current_budget_remaining=25.50,
-        current_tokens_remaining=4500
+        current_tokens_remaining=4500,
     )
     _print_status_table(status)
 

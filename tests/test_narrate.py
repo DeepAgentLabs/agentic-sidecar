@@ -23,10 +23,7 @@ def test_set_objective() -> None:
 
 def test_record_tool_call_success() -> None:
     narrator = StatusNarrator()
-    call = narrator.record_tool_call(
-        tool_name="search",
-        arguments={"query": "hotels in NYC"}
-    )
+    call = narrator.record_tool_call(tool_name="search", arguments={"query": "hotels in NYC"})
     assert isinstance(call, ToolCallNarrative)
     assert call.tool_name == "search"
     assert call.narrative == "🔍 Searching for information"
@@ -37,11 +34,7 @@ def test_record_tool_call_with_decision_block() -> None:
     narrator = StatusNarrator()
     decision = Decision(status="BLOCK", risk=None, reason="Policy violation")
 
-    call = narrator.record_tool_call(
-        tool_name="delete",
-        arguments={"id": "123"},
-        decision=decision
-    )
+    call = narrator.record_tool_call(tool_name="delete", arguments={"id": "123"}, decision=decision)
 
     assert narrator.blocked_decisions == 1
     assert call.decision == decision
@@ -57,9 +50,7 @@ def test_record_tool_call_with_decision_pause() -> None:
     )
 
     call = narrator.record_tool_call(
-        tool_name="refund",
-        arguments={"amount": 850},
-        decision=decision
+        tool_name="refund", arguments={"amount": 850}, decision=decision
     )
 
     assert narrator.paused_decisions == 1
@@ -68,34 +59,18 @@ def test_record_tool_call_with_decision_pause() -> None:
 
 def test_intent_violation_tracking() -> None:
     narrator = StatusNarrator()
-    narrator.record_tool_call(
-        tool_name="search",
-        arguments={},
-        intent_compliant=False
-    )
-    narrator.record_tool_call(
-        tool_name="search",
-        arguments={},
-        intent_compliant=False
-    )
+    narrator.record_tool_call(tool_name="search", arguments={}, intent_compliant=False)
+    narrator.record_tool_call(tool_name="search", arguments={}, intent_compliant=False)
 
     assert narrator.intent_violations == 2
 
 
 def test_max_risk_tracking() -> None:
     narrator = StatusNarrator()
-    narrator.record_tool_call(
-        tool_name="search",
-        arguments={},
-        risk_level="LOW"
-    )
+    narrator.record_tool_call(tool_name="search", arguments={}, risk_level="LOW")
     assert narrator.max_risk_seen == "LOW"
 
-    narrator.record_tool_call(
-        tool_name="query",
-        arguments={},
-        risk_level="HIGH"
-    )
+    narrator.record_tool_call(tool_name="query", arguments={}, risk_level="HIGH")
     assert narrator.max_risk_seen == "HIGH"
 
 
@@ -118,7 +93,7 @@ def test_get_status() -> None:
     status = narrator.get_status(
         current_objective="Searching...",
         current_budget_remaining=10.5,
-        current_tokens_remaining=2000
+        current_tokens_remaining=2000,
     )
 
     assert status.current_objective == "Searching..."
@@ -142,7 +117,7 @@ def test_get_narrative_with_objectives_and_calls() -> None:
     narrator.record_tool_call(
         tool_name="retrieve",
         arguments={},
-        decision=Decision(status="ALLOW", risk="LOW", reason="ok")
+        decision=Decision(status="ALLOW", risk="LOW", reason="ok"),
     )
 
     narrative = narrator.get_narrative()
@@ -156,12 +131,12 @@ def test_get_narrative_with_blocked_decisions() -> None:
     narrator.record_tool_call(
         tool_name="delete",
         arguments={},
-        decision=Decision(status="BLOCK", risk=None, reason="Policy")
+        decision=Decision(status="BLOCK", risk=None, reason="Policy"),
     )
     narrator.record_tool_call(
         tool_name="delete",
         arguments={},
-        decision=Decision(status="BLOCK", risk=None, reason="Policy")
+        decision=Decision(status="BLOCK", risk=None, reason="Policy"),
     )
 
     narrative = narrator.get_narrative()

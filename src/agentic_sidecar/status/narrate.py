@@ -144,8 +144,7 @@ class StatusNarrator:
         return StatusNarrative(
             timestamp=datetime.now(),
             current_objective=(
-                current_objective
-                or (self.objectives[-1] if self.objectives else None)
+                current_objective or (self.objectives[-1] if self.objectives else None)
             ),
             current_step=current_objective,
             steps_completed=len(self.tool_calls),
@@ -244,8 +243,7 @@ class StatusNarrator:
     def _update_max_risk(self, risk_level: RiskLevel) -> None:
         """Update the maximum risk seen so far."""
         risk_order = {"LOW": 0, "MEDIUM": 1, "HIGH": 2}
-        if (
-            self.max_risk_seen is None
-            or risk_order.get(risk_level, -1) > risk_order.get(self.max_risk_seen, -1)
+        if self.max_risk_seen is None or risk_order.get(risk_level, -1) > risk_order.get(
+            self.max_risk_seen, -1
         ):
             self.max_risk_seen = risk_level
