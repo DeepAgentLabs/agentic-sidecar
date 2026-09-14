@@ -8,13 +8,14 @@ from __future__ import annotations
 
 import time
 from datetime import datetime
+from typing import Any
 
 import typer
 from rich.console import Console
 from rich.progress import Progress
 from rich.table import Table
 
-from agentic_sidecar.status.narrate import StatusNarrator
+from agentic_sidecar.status.narrate import StatusNarrative, StatusNarrator
 
 app = typer.Typer(help="Agentic Sidecar CLI - Live supervision and monitoring")
 console = Console()
@@ -125,7 +126,7 @@ def _display_status_stream(narrator: StatusNarrator, json_output: bool, interval
         console.print("\n[yellow]⏸️  Stream stopped by user[/yellow]")
 
 
-def _print_status_table(status) -> None:
+def _print_status_table(status: StatusNarrative) -> None:
     """Print a formatted status table."""
     table = Table(title="Sidecar Status", show_header=True, header_style="bold magenta")
     table.add_column("Metric", style="cyan")
@@ -191,7 +192,7 @@ def demo() -> None:
     narrator = StatusNarrator()
     narrator.set_objective("Find and book the cheapest hotel in NYC")
 
-    demo_steps = [
+    demo_steps: list[tuple[str, dict[str, Any], str]] = [
         ("search", {}, "🔍 Searching for information"),
         ("query", {}, "❓ Querying database"),
         ("retrieve", {}, "📥 Retrieving records"),
