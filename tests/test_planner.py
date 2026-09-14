@@ -74,13 +74,23 @@ class TestPlanStep:
 
     def test_plan_step_creation(self):
         """Test PlanStep dataclass."""
-        step = PlanStep(action="search", args={"query": "test"}, expected_result="results")
-        assert step.action == "search"
-        assert step.args == {"query": "test"}
-        assert step.expected_result == "results"
+        step = PlanStep(
+            sequence=1,
+            tool_name="search",
+            description="Search for test results",
+            arguments={"query": "test"},
+            rationale="Initial search needed",
+        )
+        assert step.sequence == 1
+        assert step.tool_name == "search"
+        assert step.arguments == {"query": "test"}
 
     def test_plan_step_equality(self):
         """Test PlanStep equality comparison."""
-        step1 = PlanStep(action="search", args={"query": "test"})
-        step2 = PlanStep(action="search", args={"query": "test"})
+        step1 = PlanStep(
+            sequence=1, tool_name="search", description="Search", arguments={"query": "test"}
+        )
+        step2 = PlanStep(
+            sequence=1, tool_name="search", description="Search", arguments={"query": "test"}
+        )
         assert step1 == step2
