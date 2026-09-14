@@ -62,7 +62,7 @@ jobs:
 
           start = None
           end = None
-          heading = f"## {version} - "
+          heading = f"## [{version}] - "
           for index, line in enumerate(changelog):
               if line.startswith(heading):
                   start = index
