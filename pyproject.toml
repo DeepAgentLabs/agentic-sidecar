@@ -28,7 +28,7 @@ dependencies = [
   "pyyaml>=6.0,<7",
   # v0.5 CLI for status command with Rich terminal formatting
   "typer>=0.9,<1",
-  "rich>=13.0,<14",
+  "rich>=13.0,<16",
 ]
 
 [project.optional-dependencies]
