@@ -12,7 +12,6 @@ Planned for v0.4 -- fully implemented.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Literal
 
 
 @dataclass

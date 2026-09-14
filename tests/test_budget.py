@@ -1,8 +1,7 @@
 """Tests for `agentic_sidecar.gate.budget.BudgetGuardian`."""
 
-import pytest
 
-from agentic_sidecar.gate.budget import BudgetGuardian, BudgetResult
+from agentic_sidecar.gate.budget import BudgetGuardian
 
 
 def test_budget_guardian_tracks_cost() -> None:
