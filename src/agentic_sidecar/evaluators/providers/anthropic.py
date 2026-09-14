@@ -73,9 +73,7 @@ class AnthropicJudge(JudgeProvider):
             },
         }
 
-    async def evaluate_async(
-        self, question: str, context: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def evaluate_async(self, question: str, context: dict[str, Any]) -> dict[str, Any]:
         """Async version using Anthropic API."""
         # In production, would use async Anthropic client
         return self.evaluate(question, context)

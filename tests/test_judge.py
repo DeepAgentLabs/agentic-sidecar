@@ -25,7 +25,7 @@ class TestJudgeEvaluator:
         """Test judge evaluation with mock provider."""
         provider = OpenAIJudge(model="gpt-4")
         judge = JudgeEvaluator(provider=provider)
-        
+
         context = {
             "tool_name": "refund",
             "arguments": {"amount": 100},
@@ -40,10 +40,10 @@ class TestJudgeEvaluator:
         """Test cost tracking."""
         provider = OpenAIJudge(model="gpt-4")
         judge = JudgeEvaluator(provider=provider)
-        
+
         initial_cost = judge.get_cost()
         assert initial_cost >= 0
-        
+
         context = {
             "tool_name": "search",
             "arguments": {},
@@ -64,7 +64,7 @@ class TestJudgeEvaluator:
         """Test cost reset."""
         provider = OpenAIJudge(model="gpt-4")
         judge = JudgeEvaluator(provider=provider)
-        
+
         context = {
             "tool_name": "search",
             "arguments": {},
@@ -88,7 +88,7 @@ class TestOpenAIJudge:
         """Test provider validation."""
         provider = OpenAIJudge(model="gpt-4")
         assert provider.validate() is True
-        
+
         empty_provider = OpenAIJudge(model="")
         assert empty_provider.validate() is False
 
@@ -117,7 +117,7 @@ class TestAnthropicJudge:
         """Test provider validation."""
         provider = AnthropicJudge(model="claude-3-opus")
         assert provider.validate() is True
-        
+
         empty_provider = AnthropicJudge(model="")
         assert empty_provider.validate() is False
 
@@ -142,10 +142,10 @@ class TestProviderSwapping:
         judge = JudgeEvaluator(provider=OpenAIJudge(model="gpt-4"))
         context = {"tool_name": "search", "arguments": {}, "history": [], "intent": None}
         result1 = judge.evaluate(context)
-        
+
         judge.provider = AnthropicJudge(model="claude-3-opus")
         result2 = judge.evaluate(context)
-        
+
         # Both should return valid results
         assert result1.status is not None
         assert result2.status is not None

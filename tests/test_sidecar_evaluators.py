@@ -18,10 +18,10 @@ class TestSidecarWithEvaluators:
             planner=PlanEvaluator(enabled=True),
             roles=["planner"],
         )
-        
+
         context = DecisionContext(tool_name="search", tool_args={"query": "test"})
         decision = sidecar.evaluate(context)
-        
+
         assert decision.status in ("ALLOW", "REPLAN", "BLOCK")
         assert decision.reason is not None
 
@@ -32,10 +32,10 @@ class TestSidecarWithEvaluators:
             critic=CriticEvaluator(enabled=True),
             roles=["critic"],
         )
-        
+
         context = DecisionContext(tool_name="delete", tool_args={"table": "users"})
         decision = sidecar.evaluate(context)
-        
+
         assert decision.status in ("ALLOW", "CHALLENGE", "BLOCK")
 
     def test_sidecar_with_judge(self):
@@ -46,10 +46,10 @@ class TestSidecarWithEvaluators:
             judge=JudgeEvaluator(provider=provider, enabled=True),
             roles=["judge"],
         )
-        
+
         context = DecisionContext(tool_name="refund", tool_args={"amount": 100})
         decision = sidecar.evaluate(context)
-        
+
         assert decision.status is not None
         assert decision.reason is not None
 
@@ -62,10 +62,10 @@ class TestSidecarWithEvaluators:
             judge=JudgeEvaluator(provider=OpenAIJudge(model="gpt-4")),
             roles=["policy", "risk", "planner", "critic", "judge"],
         )
-        
+
         context = DecisionContext(tool_name="delete", tool_args={"id": 123})
         decision = sidecar.evaluate(context)
-        
+
         assert decision.status is not None
 
     def test_sidecar_disabled_evaluators(self):
@@ -76,10 +76,10 @@ class TestSidecarWithEvaluators:
             critic=CriticEvaluator(enabled=False),
             roles=["policy", "risk", "planner", "critic"],
         )
-        
+
         context = DecisionContext(tool_name="search", tool_args={})
         decision = sidecar.evaluate(context)
-        
+
         assert decision.status == "ALLOW"
 
     def test_sidecar_early_exit_on_planner(self):
@@ -90,10 +90,10 @@ class TestSidecarWithEvaluators:
             critic=CriticEvaluator(enabled=True),
             roles=["planner", "critic"],
         )
-        
+
         context = DecisionContext(tool_name="refund", tool_args={"amount": 100})
         decision = sidecar.evaluate(context)
-        
+
         # Decision should be ALLOW, REPLAN, BLOCK, or CHALLENGE
         assert decision.status in ("ALLOW", "REPLAN", "BLOCK", "CHALLENGE")
 
@@ -106,10 +106,10 @@ class TestSidecarWithEvaluators:
             judge=None,
             roles=["policy", "risk"],
         )
-        
+
         context = DecisionContext(tool_name="search", tool_args={})
         decision = sidecar.evaluate(context)
-        
+
         assert decision.status == "ALLOW"
 
     def test_decision_history_available_to_evaluators(self):
@@ -119,13 +119,13 @@ class TestSidecarWithEvaluators:
             critic=CriticEvaluator(enabled=True),
             roles=["critic"],
         )
-        
+
         context1 = DecisionContext(tool_name="search", tool_args={"query": "test"})
         sidecar.evaluate(context1)
-        
+
         context2 = DecisionContext(tool_name="delete", tool_args={"id": 123})
         decision2 = sidecar.evaluate(context2)
-        
+
         # Second decision should have history from first
         assert len(sidecar.decisions) == 2
         assert decision2.status is not None

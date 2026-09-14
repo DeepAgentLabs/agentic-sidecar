@@ -37,15 +37,17 @@ SidecarMode = Literal["observe", "govern"]
 DecisionHook = Callable[[DecisionContext], Decision]
 EscalationHook = Callable[..., ApprovalResponse]
 
-_SUPPORTED_ROLES = frozenset({
-    "policy",
-    "risk",
-    "intent_guardian",
-    "budget",
-    "planner",
-    "critic",
-    "judge",
-})
+_SUPPORTED_ROLES = frozenset(
+    {
+        "policy",
+        "risk",
+        "intent_guardian",
+        "budget",
+        "planner",
+        "critic",
+        "judge",
+    }
+)
 _KNOWN_FUTURE_ROLES: dict[str, str] = {}
 
 

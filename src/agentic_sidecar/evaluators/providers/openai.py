@@ -71,9 +71,7 @@ class OpenAIJudge(JudgeProvider):
             },
         }
 
-    async def evaluate_async(
-        self, question: str, context: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def evaluate_async(self, question: str, context: dict[str, Any]) -> dict[str, Any]:
         """Async version using OpenAI API."""
         # In production, would use async OpenAI client
         return self.evaluate(question, context)

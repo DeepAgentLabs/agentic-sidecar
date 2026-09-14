@@ -11,6 +11,7 @@ from agentic_sidecar.evaluators.base import EvaluatorBase, EvaluatorResult
 @dataclass
 class CriticChallenge:
     """A challenge raised by the Critic."""
+
     category: str
     severity: str
     description: str
@@ -91,9 +92,7 @@ class CriticEvaluator(EvaluatorBase):
 
         return challenges
 
-    def _check_contradictions(
-        self, tool_name: str, history: list[Any]
-    ) -> list[CriticChallenge]:
+    def _check_contradictions(self, tool_name: str, history: list[Any]) -> list[CriticChallenge]:
         """Check for contradictions."""
         return []
 
