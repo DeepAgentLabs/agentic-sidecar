@@ -1,14 +1,29 @@
-"""Planner, Critic, and Judge -- independent evaluation of a proposed plan
-or decision.
+"""Evaluators module: LLM-based decision evaluation (v0.3.0+).
 
-Unlike `gate/` (Policy, Risk), these modules may call an LLM, and it should
-never be the same model/provider as the Main Agent by default (see
-README.md § Sidecar modules -- model independence). All three stay optional
-and off by default (`judge.enabled: false`) given the cost/latency
-tradeoff.
+Provides optional, model-agnostic evaluators for plan-level and decision-level
+assessment. All evaluators inherit from EvaluatorBase and can be composed
+independently into the Sidecar.
 
-Planner evaluates the whole plan; Critic challenges one decision at a time;
-Judge is the pluggable model-agnostic scoring interface both can call into.
-
-Planned for v0.3 -- see ROADMAP.md. Not implemented yet.
+Available Evaluators:
+- PlanEvaluator: Assesses plan alignment with intent
+- CriticEvaluator: Challenges decisions for flaws and risks
+- JudgeEvaluator: LLM-based decision evaluation (coming in Phase 4)
 """
+
+from agentic_sidecar.evaluators.base import (
+    EvaluatorBase,
+    EvaluatorResult,
+    JudgeProvider,
+)
+from agentic_sidecar.evaluators.critic import CriticChallenge, CriticEvaluator
+from agentic_sidecar.evaluators.planner import PlanEvaluator, PlanStep
+
+__all__ = [
+    "EvaluatorBase",
+    "EvaluatorResult",
+    "JudgeProvider",
+    "PlanEvaluator",
+    "PlanStep",
+    "CriticEvaluator",
+    "CriticChallenge",
+]
