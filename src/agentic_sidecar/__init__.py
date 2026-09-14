@@ -31,8 +31,13 @@ from agentic_sidecar.gate import (
     EscalationHandler,
     EscalationRequest,
 )
+from agentic_sidecar.status import (
+    StatusNarrative,
+    StatusNarrator,
+    ToolCallNarrative,
+)
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 __all__ = [
     "ApprovalAction",
@@ -51,5 +56,8 @@ __all__ = [
     "RiskLevel",
     "Sidecar",
     "SidecarBlockedError",
+    "StatusNarrative",
+    "StatusNarrator",
+    "ToolCallNarrative",
     "__version__",
 ]

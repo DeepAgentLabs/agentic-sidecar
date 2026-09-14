@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.20.0,<1.22.0"]
 build-backend = "hatchling.build"
 
 [project]
 name = "agentic-sidecar"
-version = "0.4.0"
+version = "0.5.0"
 description = "Companion intelligence and real-time decision supervision for autonomous AI agents."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -21,12 +21,14 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-# Only what the current scaffold actually needs. `typer`/`rich` belong here
-# once the CLI (v0.5, see ROADMAP.md) has real code -- not before.
+# v0.5 CLI uses typer/rich for formatted output and command framework
 dependencies = [
   "pydantic>=2.0,<3",
   # gate.policy / gate.risk load their rule sets from YAML (v0.1).
   "pyyaml>=6.0,<7",
+  # v0.5 CLI for status command with Rich terminal formatting
+  "typer>=0.9,<1",
+  "rich>=13.0,<14",
 ]
 
 [project.optional-dependencies]
@@ -62,16 +64,18 @@ dev = [
   "types-PyYAML>=6.0",
 ]
 
-# [project.scripts] intentionally omitted -- add
-# `agentic-sidecar = "agentic_sidecar.cli.main:app"` once cli/main.py has a
-# real Typer `app` (v0.5, see ROADMAP.md). A console-script entry pointing
-# at a stub would build fine but fail the moment anyone actually ran it.
+[project.scripts]
+agentic-sidecar = "agentic_sidecar.cli.main:main"
 
 [project.urls]
 Homepage = "https://github.com/DeepAgentLabs/agentic-sidecar"
 Repository = "https://github.com/DeepAgentLabs/agentic-sidecar"
 Issues = "https://github.com/DeepAgentLabs/agentic-sidecar/issues"
 Changelog = "https://github.com/DeepAgentLabs/agentic-sidecar/blob/main/CHANGELOG.md"
+
+[tool.hatch.build]
+# Ensure we generate stable metadata version 2.4 for CI compatibility
+# This avoids issues with older twine versions in CI that don't recognize 2.5
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/agentic_sidecar"]
