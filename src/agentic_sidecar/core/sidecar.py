@@ -250,7 +250,10 @@ class Sidecar:
                     risk=None,
                     reason=f"Policy Advisor: {policy_result.reason}",
                     decision_point="tool_call",
-                    trigger_details={"tool_name": context.tool_name, "arguments": context.tool_args},
+                    trigger_details={
+                        "tool_name": context.tool_name,
+                        "arguments": context.tool_args,
+                    },
                 )
 
         risk_result = None
@@ -265,7 +268,10 @@ class Sidecar:
                         f"(risk >= block threshold '{self.risk_block_threshold}')"
                     ),
                     decision_point="tool_call",
-                    trigger_details={"tool_name": context.tool_name, "arguments": context.tool_args},
+                    trigger_details={
+                        "tool_name": context.tool_name,
+                        "arguments": context.tool_args,
+                    },
                 )
 
         alignment_result: AlignmentResult | None = None
@@ -277,7 +283,10 @@ class Sidecar:
                     risk=risk_result.risk if risk_result else None,
                     reason=f"Intent Guardian: {alignment_result.reason}",
                     decision_point="tool_call",
-                    trigger_details={"tool_name": context.tool_name, "arguments": context.tool_args},
+                    trigger_details={
+                        "tool_name": context.tool_name,
+                        "arguments": context.tool_args,
+                    },
                 )
 
         budget_result = None
@@ -289,7 +298,10 @@ class Sidecar:
                     risk=risk_result.risk if risk_result else None,
                     reason=f"Budget Guardian: {budget_result.reason}",
                     decision_point="tool_call",
-                    trigger_details={"tool_name": context.tool_name, "arguments": context.tool_args},
+                    trigger_details={
+                        "tool_name": context.tool_name,
+                        "arguments": context.tool_args,
+                    },
                     escalation_required=True,
                 )
 
