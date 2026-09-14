@@ -61,25 +61,19 @@ class BudgetGuardian:
             BudgetResult with exceeded flag and remaining budget.
         """
         cost_exceeded = self.current_cost >= self.max_cost
-        tokens_exceeded = (
-            self.max_tokens is not None and self.current_tokens >= self.max_tokens
-        )
+        tokens_exceeded = self.max_tokens is not None and self.current_tokens >= self.max_tokens
 
         if cost_exceeded or tokens_exceeded:
             reasons = []
             if cost_exceeded:
                 reasons.append(f"cost ${self.current_cost:.4f} >= ${self.max_cost:.4f}")
             if tokens_exceeded:
-                reasons.append(
-                    f"tokens {self.current_tokens} >= {self.max_tokens}"
-                )
+                reasons.append(f"tokens {self.current_tokens} >= {self.max_tokens}")
             return BudgetResult(
                 exceeded=True,
                 remaining_cost=max(0.0, self.max_cost - self.current_cost),
                 remaining_tokens=(
-                    max(0, self.max_tokens - self.current_tokens)
-                    if self.max_tokens
-                    else None
+                    max(0, self.max_tokens - self.current_tokens) if self.max_tokens else None
                 ),
                 reason="; ".join(reasons),
             )
@@ -87,9 +81,7 @@ class BudgetGuardian:
         return BudgetResult(
             exceeded=False,
             remaining_cost=self.max_cost - self.current_cost,
-            remaining_tokens=(
-                self.max_tokens - self.current_tokens if self.max_tokens else None
-            ),
+            remaining_tokens=(self.max_tokens - self.current_tokens if self.max_tokens else None),
         )
 
     def is_at_capacity(self) -> bool:

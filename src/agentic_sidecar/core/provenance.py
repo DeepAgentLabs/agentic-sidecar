@@ -16,10 +16,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Literal
 
-
-DecisionOutcome = Literal[
-    "ALLOW", "WARN", "BLOCK", "CHALLENGE", "REPLAN", "PAUSE", "ESCALATE"
-]
+DecisionOutcome = Literal["ALLOW", "WARN", "BLOCK", "CHALLENGE", "REPLAN", "PAUSE", "ESCALATE"]
 
 
 @dataclass
@@ -58,10 +55,7 @@ class DecisionRationale:
     def all_findings(self) -> list[str]:
         """All findings across all modules."""
         return (
-            self.policy_findings
-            + self.risk_findings
-            + self.intent_findings
-            + self.budget_findings
+            self.policy_findings + self.risk_findings + self.intent_findings + self.budget_findings
         )
 
 

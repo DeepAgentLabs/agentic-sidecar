@@ -1,6 +1,5 @@
 """Tests for `agentic_sidecar.gate.budget.BudgetGuardian`."""
 
-
 from agentic_sidecar.gate.budget import BudgetGuardian
 
 
