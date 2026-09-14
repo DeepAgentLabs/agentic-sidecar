@@ -1,8 +1,7 @@
 """Tests for `agentic_sidecar.cli.main`."""
 
 import json
-from io import StringIO
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from typer.testing import CliRunner
 
@@ -17,7 +16,7 @@ def test_version_command() -> None:
     result = runner.invoke(app, ["version"])
     assert result.exit_code == 0
     assert "agentic-sidecar" in result.stdout
-    assert "0.4.0" in result.stdout
+    assert "0.5.0" in result.stdout
 
 
 def test_status_command_once() -> None:
@@ -115,7 +114,7 @@ def test_status_narrator_with_decision() -> None:
 
     # Record a blocked decision
     blocked_decision = Decision(status="BLOCK", risk=None, reason="Policy")
-    call1 = narrator.record_tool_call(
+    narrator.record_tool_call(
         "delete",
         {"id": "123"},
         decision=blocked_decision,
@@ -129,7 +128,7 @@ def test_status_narrator_with_decision() -> None:
         reason="Budget",
         escalation_required=True,
     )
-    call2 = narrator.record_tool_call(
+    narrator.record_tool_call(
         "refund",
         {"amount": 500},
         decision=paused_decision,

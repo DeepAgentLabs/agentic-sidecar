@@ -1,7 +1,5 @@
 """Tests for `agentic_sidecar.status.narrate`."""
 
-from datetime import datetime
-
 from agentic_sidecar.core.decision import Decision
 from agentic_sidecar.status.narrate import StatusNarrator, ToolCallNarrative
 
@@ -51,7 +49,12 @@ def test_record_tool_call_with_decision_block() -> None:
 
 def test_record_tool_call_with_decision_pause() -> None:
     narrator = StatusNarrator()
-    decision = Decision(status="PAUSE", risk=None, reason="Budget exceeded", escalation_required=True)
+    decision = Decision(
+        status="PAUSE",
+        risk=None,
+        reason="Budget exceeded",
+        escalation_required=True,
+    )
 
     call = narrator.record_tool_call(
         tool_name="refund",
@@ -185,13 +188,34 @@ def test_tool_call_with_multiple_statuses() -> None:
     narrator = StatusNarrator()
 
     # Record allow
-    narrator.record_tool_call("search", {}, decision=Decision(status="ALLOW", risk="LOW", reason="ok"))
+    narrator.record_tool_call(
+        "search",
+        {},
+        decision=Decision(status="ALLOW", risk="LOW", reason="ok"),
+    )
     # Record warn
-    narrator.record_tool_call("update", {}, decision=Decision(status="WARN", risk="MEDIUM", reason="warning"))
+    narrator.record_tool_call(
+        "update",
+        {},
+        decision=Decision(status="WARN", risk="MEDIUM", reason="warning"),
+    )
     # Record block
-    narrator.record_tool_call("delete", {}, decision=Decision(status="BLOCK", risk="HIGH", reason="blocked"))
+    narrator.record_tool_call(
+        "delete",
+        {},
+        decision=Decision(status="BLOCK", risk="HIGH", reason="blocked"),
+    )
     # Record pause
-    narrator.record_tool_call("refund", {}, decision=Decision(status="PAUSE", risk=None, reason="escalate", escalation_required=True))
+    narrator.record_tool_call(
+        "refund",
+        {},
+        decision=Decision(
+            status="PAUSE",
+            risk=None,
+            reason="escalate",
+            escalation_required=True,
+        ),
+    )
 
     assert narrator.blocked_decisions == 1
     assert narrator.paused_decisions == 1

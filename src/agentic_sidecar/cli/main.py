@@ -6,17 +6,13 @@ v0.5 implements the CLI status command with real-time streaming support.
 
 from __future__ import annotations
 
-import json
-import sys
 import time
 from datetime import datetime
-from typing import Optional
 
 import typer
 from rich.console import Console
 from rich.progress import Progress
 from rich.table import Table
-from rich.text import Text
 
 from agentic_sidecar.status.narrate import StatusNarrator
 
@@ -216,7 +212,7 @@ def demo() -> None:
     with Progress() as progress:
         task = progress.add_task("[cyan]Executing demo...", total=len(demo_steps))
 
-        for tool, args, expected_narration in demo_steps:
+        for tool, args, _expected_narration in demo_steps:
             call = narrator.record_tool_call(tool, args)
             console.print(f"  {call.narrative}")
             progress.update(task, advance=1)
