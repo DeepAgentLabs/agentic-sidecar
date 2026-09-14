@@ -25,17 +25,31 @@ What it demonstrates, in contrast to `langgraph_refund_observe_mode.py`
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
 from typing import Any
 
-from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_core.messages import AIMessage, BaseMessage
-from langchain_core.outputs import ChatGeneration, ChatResult
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-# create_react_agent moved to langchain.agents.create_agent in LangGraph
-# 1.0+ (still functional here, just deprecated) -- kept as the import here
-# so this example only needs the `langgraph` extra, not the heavier
-# `langchain` package.
-from langgraph.prebuilt import create_react_agent
+try:
+    from langchain_core.language_models.chat_models import BaseChatModel
+    from langchain_core.messages import AIMessage, BaseMessage
+    from langchain_core.outputs import ChatGeneration, ChatResult
+
+    # create_react_agent moved to langchain.agents.create_agent in LangGraph
+    # 1.0+ (still functional here, just deprecated) -- kept as the import here
+    # so this example only needs the `langgraph` extra, not the heavier
+    # `langchain` package.
+    from langgraph.prebuilt import create_react_agent
+except ModuleNotFoundError as exc:
+    missing = exc.name or "a LangGraph example dependency"
+    raise SystemExit(
+        f"Missing dependency '{missing}'. Install the LangGraph example dependencies with:\n"
+        "  uv sync --extra langgraph\n"
+        "or, if using pip:\n"
+        '  python -m pip install -e ".[langgraph]"\n'
+        "\nThen run this example again."
+    ) from exc
 
 from agentic_sidecar import Sidecar, SidecarBlockedError
 from agentic_sidecar.adapters.langgraph import attach

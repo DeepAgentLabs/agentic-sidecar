@@ -49,6 +49,7 @@ agentic-chaos = [
 # the adapter module itself has no import-time dependency on `langgraph`
 # (see src/agentic_sidecar/adapters/langgraph.py).
 langgraph = [
+  "langchain-core>=0.3,<2",
   "langgraph>=1.0,<2",
 ]
 dev = [

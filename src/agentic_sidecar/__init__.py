@@ -6,21 +6,48 @@ supervision layer for autonomous AI agents.
 v0.1 shipped the Sidecar runtime and a rule-based, LLM-free Decision Gate
 (Policy Advisor + Risk Evaluator), attached via the LangGraph adapter, in
 Observe mode. v0.2 adds Intent Guardian (`agentic_sidecar.intent`) and
-Govern mode, where a `BLOCK` decision is actually enforced. See ROADMAP.md
-for the full build order and README.md for the architecture and Python API.
+Govern mode, where a `BLOCK` decision is actually enforced. v0.4 adds the
+full Decision Gate outcomes (CHALLENGE, REPLAN, PAUSE, ESCALATE), Budget
+Guardian for cost/token ceilings, and Human Escalation primitives. See
+ROADMAP.md for the full build order and README.md for the architecture and
+Python API.
 """
 
 from agentic_sidecar.core.context import DecisionContext
 from agentic_sidecar.core.decision import Decision, DecisionStatus, RiskLevel
 from agentic_sidecar.core.exceptions import SidecarBlockedError
+from agentic_sidecar.core.provenance import (
+    AuditRecord,
+    CausalLink,
+    DecisionRationale,
+    DecisionTrigger,
+)
 from agentic_sidecar.core.sidecar import Sidecar
+from agentic_sidecar.gate import (
+    ApprovalAction,
+    ApprovalResponse,
+    BudgetGuardian,
+    BudgetResult,
+    EscalationHandler,
+    EscalationRequest,
+)
 
-__version__ = "0.2.0"
+__version__ = "0.4.0"
 
 __all__ = [
+    "ApprovalAction",
+    "ApprovalResponse",
+    "AuditRecord",
+    "BudgetGuardian",
+    "BudgetResult",
+    "CausalLink",
     "Decision",
     "DecisionContext",
+    "DecisionRationale",
     "DecisionStatus",
+    "DecisionTrigger",
+    "EscalationHandler",
+    "EscalationRequest",
     "RiskLevel",
     "Sidecar",
     "SidecarBlockedError",
