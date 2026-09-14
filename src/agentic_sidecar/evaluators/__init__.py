@@ -7,7 +7,11 @@ independently into the Sidecar.
 Available Evaluators:
 - PlanEvaluator: Assesses plan alignment with intent
 - CriticEvaluator: Challenges decisions for flaws and risks
-- JudgeEvaluator: LLM-based decision evaluation (coming in Phase 4)
+- JudgeEvaluator: LLM-based decision evaluation
+
+Available Providers:
+- OpenAIJudge: Uses OpenAI models (GPT-4, GPT-3.5, etc.)
+- AnthropicJudge: Uses Anthropic models (Claude, etc.)
 """
 
 from agentic_sidecar.evaluators.base import (
@@ -16,7 +20,9 @@ from agentic_sidecar.evaluators.base import (
     JudgeProvider,
 )
 from agentic_sidecar.evaluators.critic import CriticChallenge, CriticEvaluator
+from agentic_sidecar.evaluators.judge import JudgeEvaluator
 from agentic_sidecar.evaluators.planner import PlanEvaluator, PlanStep
+from agentic_sidecar.evaluators.providers import AnthropicJudge, OpenAIJudge
 
 __all__ = [
     "EvaluatorBase",
@@ -26,4 +32,7 @@ __all__ = [
     "PlanStep",
     "CriticEvaluator",
     "CriticChallenge",
+    "JudgeEvaluator",
+    "OpenAIJudge",
+    "AnthropicJudge",
 ]
