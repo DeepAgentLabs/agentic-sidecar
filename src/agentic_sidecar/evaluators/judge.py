@@ -164,7 +164,6 @@ class JudgeEvaluator(EvaluatorBase):
     ) -> str:
         """Build the question to ask the judge LLM."""
         goal = context.get("goal", "")
-        intent = context.get("intent")
 
         question = f"""Evaluate this decision:
 

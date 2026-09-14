@@ -92,11 +92,11 @@ class EvaluatorBase(ABC):
 
     def on_enabled(self) -> None:
         """Called when evaluator is enabled (hook for initialization)."""
-        pass
+        return
 
     def on_disabled(self) -> None:
         """Called when evaluator is disabled (hook for cleanup)."""
-        pass
+        return
 
 
 class JudgeProvider(ABC):

@@ -21,7 +21,6 @@ from typing import Literal
 
 from agentic_sidecar.core.context import DecisionContext, HistoryEntry
 from agentic_sidecar.core.decision import Decision, DecisionStatus, RiskLevel
-from agentic_sidecar.evaluators.base import EvaluatorBase
 from agentic_sidecar.evaluators.critic import CriticEvaluator
 from agentic_sidecar.evaluators.judge import JudgeEvaluator
 from agentic_sidecar.evaluators.planner import PlanEvaluator
@@ -38,7 +37,15 @@ SidecarMode = Literal["observe", "govern"]
 DecisionHook = Callable[[DecisionContext], Decision]
 EscalationHook = Callable[..., ApprovalResponse]
 
-_SUPPORTED_ROLES = frozenset({"policy", "risk", "intent_guardian", "budget", "planner", "critic", "judge"})
+_SUPPORTED_ROLES = frozenset({
+    "policy",
+    "risk",
+    "intent_guardian",
+    "budget",
+    "planner",
+    "critic",
+    "judge",
+})
 _KNOWN_FUTURE_ROLES: dict[str, str] = {}
 
 

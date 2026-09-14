@@ -1,6 +1,5 @@
 """Tests for Sidecar integration with v0.3.0 evaluators."""
 
-import pytest
 from agentic_sidecar.core.context import DecisionContext
 from agentic_sidecar.core.sidecar import Sidecar
 from agentic_sidecar.evaluators.critic import CriticEvaluator

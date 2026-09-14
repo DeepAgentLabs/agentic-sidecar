@@ -1,6 +1,5 @@
 """Tests for PlanEvaluator (v0.3.0)."""
 
-import pytest
 from agentic_sidecar.evaluators.planner import PlanEvaluator, PlanStep
 
 

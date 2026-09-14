@@ -1,6 +1,5 @@
 """Tests for CriticEvaluator (v0.3.0)."""
 
-import pytest
 from agentic_sidecar.evaluators.critic import CriticChallenge, CriticEvaluator
 
 

@@ -1,6 +1,5 @@
 """Tests for JudgeEvaluator and LLM providers (v0.3.0)."""
 
-import pytest
 from agentic_sidecar.evaluators.judge import JudgeEvaluator
 from agentic_sidecar.evaluators.providers import AnthropicJudge, OpenAIJudge
 

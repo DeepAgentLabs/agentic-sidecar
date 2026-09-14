@@ -33,10 +33,7 @@ class OpenAIJudge(JudgeProvider):
 
     def validate(self) -> bool:
         """Validate provider configuration."""
-        if not self.model:
-            return False
-        # In production, would check API key
-        return True
+        return bool(self.model)
 
     def evaluate(self, question: str, context: dict[str, Any]) -> dict[str, Any]:
         """Evaluate using OpenAI API.
