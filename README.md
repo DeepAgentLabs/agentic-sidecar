@@ -6,14 +6,16 @@
 
 ## Status
 
-**v0.1 and v0.2 implemented.** The Sidecar runtime, a rule-based Decision
-Gate (Policy Advisor + Risk Evaluator), and Intent Guardian (`IntentEnvelope`
-+ constraint validation) are real code, attached via the LangGraph adapter.
-Observe mode (v0.1, logs only) and Govern mode (v0.2, a `BLOCK` is actually
-enforced) both work today — see [Python API
-(implemented)](#python-api-implemented) below and [`examples/`](examples/)
-for two runnable scripts. No PyPI release yet. See [ROADMAP.md](ROADMAP.md)
-for the full build plan (v0.2.x onward).
+**v0.1, v0.2, and v0.4 implemented and on PyPI.** The Sidecar runtime, a 
+rule-based Decision Gate (Policy Advisor + Risk Evaluator), Intent Guardian 
+(`IntentEnvelope` + constraint validation), Budget Guardian (cost/token ceilings), 
+and Human Escalation (PAUSE/ESCALATE outcomes) are real code, attached via the 
+LangGraph adapter. Observe mode (v0.1, logs only) and Govern mode (v0.2, a 
+`BLOCK` is enforced) both work today. v0.4 adds Budget Guardian tracking and 
+human-in-the-loop escalation workflows for paused decisions. See [Python API 
+(implemented)](#python-api-implemented) below and [`examples/`](examples/) 
+for runnable scripts. Install: `pip install agentic-sidecar[langgraph]`. See 
+[ROADMAP.md](ROADMAP.md) for the full build plan (v0.3 coming next).
 
 ## Contents
 
