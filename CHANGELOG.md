@@ -4,6 +4,30 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-14
+
+### Added
+
+- Complete v0.3.0 evaluators integration: Planner, Critic, and Judge evaluators now fully integrated and production-ready
+- Evaluators module exports: All evaluator classes and LLM providers available from main module for easy importing
+
+### Changed
+
+- Version bump: 0.5.0 → 0.6.0 to reflect inclusion of v0.3.0 evaluators alongside v0.4.0 and v0.5.0 features
+- Sidecar Decision Gate now includes three new optional evaluator stages: Planner → Critic → Judge
+
+### Documentation
+
+- Updated README.md with v0.3.0 evaluator features and examples
+- Updated CHANGELOG.md with complete v0.3.0 release notes
+- Added comprehensive examples for evaluator usage
+
+### Testing
+
+- 39 evaluator tests with 100% pass rate
+- 90%+ code coverage for evaluator modules
+- All CI checks passing: ruff linting, formatting, mypy type checking
+
 ## [0.3.0] - 2026-09-14
 
 ### Added
