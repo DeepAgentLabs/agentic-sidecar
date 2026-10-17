@@ -4,6 +4,20 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-10-17
+
+### Changed
+
+- The optional `agenticlens` extra now admits AgenticLens 0.8
+  (`>=0.7.1,<0.9`, was `<0.8`), so `pip install "agentic-sidecar[agenticlens]"`
+  resolves alongside AgenticLens 0.8.0 (test-suite and dataset management).
+  The lock file tests against 0.8.0.
+- `sidecar.correlation/1` readback and decision export are unchanged; the
+  ecosystem export tests pass against Lens 0.8.0. Suites carry no
+  supervision decisions.
+- Version markers in the README, roadmap and docs move to 0.8.2. No runtime,
+  API or schema change.
+
 ## [0.8.1] - 2026-10-17
 
 ### Changed
