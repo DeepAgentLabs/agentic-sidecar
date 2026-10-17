@@ -37,7 +37,8 @@ jobs:
           uv run pytest
           for example in examples/*.py; do uv run python "$example"; done
           uv run python scripts/check_docs.py
-          uv run mkdocs build --strict
+          uv run mkdocs build --strict -f website/mkdocs.yml --site-dir "$RUNNER_TEMP/site/docs"
+          uv run mkdocs build --strict -f website/mkdocs.usecases.yml --site-dir "$RUNNER_TEMP/site/usecases"
       - name: Build distributions
         run: |
           uv run python -m build
