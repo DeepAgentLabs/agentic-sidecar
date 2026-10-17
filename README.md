@@ -541,3 +541,19 @@ should tolerate unknown fields. Sidecar supervision decisions remain separate fr
 See the [contract, examples and compatibility policy](https://github.com/DeepAgentLabs/agentic-evals/blob/main/docs/report-contract.md). Existing dependency
 ranges remain sufficient; using the new accessors directly requires
 `agentic-evals>=0.7.2`. This documentation alignment needs no sibling patch release.
+
+## AgenticLens 0.8.0 suite management
+
+AgenticLens 0.8.0 delivers its v0.6 milestone: `agenticlens.suites` and
+`agenticlens suite` build regression suites from CSV/JSON imports, production
+traces and user feedback. It masks PII before storage, detects duplicates and
+conflicting labels, adds synthetic variations and stable splits, records
+reviews, and approves suites into immutable, hash-verified versions that CI
+verifies, exports and evaluates. Suites stay plain agentic-evals `TestSuite`
+files.
+
+Sidecar 0.8.2 widens the optional `agenticlens` extra to `>=0.7.1,<0.9`
+so it resolves alongside Lens 0.8.0. The `sidecar.correlation/1` readback and
+decision export are unchanged, and suites carry no supervision decisions.
+
+See the [suite management guide](https://github.com/DeepAgentLabs/agenticlens/blob/v0.8.0/docs/suite-management.md).
