@@ -8,3 +8,7 @@ should tolerate unknown fields. Sidecar supervision decisions remain separate fr
 See the [contract, examples and compatibility policy](https://github.com/DeepAgentLabs/agentic-evals/blob/main/docs/report-contract.md). Existing dependency
 ranges remain sufficient; using the new accessors directly requires
 `agentic-evals>=0.7.2`. This documentation alignment needs no sibling patch release.
+
+Native Evals schema validation does not establish AIOS conformance. These
+package-local schemas are separate from the specification's normative object
+model and its draft conformance checks.

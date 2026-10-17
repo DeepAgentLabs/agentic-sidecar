@@ -102,7 +102,7 @@ it; actual dispatch still uses a supervised adapter. Tested against Chaos 0.5.3 
 0.6.0; the optional `agentic-chaos` extra admits `>=0.5.3,<0.7` since Sidecar 0.8.1.
 Chaos 0.6.0 event IDs and shape are unchanged; its contracts and pytest plugin stay in Chaos.
 Gate failure tests cover explicit fail_open/fail_closed; Chaos retains fault injection.
-Evals 0.7.1 retains scoring/report ownership; comparative supervision evidence and
+Evals 0.7.2 retains scoring/report ownership; comparative supervision evidence and
 delegated authority remain v0.9 work. No core sibling dependency is introduced.
 
 ## Tower, AIOS and Semantica
@@ -113,3 +113,13 @@ live runtime. Compatibility checks do not imply remote operator bridging.
 AIOS records the correlation convention as a draft, not stable conformance.
 `integrations.semantica` and the empty `semantica` extra are reserved; no provenance
 export or upstream compatibility is claimed until its API is validated.
+
+## Native Evals report contract
+
+Evals 0.7.2 publishes packaged report and gate JSON Schemas through
+`report_schema()` and `gate_decision_schema()`. Contract 1.x evolves additively;
+readers should tolerate unknown fields. Native validation does not establish
+AIOS conformance or containment. See the
+[contract and runnable examples](https://github.com/DeepAgentLabs/agentic-evals/blob/main/docs/report-contract.md).
+Existing dependency ranges remain sufficient; importing the new accessors
+directly requires `agentic-evals>=0.7.2`.
