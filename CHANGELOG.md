@@ -4,6 +4,20 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.8.4] - 2026-10-18
+
+### Changed
+
+- The optional `agenticlens` extra now admits AgenticLens 0.9
+  (`>=0.7.1,<1`, was `<0.9`), so `pip install "agentic-sidecar[agenticlens]"`
+  resolves alongside AgenticLens 0.9.0 (ModelFit). The lock and the locked
+  ecosystem CI job test 0.9.0.
+- `sidecar.correlation/1` readback and decision export are unchanged; the
+  ecosystem export tests pass against Lens 0.9.0. ModelFit recommendations
+  carry no supervision decisions.
+- Version markers in the README and website docs move to 0.8.4. No runtime,
+  API or schema change.
+
 ## [0.8.3] - 2026-10-17
 
 ### Changed

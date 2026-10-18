@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated **2026-10-17 · Current version: 0.8.2**.
+Updated **2026-10-18 · Current version: 0.8.4**.
 The [root ROADMAP.md](https://github.com/DeepAgentLabs/agentic-sidecar/blob/main/ROADMAP.md)
 is the canonical plan with detailed deliverables and acceptance criteria.
 Future version targets describe priorities, not committed delivery dates.
@@ -99,3 +99,6 @@ authority and end-to-end privacy validation remain v0.9 work.
 
 Chaos 0.7 compatibility ships in Sidecar 0.8.3: the optional dependency
 now admits 0.7. [Evidence and limits](chaos-0.7.md).
+
+AgenticLens 0.9 compatibility ships in Sidecar 0.8.4: the optional
+`agenticlens` extra admits `>=0.7.1,<1`. No runtime change.

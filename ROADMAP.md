@@ -1,6 +1,6 @@
 # agentic-sidecar — Roadmap & Architecture
 
-> **Updated 2026-10-17 · Current checkout: 0.8.2.**
+> **Updated 2026-10-18 · Current checkout: 0.8.4.**
 > This is the canonical capability roadmap. Each stage builds on the existing
 > runtime with explicit deliverables and acceptance criteria. Future version
 > targets describe development priorities, not committed delivery dates.
@@ -24,6 +24,8 @@ local operator interface and Control Room; see [live operations](website/docs/li
 (`>=0.5.3,<0.7`); no runtime change. See [Chaos integration](website/docs/integrations.md).
 **0.8.2 compatibility patch:** the optional `agenticlens` extra admits AgenticLens 0.8
 (`>=0.7.1,<0.9`); the lock tests 0.8.0. No runtime change.
+**0.8.4 compatibility patch:** the optional `agenticlens` extra admits AgenticLens 0.9
+(`>=0.7.1,<1`); the lock and the locked ecosystem CI job test 0.9.0. No runtime change.
 
 ## Current Capabilities and Next Steps
 
@@ -450,3 +452,18 @@ native evidence schema changes are required; this documentation alignment needs
 no patch release. See the [operator guide](https://github.com/DeepAgentLabs/agenticops-control-tower/blob/v0.7.0/docs/fleet-operations.md).
 
 See the [local Tower compatibility guide](docs/tower-0.7-fleet-operations.md) for the operator workflow and package boundaries.
+
+## AgenticLens 0.9.0 ModelFit
+
+AgenticLens 0.9.0 delivers its v0.7 milestone: per-task-category model
+recommendations from recorded experiment reports, under hard quality, cost,
+latency, safety, provider and deployment constraints that fail closed, with
+confidence, fallbacks, evidence-tied savings and quality risks.
+
+Sidecar 0.8.4 widens the optional `agenticlens` extra to `>=0.7.1,<1` and locks
+0.9.0. `sidecar.correlation/1` readback and decision export are unchanged.
+ModelFit recommends models and carries no supervision decisions; routing a
+recommendation through supervision remains a host decision and Lens v0.8
+(advisory runtime routing) work.
+
+See the [ModelFit guide](https://github.com/DeepAgentLabs/agenticlens/blob/v0.9.0/docs/modelfit.md).

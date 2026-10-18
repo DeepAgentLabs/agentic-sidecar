@@ -94,6 +94,10 @@ invalid/conflicting batches; duplicate records are idempotent. Diagnosis schema 
 adds supervision decisions to the timeline. BLOCK does not mark a span/run/deployment
 failed; actual dispatch/completion remains native journal evidence.
 
+The extra admits `agenticlens>=0.7.1,<1` since Sidecar 0.8.4, so it installs
+alongside Lens 0.9.0 (ModelFit). ModelFit model recommendations carry no
+supervision decisions; correlation readback is unchanged.
+
 ## Agentic Chaos and Evals
 
 `integrations.agentic_chaos.evaluate_recovery(sidecar, event, tool_name=..., arguments=...)`
