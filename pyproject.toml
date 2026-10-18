@@ -34,8 +34,9 @@ dependencies = [
 [project.optional-dependencies]
 openai = ["openai>=1.68,<4"]
 anthropic = ["anthropic>=0.49,<2"]
-# Sibling runtime dependencies stay optional. Lens 0.7.1 supplies native readback.
-agenticlens = ["agenticlens>=0.7.1,<0.9"]
+# Sibling runtime dependencies stay optional. Lens 0.7.1 supplies native readback;
+# later 0.x releases (0.9.0 adds ModelFit) keep sidecar.correlation/1 unchanged.
+agenticlens = ["agenticlens>=0.7.1,<1"]
 agentic-chaos = ["agentic-chaos>=0.5.3,<0.8"]
 # Reserved until the upstream provenance API is validated; no export claim.
 semantica = []
