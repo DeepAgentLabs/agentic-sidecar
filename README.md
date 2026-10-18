@@ -558,3 +558,9 @@ so it resolves alongside Lens 0.8.0. The `sidecar.correlation/1` readback and
 decision export are unchanged, and suites carry no supervision decisions.
 
 See the [suite management guide](https://github.com/DeepAgentLabs/agenticlens/blob/v0.8.0/docs/suite-management.md).
+
+## Evals 0.8.0 CLI interoperability
+
+Evals 0.8.0 provides declarative `evaluate`, `live` and `gate` commands for supplied evaluation observations. Sidecar supervision decisions remain separate from scoring and release gates. Agent Alone versus Agent + Sidecar evidence remains Sidecar v0.9 work; no runtime dependency is added.
+
+See [CLI usage and compatibility](docs/evals-0.8-cli.md).
