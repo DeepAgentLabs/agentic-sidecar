@@ -123,3 +123,6 @@ AIOS conformance or containment. See the
 [contract and runnable examples](https://github.com/DeepAgentLabs/agentic-evals/blob/main/docs/report-contract.md).
 Existing dependency ranges remain sufficient; importing the new accessors
 directly requires `agentic-evals>=0.7.2`.
+
+For Chaos 0.7 cascades and synthetic poisoning, install Sidecar 0.8.3 or later.
+See [compatibility and containment limits](chaos-0.7.md).
