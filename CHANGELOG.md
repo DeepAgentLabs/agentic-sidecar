@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-10-17
+
+### Changed
+
+- Accept Chaos 0.7 in the optional extra without changing recovery-decision semantics.
+- Document advanced Chaos evidence compatibility and synthetic containment limits.
+
 ## [0.8.2] - 2026-10-17
 
 ### Changed
