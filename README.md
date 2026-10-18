@@ -6,7 +6,7 @@
 
 ## Status
 
-**Current checkout version: 0.8.2.** The runtime brings together deterministic
+**Current checkout version: 0.8.4.** The runtime brings together deterministic
 intent/policy/risk supervision, optional evaluators, budget accounting,
 narration, and the CLI. See the [roadmap](ROADMAP.md) for release history
 and upcoming capability stages.
@@ -596,3 +596,20 @@ native evidence schema changes are required; this documentation alignment needs
 no patch release. See the [operator guide](https://github.com/DeepAgentLabs/agenticops-control-tower/blob/v0.7.0/docs/fleet-operations.md).
 
 See the [local Tower compatibility guide](docs/tower-0.7-fleet-operations.md) for the operator workflow and package boundaries.
+
+## AgenticLens 0.9.0 ModelFit
+
+AgenticLens 0.9.0 delivers its v0.7 milestone: `agenticlens.modelfit` and
+`agenticlens modelfit` recommend a model per task category from recorded
+experiment reports, under hard quality, cost, latency, safety, provider and
+deployment constraints, with confidence, fallbacks, evidence-tied savings and
+quality risks.
+
+Sidecar 0.8.4 widens the optional `agenticlens` extra from `>=0.7.1,<0.9` to
+`>=0.7.1,<1`, so `pip install "agentic-sidecar[agenticlens]"` resolves
+alongside Lens 0.9.0; the lock and the locked ecosystem CI job test 0.9.0.
+`sidecar.correlation/1` readback and decision export are unchanged. ModelFit
+recommends models; it does not supervise or block actions, and its
+recommendations carry no supervision decisions.
+
+See the [ModelFit guide](https://github.com/DeepAgentLabs/agenticlens/blob/v0.9.0/docs/modelfit.md).
