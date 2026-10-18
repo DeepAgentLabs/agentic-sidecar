@@ -418,3 +418,20 @@ See the [suite management guide](https://github.com/DeepAgentLabs/agenticlens/bl
 Evals 0.8.0 provides declarative `evaluate`, `live` and `gate` commands for supplied evaluation observations. Sidecar supervision decisions remain separate from scoring and release gates. Agent Alone versus Agent + Sidecar evidence remains Sidecar v0.9 work; no runtime dependency is added.
 
 See [CLI usage and compatibility](docs/evals-0.8-cli.md).
+
+## Chaos 0.7.0 interoperability
+
+Chaos 0.7.0 adds sequential fault cascades, deterministic monotonic breaking-point
+search, synthetic response poisoning (including prompt/tool-response instruction
+and policy-bypass payloads), and explicit-price retry cost estimates. Native
+child event IDs and fault types remain intact; cascade IDs/stages and poisoning
+strategy/payload/seed are additive event detail. Existing report readers and
+AIOS exports remain compatible.
+
+See the [v0.7 guide and offline synthetic example](https://github.com/DeepAgentLabs/agentic-chaos/blob/v0.7.0/docs/v0.7.md).
+The example includes observed synthetic dispatches and a bypassed negative
+control. Injection or recovery alone does not prove containment. No new shared
+schema, automatic adapter, hosted execution capability or containment guarantee
+is introduced.
+
+Sidecar 0.8.3 widens its optional agentic-chaos extra to >=0.5.3,<0.8. Recovery proposals retain native Chaos event IDs. This packaging patch changes no governance behavior; cross-framework attack containment remains v0.9 validation.

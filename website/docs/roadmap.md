@@ -96,3 +96,6 @@ cancellation, audit and harness-revocation interface is implemented. v0.8 adds
 a separate-process enforcing MCP gateway demonstration and Lens native journal
 verification. Secure service deployment is a harness responsibility; delegated
 authority and end-to-end privacy validation remain v0.9 work.
+
+Chaos 0.7 compatibility ships in Sidecar 0.8.3: the optional dependency
+now admits 0.7. [Evidence and limits](chaos-0.7.md).
