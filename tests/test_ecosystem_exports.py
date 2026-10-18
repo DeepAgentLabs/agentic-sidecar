@@ -100,3 +100,22 @@ def test_serialized_evidence_requires_original_decision_identity() -> None:
     del record["decision"]["decision_id"]
     with pytest.raises(ValidationError):
         DecisionEvidence.model_validate(record)
+
+
+def test_chaos_v07_poisoning_retains_native_recovery_identity() -> None:
+    pytest.importorskip("agentic_chaos", minversion="0.7.0")
+    from agentic_chaos import PoisonedResponseFault, chaos_call, chaos_session
+
+    from agentic_sidecar.gate.policy import PolicyAdvisor, PolicyRule
+
+    sidecar = Sidecar(
+        on_sidecar_failure="fail_closed",
+        mode="govern",
+        policy=PolicyAdvisor([PolicyRule(tool="delete", effect="deny")]),
+    )
+    with chaos_session([PoisonedResponseFault("policy_bypass", seed=7)]) as session:
+        chaos_call(lambda: "safe")
+    event = session.events[0]
+    with pytest.raises(SidecarBlockedError):
+        evaluate_recovery(sidecar, event.model_dump(mode="json"), tool_name="delete", arguments={})
+    assert sidecar.decisions[0][0].metadata["chaos.event_id"] == event.id
