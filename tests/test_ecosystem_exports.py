@@ -119,3 +119,30 @@ def test_chaos_v07_poisoning_retains_native_recovery_identity() -> None:
     with pytest.raises(SidecarBlockedError):
         evaluate_recovery(sidecar, event.model_dump(mode="json"), tool_name="delete", arguments={})
     assert sidecar.decisions[0][0].metadata["chaos.event_id"] == event.id
+
+
+def test_chaos_v08_workflow_events_retain_native_recovery_identity() -> None:
+    pytest.importorskip("agentic_chaos", minversion="0.8.0")
+    from agentic_chaos import PoisonedResponseFault, Scope, chaos_call
+    from agentic_chaos.workflows import ChaosWorkflow, Step
+
+    from agentic_sidecar.gate.policy import PolicyAdvisor, PolicyRule
+
+    workflow = ChaosWorkflow(
+        "sidecar-recovery",
+        [Step("poison", faults=[PoisonedResponseFault("policy_bypass", seed=7)])],
+        scope=Scope(steps=["planner"]),
+    )
+    report = workflow.run(lambda: chaos_call(lambda: "safe", step_name="planner"))
+    (event,) = report.chaos_events
+    assert event["detail"]["workflow"]["step"] == "poison"
+
+    sidecar = Sidecar(
+        on_sidecar_failure="fail_closed",
+        mode="govern",
+        policy=PolicyAdvisor([PolicyRule(tool="delete", effect="deny")]),
+    )
+    with pytest.raises(SidecarBlockedError):
+        evaluate_recovery(sidecar, event, tool_name="delete", arguments={})
+    assert sidecar.decisions[0][0].metadata["chaos.event_id"] == event["id"]
+
