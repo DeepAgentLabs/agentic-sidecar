@@ -86,7 +86,7 @@ Print the installed package version.
 
 ```bash
 agentic-sidecar version
-# agentic-sidecar 0.8.4
+# agentic-sidecar 0.8.5
 ```
 
 ---
