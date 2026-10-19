@@ -661,3 +661,15 @@ Recovery proposals keep native Chaos event IDs, including for events raised
 inside workflow steps. Chaos workflow Suspend gates are Chaos-owned approvals,
 not Sidecar decisions. This packaging patch changes no governance behavior.
 Injecting into Sidecar gate and approval paths remains v0.9 validation.
+
+## Evals 0.9.0 judge reliability and live resilience
+
+Evals 0.9.0 adds async live targets (`arun_live_suite`), bounded retries with
+per-case `target_status` (`ok`, `timed_out`, `error`) and unavailable judge
+scores that never pass. A supervised refusal returned as output is scored as
+an answer, not a target error, and is not retried. A refusal raised as
+`SidecarBlockedError`/`SidecarSuspendedError` is a target `error` and *is*
+retried unless `RetryPolicy(retry_on=...)` excludes it. Supervision
+decisions stay separate from scores and gates. Agent Alone versus Agent +
+Sidecar evidence remains Sidecar v0.9 work. No dependency or release is
+needed. See [the compatibility note](docs/evals-0.9-judge-reliability.md).
