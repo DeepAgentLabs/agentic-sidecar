@@ -629,5 +629,5 @@ and [offline example](https://github.com/DeepAgentLabs/agenticlens/blob/v0.10.0/
 The existing optional `agenticlens>=0.7.1,<1` extra already admits 0.10.0.
 Decision Gate policy, authority and human approval remain Sidecar/host-owned;
 a Lens route is not a Sidecar ALLOW or approval artifact. A blocked/escalated
-route invokes no provider callback. No dependency change or Sidecar patch release
-is required.
+route invokes no provider callback. The locked integration CI now tests Lens 0.10.0. No runtime dependency-range
+change or Sidecar patch release is required.
