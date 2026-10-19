@@ -102,3 +102,6 @@ now admits 0.7. [Evidence and limits](chaos-0.7.md).
 
 AgenticLens 0.9 compatibility ships in Sidecar 0.8.4: the optional
 `agenticlens` extra admits `>=0.7.1,<1`. No runtime change.
+
+Chaos 0.8 compatibility ships in Sidecar 0.8.5: the optional dependency
+now admits 0.8. [Workflow evidence and limits](chaos-0.8.md).
