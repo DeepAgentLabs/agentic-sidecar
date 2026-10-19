@@ -527,3 +527,11 @@ retried unless `RetryPolicy(retry_on=...)` excludes it. Supervision
 decisions stay separate from scores and gates. Agent Alone versus Agent +
 Sidecar evidence remains Sidecar v0.9 work. No dependency or release is
 needed. See [the compatibility note](docs/evals-0.9-judge-reliability.md).
+
+## MCP 0.4.0 unified release checks
+
+MCP 0.4.0's unified workflows do not consume Sidecar evidence; MCP keeps
+discovery-only Sidecar tools. The authenticated stop/revoke bridge remains open
+Phase 4 work on the MCP side. No Sidecar change or release.
+See [the compatibility guide](docs/mcp-0.4-unified-workflows.md)
+and the [MCP guide](https://github.com/DeepAgentLabs/mcp-server/blob/v0.4.0/docs/unified-workflows.md).
