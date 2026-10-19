@@ -38,6 +38,7 @@ validation:
   anchors: warn
 
 nav:
+  - Chaos 0.8 Compatibility: chaos-0.8.md
   - Chaos 0.7 Compatibility: chaos-0.7.md
   - Home: index.md
   - Getting started: getting-started.md
