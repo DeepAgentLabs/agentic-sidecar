@@ -145,4 +145,3 @@ def test_chaos_v08_workflow_events_retain_native_recovery_identity() -> None:
     with pytest.raises(SidecarBlockedError):
         evaluate_recovery(sidecar, event, tool_name="delete", arguments={})
     assert sidecar.decisions[0][0].metadata["chaos.event_id"] == event["id"]
-
