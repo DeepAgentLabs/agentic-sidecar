@@ -15,8 +15,13 @@ evaluators and targets (`aevaluate_suite`, `arun_live_suite`).
   raises because supervision stopped it is recorded as `error` with the
   exception text, so compare those cases deliberately rather than gating them
   away with `max_target_error_cases`.
-- Do not retry a supervised refusal into a pass: retries only repeat calls that
-  raised or timed out, and `target_attempts` shows when they did.
+- Do not retry a supervised refusal into a pass. Retries repeat calls that
+  raised or timed out, so a refusal *returned* as output is never retried. A
+  refusal *raised* by the enforcing adapters (`SidecarBlockedError`,
+  `SidecarSuspendedError`) is retried by the default `retry_on=(Exception,)`.
+  Limit retries to transport failures, for example
+  `RetryPolicy(max_attempts=3, retry_on=(ConnectionError, TimeoutError))`, and
+  read `target_attempts` to see when a retry happened.
 - An unavailable LLM judgment never passes and fails the Evals default gate, so
   a judge outage cannot make Agent + Sidecar look safer than it is.
 
