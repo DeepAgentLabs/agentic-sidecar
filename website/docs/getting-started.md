@@ -1,16 +1,16 @@
 # Getting Started
 
-Start with deterministic tool-call supervision using the **0.8.4** API (unchanged from 0.8.0).
+Start with deterministic tool-call supervision using the **0.8.5** API (unchanged from 0.8.0).
 These examples run without a model, framework installation, or API key.
 
 ## Installation
 
-Requires Python 3.10 or newer. Install the v0.8.4 package from PyPI:
+Requires Python 3.10 or newer. Install the v0.8.5 package from PyPI:
 
 ```bash
-pip install agentic-sidecar==0.8.4
+pip install agentic-sidecar==0.8.5
 # Optional live Judge SDKs:
-pip install "agentic-sidecar[openai,anthropic]==0.8.4"
+pip install "agentic-sidecar[openai,anthropic]==0.8.5"
 ```
 
 For development from a checkout, run `uv sync --extra dev --extra langgraph --extra docs`.

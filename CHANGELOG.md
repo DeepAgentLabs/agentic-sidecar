@@ -4,6 +4,20 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.8.5] - 2026-10-18
+
+### Changed
+
+- The optional `agentic-chaos` extra now admits Chaos 0.8 (`>=0.5.3,<0.9`,
+  was `<0.8`), so `pip install "agentic-sidecar[agentic-chaos]"` resolves
+  alongside Chaos 0.8.0 (workflows, declarative experiments, explosion radius).
+  The lock and the locked ecosystem CI job test 0.8.0.
+- Recovery proposals keep native Chaos event IDs for events raised inside
+  workflow steps (`detail.workflow` is additive). No runtime, API or schema
+  change.
+- Document Chaos 0.8 workflow evidence and its limits. Version markers in the
+  README and website docs move to 0.8.5.
+
 ## [0.8.4] - 2026-10-18
 
 ### Changed

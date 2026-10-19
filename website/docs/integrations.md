@@ -130,3 +130,6 @@ directly requires `agentic-evals>=0.7.2`.
 
 For Chaos 0.7 cascades and synthetic poisoning, install Sidecar 0.8.3 or later.
 See [compatibility and containment limits](chaos-0.7.md).
+
+For Chaos 0.8 workflows and experiments, install Sidecar 0.8.5 or later. The
+optional extra then admits `>=0.5.3,<0.9`. See [workflow evidence and limits](chaos-0.8.md).
