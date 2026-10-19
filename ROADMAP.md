@@ -485,3 +485,32 @@ Decision Gate policy, authority and human approval remain Sidecar/host-owned;
 a Lens route is not a Sidecar ALLOW or approval artifact. A blocked/escalated
 route invokes no provider callback. The locked integration CI now tests Lens 0.10.0. No runtime dependency-range
 change or Sidecar patch release is required.
+
+## Chaos 0.8.0 interoperability
+
+Chaos 0.8.0 adds:
+
+- multi-stage chaos workflows: steps, steady-state health checks, parallel
+  branches, approval gates that can be resumed, and reusable templates
+- declarative YAML/JSON/TOML experiments, with validation that never executes
+  targets and cron schedule previews
+- `Scope` explosion-radius control (steps, providers and exclusions) on every
+  fault
+- a topology fuzzer that weights fault placement by fan-out
+
+Native event IDs and fault types are unchanged. Workflow provenance
+(`detail.workflow`) and an optional `ChaosReport.workflow` summary are
+additive. A workflow's steps merge into one native report for contracts and
+AIOS export.
+
+See the [v0.8 guide](https://github.com/DeepAgentLabs/agentic-chaos/blob/v0.8.0/docs/v0.8.md)
+and the [offline examples](https://github.com/DeepAgentLabs/agentic-chaos/tree/v0.8.0/examples/workflows).
+Workflow statuses, health checks and fuzz outcomes are resilience evidence.
+They are not scores, release gates or proof of containment. No new shared
+schema, automatic adapter or hosted execution capability is introduced.
+
+Sidecar 0.8.5 widens its optional `agentic-chaos` extra to `>=0.5.3,<0.9`.
+Recovery proposals keep native Chaos event IDs, including for events raised
+inside workflow steps. Chaos workflow Suspend gates are Chaos-owned approvals,
+not Sidecar decisions. This packaging patch changes no governance behavior.
+Injecting into Sidecar gate and approval paths remains v0.9 validation.
