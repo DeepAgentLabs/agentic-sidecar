@@ -43,17 +43,16 @@ class CriticEvaluator(EvaluatorBase):
         history = context.get("history", [])
 
         challenges = self._analyze_decision(tool_name, arguments, goal, history)
-        metadata = context.get("metadata", {})
-        if metadata.get("authorized") is True:
-            challenges = [c for c in challenges if c.category != "risky"]
-        if metadata.get("eligibility_verified") is True:
-            challenges = [c for c in challenges if c.category != "assumption"]
-        if metadata.get("backup_verified") is True:
-            challenges = [c for c in challenges if c.category != "reasoning"]
+        challenges = self._verified(challenges, context.get("metadata", {}))
         for step in context.get("plan", []):
             name = step.get("tool_name", "") if isinstance(step, dict) else step.tool_name
             args = step.get("arguments", {}) if isinstance(step, dict) else (step.arguments or {})
-            challenges.extend(self._analyze_decision(name, args or {}, goal, history))
+            # Evidence is scoped to this step; top-level evidence describes only
+            # the top-level action and cannot authorize every step in a plan.
+            metadata = step.get("metadata", {}) if isinstance(step, dict) else {}
+            challenges.extend(
+                self._verified(self._analyze_decision(name, args or {}, goal, history), metadata)
+            )
 
         if not challenges or self.threshold > 0.85:
             return EvaluatorResult(
@@ -69,6 +68,19 @@ class CriticEvaluator(EvaluatorBase):
             confidence=0.85,
             metadata={"challenge_count": len(challenges)},
         )
+
+    @staticmethod
+    def _verified(
+        challenges: list[CriticChallenge], metadata: dict[str, Any]
+    ) -> list[CriticChallenge]:
+        verified = {
+            "risky": metadata.get("authorized") is True,
+            "assumption": metadata.get("eligibility_verified") is True,
+            "reasoning": metadata.get("backup_verified") is True,
+        }
+        return [
+            challenge for challenge in challenges if not verified.get(challenge.category, False)
+        ]
 
     def _analyze_decision(
         self, tool_name: str, arguments: dict[str, Any], goal: str, history: list[Any]
