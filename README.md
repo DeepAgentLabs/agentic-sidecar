@@ -694,3 +694,10 @@ See [the compatibility guide](docs/mcp-0.4-unified-workflows.md).
 See [AIOS v0.6 compatibility](docs/aios-v0.6.md) for canonical examples,
 namespace rules and native contract boundaries. AIOS artifacts remain
 `0.4-draft`; no runtime dependency bump or package release is required.
+
+## Control Tower 0.8.0 live operations
+
+See [operator compatibility and ownership](docs/tower-0.8-live-operations.md) for
+periodic detection, durable alerts, acknowledgements and joined incident console
+views. Existing native contracts and optional dependency ranges remain compatible;
+no runtime or patch release is required here.
