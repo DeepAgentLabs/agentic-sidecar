@@ -118,7 +118,7 @@ class BoundAgent:
 
     def context(self, *, reader: str | None = None) -> dict[str, Any]:
         """Read as a harness-authenticated reader (defaults to this agent)."""
-        return self._context.read(reader or self._context.owner)
+        return self._context.read(self._context.owner if reader is None else reader)
 
     def deliver(self, receiver: Callable[[dict[str, Any]], None]) -> None:
         """Explicit host prompt/memory transport; no implicit agent mutation."""

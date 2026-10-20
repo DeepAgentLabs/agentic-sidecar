@@ -142,3 +142,10 @@ def test_tool_results_and_handoff_do_not_implicitly_propagate_private_context():
     assert SECRET not in json.dumps(refund.sidecar.runtime.snapshot())
     assert SECRET not in json.dumps(research.context())
     assert SECRET not in json.dumps(research.evidence())
+
+
+def test_explicit_empty_reader_is_not_an_owner_alias():
+    refund = agents().bind("refund", on_sidecar_failure="fail_closed")
+    assert refund.context()["values"]["payment"] == SECRET
+    with pytest.raises(PermissionError):
+        refund.context(reader="")
