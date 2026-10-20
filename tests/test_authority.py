@@ -144,3 +144,23 @@ def test_operator_intent_update_cannot_escape_delegation():
     with pytest.raises(ValueError, match="re-delegation"):
         governed.runtime.modify_intent(governed.intent.envelope.model_dump(mode="json"), "operator")
     assert not any(e["kind"] == "intent_modified" for e in governed.runtime.journal.export())
+
+
+def test_expiry_is_rechecked_at_dispatch(monkeypatch):
+    import agentic_sidecar.intent.authority as authority_module
+
+    clock = datetime.now(timezone.utc)
+
+    class Clock:
+        @staticmethod
+        def now(tz):
+            return clock
+
+    monkeypatch.setattr(authority_module, "datetime", Clock)
+    governed = sidecar(root(expires=clock + timedelta(seconds=1)))
+    context = DecisionContext(tool_name="refund", tool_args={"amount": 10})
+    decision = governed.evaluate(context)
+    assert decision.status == "ALLOW"
+    clock += timedelta(seconds=2)
+    with pytest.raises(SidecarBlockedError, match="expired"):
+        governed.runtime.dispatch(context, decision)

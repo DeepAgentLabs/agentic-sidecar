@@ -309,6 +309,8 @@ class TaskRuntime(EscalationHandler):
                 from agentic_sidecar.intent.envelope import IntentEnvelope
 
                 sidecar = self._require_sidecar()
+                if sidecar.intent is not None and sidecar.intent.grant_id is not None:
+                    raise ValueError("Authority-bearing intent requires explicit re-delegation")
                 if sidecar.intent is None or response.modified_intent is None:
                     raise ValueError("Active intent and a complete envelope required")
                 IntentEnvelope.model_validate(response.modified_intent)

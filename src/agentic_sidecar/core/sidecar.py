@@ -498,6 +498,14 @@ class Sidecar:
 
     def _inject(self, context: DecisionContext) -> None:
         context.metadata.update(deepcopy(self._context_metadata))
+        if self.intent is not None and self.intent.grant_id is not None:
+            context.metadata["sidecar.authority"] = {
+                "grant_id": self.intent.grant_id,
+                "task_id": self.intent.task_id,
+                "agent_id": self.intent.agent_id,
+                "intent_id": self.intent.envelope.id,
+                "parent_intent_id": self.intent.envelope.metadata.get("parent_intent_id"),
+            }
         history = [
             HistoryEntry(tool_name=c.tool_name, tool_args=c.tool_args, status=d.status)
             for c, d in self.decisions

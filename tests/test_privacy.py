@@ -125,3 +125,20 @@ def test_reader_operator_view_is_redacted_and_cannot_mutate_or_read_raw_events()
             with pytest.raises(HTTPError) as error:
                 request(server.url, reader, route, body)
             assert error.value.code == 403
+
+
+def test_tool_results_and_handoff_do_not_implicitly_propagate_private_context():
+    from agentic_sidecar.adapters.callable import attach
+
+    system = agents()
+    refund = system.bind("refund", on_sidecar_failure="fail_closed")
+    research = system.bind("research", on_sidecar_failure="fail_closed")
+
+    def read():
+        """Return a private result to the owning agent only."""
+        return SECRET
+
+    assert attach(refund.sidecar, [read])[0]() == SECRET
+    assert SECRET not in json.dumps(refund.sidecar.runtime.snapshot())
+    assert SECRET not in json.dumps(research.context())
+    assert SECRET not in json.dumps(research.evidence())
