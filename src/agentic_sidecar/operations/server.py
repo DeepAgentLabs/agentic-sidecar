@@ -68,10 +68,11 @@ catch(e){$('message').textContent=e.message;}};
 
 
 class OperatorServer(AbstractContextManager["OperatorServer"]):
-    """Explicit opt-in loopback server; one secret/actor and task per instance.
+    """Explicit opt-in loopback server; one operator and task per instance.
 
     The token must have at least 32 characters. All API reads and mutations
-    require it. It is never embedded in HTML, URLs or logs. No cross-origin API.
+    require an operator or configured reader token. Reader tokens permit only
+    redacted GET /status. Tokens never appear in HTML, URLs or logs. No cross-origin API.
     """
 
     def __init__(
