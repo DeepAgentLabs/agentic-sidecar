@@ -531,16 +531,19 @@ class Sidecar:
                     intent=context.intent,
                     history=context.history,
                 )
-                if "policy" in self.roles and self.policy.evaluate(step_context).effect == "deny":
-                    return Decision(
-                        status="BLOCK",
-                        risk=None,
-                        reason="Plan step denied by policy",
-                        decision_point="plan",
-                    )
                 findings: dict[str, Any] = {"tool_name": step_context.tool_name}
                 step_findings.append(findings)
                 context._findings["plan_steps"] = step_findings
+                if "policy" in self.roles:
+                    policy = self.policy.evaluate(step_context)
+                    findings["policy"] = policy.model_dump(mode="json")
+                    if policy.effect == "deny":
+                        return Decision(
+                            status="BLOCK",
+                            risk=plan_risk,
+                            reason="Plan step denied by policy",
+                            decision_point="plan",
+                        )
                 if "risk" in self.roles:
                     risk = self.risk.evaluate(step_context)
                     findings["risk"] = risk.model_dump(mode="json")
@@ -549,16 +552,17 @@ class Sidecar:
                     if RISK_ORDER[risk.risk] >= RISK_ORDER[self.risk_block_threshold]:
                         return Decision(
                             status="BLOCK",
-                            risk=risk.risk,
+                            risk=plan_risk,
                             reason=risk.reason,
                             decision_point="plan",
                         )
                 if self.intent is not None and "intent_guardian" in self.roles:
                     alignment = self.intent.evaluate(step_context)
+                    findings["alignment"] = alignment.model_dump(mode="json")
                     if alignment.status == "BLOCK":
                         return Decision(
                             status=alignment.status,
-                            risk=None,
+                            risk=plan_risk,
                             reason=alignment.reason,
                             decision_point="plan",
                         )

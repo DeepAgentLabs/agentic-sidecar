@@ -81,3 +81,27 @@ def test_critic_uses_step_scoped_verification():
         critic.evaluate({"metadata": evidence, "plan": [{"tool_name": "delete_record"}]}).status
         == "CHALLENGE"
     )
+
+
+@pytest.mark.parametrize("denial", ["policy", "intent"])
+def test_plan_early_denials_keep_prior_risk_and_findings(denial):
+    from agentic_sidecar.gate import PolicyAdvisor, PolicyRule
+
+    sidecar = Sidecar(
+        on_sidecar_failure="fail_closed",
+        roles=["policy", "risk", "intent_guardian"],
+        intent=guardian(100),
+        policy=PolicyAdvisor([PolicyRule(tool="deny", effect="deny")]),
+        risk=RiskEvaluator([RiskRule(tool="inspect", risk="MEDIUM")]),
+    )
+    plan = [
+        {"tool_name": "inspect"},
+        {"tool_name": "deny" if denial == "policy" else "refund", "arguments": {"amount": 999}},
+    ]
+    decision = sidecar.evaluate_plan(plan)
+    assert decision.status == "BLOCK"
+    assert decision.risk == "MEDIUM"
+    findings = sidecar.runtime.snapshot()["decisions"][-1]["rationale"]["findings"]["plan_steps"]
+    assert len(findings) == 2
+    assert findings[0]["risk"]["risk"] == "MEDIUM"
+    assert denial in findings[1] if denial == "policy" else "alignment" in findings[1]
