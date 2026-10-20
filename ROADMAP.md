@@ -557,3 +557,9 @@ Agent Alone dispatches 6 unsafe actions; governed Sidecar dispatches 0, with 2 f
 interventions during synthetic gate/provider outages (10/12 task successes).
 Chaos 0.8 injects native gate faults; Evals 0.9 scores supplied observations.
 No live-provider reliability or economic benefit is inferred from this fixture.
+
+## AIOS v0.6 examples and extension guidance
+
+See [AIOS v0.6 compatibility](docs/aios-v0.6.md) for canonical examples,
+namespace rules and native contract boundaries. AIOS artifacts remain
+`0.4-draft`; no runtime dependency bump or package release is required.

@@ -688,3 +688,9 @@ decisions, and MCP still exposes Sidecar discovery only (`sidecar.status`,
 `sidecar.module_inventory`). Sidecar's own `mcp` extra and gateway are unaffected.
 No Sidecar change, dependency bump or release is needed.
 See [the compatibility guide](docs/mcp-0.4-unified-workflows.md).
+
+## AIOS v0.6 examples and extension guidance
+
+See [AIOS v0.6 compatibility](docs/aios-v0.6.md) for canonical examples,
+namespace rules and native contract boundaries. AIOS artifacts remain
+`0.4-draft`; no runtime dependency bump or package release is required.
