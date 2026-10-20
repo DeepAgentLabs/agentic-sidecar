@@ -8,10 +8,11 @@ import fnmatch
 import json
 from collections.abc import Callable, Sequence
 from copy import deepcopy
+from datetime import datetime
 from typing import Any
 from uuid import NAMESPACE_URL, uuid5
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from agentic_sidecar.core.context import DecisionContext
 from agentic_sidecar.core.decision import Decision
@@ -20,6 +21,7 @@ from agentic_sidecar.gate.policy import PolicyAdvisor, PolicyEffect, PolicyRule
 from agentic_sidecar.intent.alignment import ConstraintBinding, IntentGuardian
 from agentic_sidecar.intent.envelope import IntentEnvelope, Requester
 from agentic_sidecar.operations import TaskRuntime
+from agentic_sidecar.scopes.privacy import ProtectedContext, redact_snapshot
 
 
 class ContextSpec(BaseModel):
@@ -28,6 +30,15 @@ class ContextSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
     goal: str = ""
     values: dict[str, Any] = Field(default_factory=dict)
+    readers: set[str] = Field(default_factory=set)
+    expires: datetime | None = None
+
+    @field_validator("expires")
+    @classmethod
+    def aware_expiry(cls, value: datetime | None) -> datetime | None:
+        if value is not None and (value.tzinfo is None or value.utcoffset() is None):
+            raise ValueError("Context expiry must be timezone-aware")
+        return value
 
 
 class GuardrailSpec(BaseModel):
@@ -101,17 +112,28 @@ class ScopeLayer(BaseModel):
 class BoundAgent:
     """A host-bound identity with its own Sidecar/history and context payload."""
 
-    def __init__(self, sidecar: Sidecar, payload: dict[str, Any]) -> None:
+    def __init__(self, sidecar: Sidecar, context: ProtectedContext) -> None:
         self.sidecar = sidecar
-        self._payload = deepcopy(payload)
+        self._context = context
 
-    def context(self) -> dict[str, Any]:
-        """Return only this agent's resolved context as a defensive copy."""
-        return deepcopy(self._payload)
+    def context(self, *, reader: str | None = None) -> dict[str, Any]:
+        """Read as a harness-authenticated reader (defaults to this agent)."""
+        return self._context.read(reader or self._context.owner)
 
     def deliver(self, receiver: Callable[[dict[str, Any]], None]) -> None:
         """Explicit host prompt/memory transport; no implicit agent mutation."""
         receiver(self.context())
+
+    def update_context(self, values: dict[str, Any], *, actor: str) -> None:
+        """Owner-only context update; guardrails remain independently configured."""
+        self._context.update(values, actor=actor)
+
+    def revoke_context(self, *, actor: str) -> None:
+        self._context.revoke(actor=actor)
+
+    def evidence(self) -> dict[str, Any]:
+        """Redacted summary suitable for other agents; no private raw journal."""
+        return redact_snapshot(self.sidecar.runtime.snapshot())
 
 
 class ScopedSystem:
@@ -170,7 +192,17 @@ class ScopedSystem:
     ) -> BoundAgent:
         """Bind trusted identity, context and mandatory guardrails to a Sidecar."""
         payload, checks = self._resolve(agent_id)
-        goal = "\n".join(payload["goals"])
+        contexts = [
+            layer.context
+            for layer in [self._shared, self._exclusive.get(agent_id, ScopeLayer())]
+            if layer.context is not None
+        ]
+        # Reading the combined payload requires permission on every layer.
+        readers = set.intersection(*(set(item.readers) for item in contexts)) if contexts else set()
+        expiries = [item.expires for item in contexts if item.expires is not None]
+        protected = ProtectedContext(
+            payload, owner=agent_id, readers=readers, expires=min(expiries) if expiries else None
+        )
         sidecar = Sidecar(
             on_sidecar_failure=on_sidecar_failure,
             mode=mode,
@@ -183,12 +215,14 @@ class ScopedSystem:
             },
             context_metadata={
                 "sidecar.scope": {**self._identity, "agent_id": agent_id},
-                "sidecar.context": payload["values"],
+                "sidecar.context": {},
             },
             roles=("policy", "risk", "intent_guardian"),
-            intent=IntentGuardian(IntentEnvelope(goal=goal, requested_by=Requester(id="harness"))),
+            intent=IntentGuardian(
+                IntentEnvelope(goal="Scoped task supervision", requested_by=Requester(id="harness"))
+            ),
             runtime=TaskRuntime(
                 task_id=str(uuid5(NAMESPACE_URL, json.dumps([*self._identity.values(), agent_id])))
             ),
         )
-        return BoundAgent(sidecar, payload)
+        return BoundAgent(sidecar, protected)
