@@ -9,7 +9,7 @@
 | Field | Value |
 |---|---|
 | **Package** | `agentic-sidecar` |
-| **Checkout version** | `0.8.5` |
+| **Checkout version** | `0.9.0` |
 | **Maturity** | Pre-Alpha |
 | **License** | MIT |
 | **Python** | ≥ 3.10 |
@@ -49,3 +49,5 @@ All of this runs in either **Observe mode** (log decisions, never block) or **Go
 | [Troubleshooting](troubleshooting.md) | Common errors and how to fix them |
 | [Limitations](limitations.md) | Known constraints and current boundaries |
 | [Roadmap](roadmap.md) | Release history and upcoming capability stages |
+
+See [v0.9 authority, privacy and migration](v0.9.md) for the current lifecycle APIs.

@@ -52,7 +52,7 @@ practice, the package covers both supervision and governance.
 
 ### Current Roadmap Focus
 
-The checkout targets the v0.8.5 release (0.8.0 runtime plus the Chaos 0.8 and AgenticLens 0.9 extra ranges). Runtime code includes Decision Gate outcomes,
+The checkout targets the v0.9.0 release (0.8.0 runtime plus the Chaos 0.8 and AgenticLens 0.9 extra ranges). Runtime code includes Decision Gate outcomes,
 Intent Guardian, evaluator modules, budget/escalation handling, narration and
 CLI commands. Native AutoGen, CrewAI, OpenAI Agents, Google ADK and MCP boundaries are implemented;
 use the actual source and tests to distinguish implementation from roadmap
@@ -82,7 +82,7 @@ pending credentials. Read website/docs/governance.md for supported scope and val
 The current runtime includes `core/`, policy/risk, intent supervision,
 `evaluators/`, budget/escalation logic, `status/narrate.py`, and `cli/main.py`.
 The LangGraph, AutoGen, CrewAI, OpenAI Agents SDK, Google ADK and MCP adapters
-share a callable boundary. Shared/exclusive scopes provide explicit context
+share a callable boundary. v0.9 adds authority grants/delegation/revocation, protected context readers and redacted summaries. Shared/exclusive scopes provide explicit context
 delivery and mandatory checks. Lens/Chaos integrations and native correlation
 are implemented; Semantica remains reserved. CLI status with --endpoint connects to a TaskRuntime through authenticated
 loopback HTTP; without an endpoint it retains the standalone narrator.
@@ -141,7 +141,7 @@ for the full rationale on each:
 | `src/agentic_sidecar/gate/risk.py` | Risk Evaluator — rule-based classification | v0.1 (implemented) |
 | `src/agentic_sidecar/gate/budget.py` | Budget Guardian — cost/token ceilings | v0.4 (implemented) |
 | `src/agentic_sidecar/adapters/langgraph.py` | LangGraph interception adapter, incl. `attach(sidecar, tools)`; Govern outcome resolution and sync/async interception | v0.6.1 (implemented) |
-| `src/agentic_sidecar/intent/` | `IntentEnvelope`, `IntentGuardian`, `ConstraintBinding` — constraint validation only, no `authority` enforcement yet | v0.2 (implemented) |
+| `src/agentic_sidecar/intent/` | `IntentEnvelope`, `IntentGuardian`, `ConstraintBinding` — constraint validation only, optional authority binding/delegation enforcement | v0.2 (implemented) |
 | `src/agentic_sidecar/evaluators/planner.py` | Planner — evaluates the whole plan against intent | v0.3 (runtime present) |
 | `src/agentic_sidecar/evaluators/critic.py` | Critic mode — pre-decision challenge | v0.3 (runtime present) |
 | `src/agentic_sidecar/evaluators/judge.py` | Model-agnostic LLM Judge interface | v0.3 (runtime present) |

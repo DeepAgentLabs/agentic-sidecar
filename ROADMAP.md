@@ -32,7 +32,7 @@ local operator interface and Control Room; see [live operations](website/docs/li
 | Capability | Available today | Next step |
 | --- | --- | --- |
 | Runtime, Policy Advisor, Risk Evaluator | Deterministic rules and explicit failure configuration | Extend failure-path coverage |
-| Intent Guardian | Numeric/enum/allow-list constraint bindings and expiry warnings | Task-authority bindings and delegation |
+| Intent Guardian | Constraint bindings, task-authority bindings, narrowed delegation and revocation | Stable interoperable schemas |
 | LangGraph adapter | Sync/async wrapping, governed outcome suspension and local approvals | Further adapter conformance |
 | Planner | Explicit full-plan gate, goal/constraints/history/metadata and bound checks | Broader evidence-driven reasoning |
 | Critic | Selected risk/assumption/history checks and supplied evidence | Broader evidence-driven reasoning |
@@ -44,7 +44,7 @@ local operator interface and Control Room; see [live operations](website/docs/li
 | Framework adapters | LangGraph, AutoGen, CrewAI, OpenAI Agents, Google ADK and MCP boundaries | Broader version/platform evidence |
 | Ecosystem integrations | Versioned correlation, Lens decision export and Chaos recovery checks | Conditional Semantica export |
 | Control Room | Authenticated task-scoped runtime controls | Broader adapter coverage |
-| Scoped supervision | Shared/exclusive context transport and mandatory guardrail composition | Private-context and authority lifecycle validation |
+| Scoped supervision | Reader access, explicit transport, mandatory checks and redacted summaries | External harness/process isolation |
 | Evaluation and interoperability | Outcome tests and four deterministic intent fixtures | Broader comparative evidence and schemas |
 
 The 0.6.1 validation includes outcome/approval/failure tests, real LangGraph
@@ -55,7 +55,7 @@ checks. See [acceptance evidence](website/docs/governance.md) for scope and live
 ## Shared & Exclusive Context and Guardrails
 
 **Status: v0.8 configuration, delivery and composition implemented.** Privacy,
-authority/lifecycle validation and stable contracts remain v0.9/v1.0 work. Users can configure context/intent only,
+authority/lifecycle acceptance evidence ships in 0.9.0; stable contracts remain v1.0 work. Users can configure context/intent only,
 guardrails only, or both, with independent scopes for each:
 
 | Scope | Context / intent | Guardrails |
@@ -286,20 +286,26 @@ API validation and is not claimed implemented.
 Coordinate generic scoring with Agentic Evals while keeping supervision
 scenarios and intervention measurements within Sidecar.
 
-- [ ] Validate Shared & Exclusive privacy, authority and lifecycle behavior with
-      the v0.9 acceptance checks above.
-- [ ] Extend the fixtures to compare Agent Alone vs. Agent + Sidecar, including
-      unnecessary plan steps, unsupported assumptions, and degraded providers.
-- [ ] Publish reproducible task-success, unsafe-action, false-intervention,
-      latency, token, and cost results with sample sizes and configuration.
-- [ ] Measure reliability improvement per added inference cost; separate model
-      evaluation results from deterministic constraint performance.
-- [ ] Define authority bindings from a concrete use case, enforce granted/denied
-      task authority, and test expiry/handoff behavior without conflating policy.
-- [ ] Add cross-agent delegation examples with explicit authority and task scope;
-      verify envelope narrowing and correlation across boundaries.
-- [ ] Add optional model-backed plan/critic reasoning only where benchmark evidence
-      supports it; keep heuristic and deterministic defaults explicit.
+- [x] Validate Sidecar-owned Shared & Exclusive reader access, redacted summaries,
+      context updates/expiry/revocation and independent concurrent-agent state.
+      External prompt/memory/output transport remains a trusted-harness responsibility;
+      this release does not claim process isolation or retract delivered copies.
+- [x] Compare Agent Alone vs Sidecar on constraints, unnecessary plan steps,
+      unsupported assumptions, mock judgement, gate faults and unavailable providers.
+- [x] Publish dispatch-level task-success, unsafe-action, false-intervention,
+      latency, token and cost evidence with sample sizes and configuration.
+- [x] Separate deterministic and heuristic fixtures from synthetic mock inference.
+      Added live inference cost is zero; improvement per dollar is undefined.
+- [x] Enforce explicitly bound task authority, missing/denied grants, expiry,
+      ancestor revocation and dispatch-time rechecks under the registry lock.
+- [x] Demonstrate narrowed cross-agent delegation preserving constraints and task
+      scope, with parent intent/grant identity in native evidence.
+- [ ] Conditional follow-up: model-backed plan/critic reasoning only if live
+      benchmark evidence supports it. No such evidence is claimed in 0.9.0.
+
+Acceptance record: [v0.9 guide](website/docs/v0.9.md),
+[paired evidence](tests/validation/v0_9_supervision.json), authority/privacy tests,
+and native SDK authority conformance. No stable shared schema is introduced.
 
 Local-model risk classification, automatic framework usage extraction,
 caching, and sampling remain conditional follow-ups, not mandatory release
@@ -357,7 +363,7 @@ access-boundary revocation; Tower supplies optional operator coordination.
 - [x] v0.7–v0.8: correlate immutable decision records, policy versions, task IDs,
       actors, approvals and stop acknowledgements with actual dispatch/completion.
       Integrate Lens integrity verification; verdict history alone is not execution.
-- [ ] v0.9: test revoked/expired delegated authority and, with Chaos/Evals, prove
+- [x] v0.9: test revoked/expired delegated authority and, with Chaos/Evals, verify
       zero forbidden dispatches after acknowledged stop/revocation. Cover injected
       instructions, policy bypass and failures of the gate itself.
 
@@ -535,3 +541,19 @@ discovery-only Sidecar tools. The authenticated stop/revoke bridge is MCP Phase 
 (hosted access control) work. No Sidecar change or release.
 See [the compatibility guide](docs/mcp-0.4-unified-workflows.md)
 and the [MCP guide](https://github.com/DeepAgentLabs/mcp-server/blob/v0.4.0/docs/unified-workflows.md).
+
+## v0.9.0 validation record
+
+Task authority is bound explicitly to tool names and trusted task/agent identities.
+Delegation narrows permissions/expiry, preserves inherited constraints and cannot
+change task scope. Revocation invalidates descendants; restart does not revive grants.
+Reader-safe summaries deliberately omit native payloads and are not verifiable journals.
+Private context values/goals are delivered only through explicit host calls, not
+injected into evaluator inputs or audit events. Raw tool arguments and native journals
+remain privileged host data. See the v0.9 guide for migration and threat-model limits.
+
+The fixed 24-run paired fixture has 6 unsafe and 6 clean samples per variant:
+Agent Alone dispatches 6 unsafe actions; governed Sidecar dispatches 0, with 2 false
+interventions during synthetic gate/provider outages (10/12 task successes).
+Chaos 0.8 injects native gate faults; Evals 0.9 scores supplied observations.
+No live-provider reliability or economic benefit is inferred from this fixture.

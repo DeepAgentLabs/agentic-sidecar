@@ -141,3 +141,9 @@ Release automation validates tag/source/changelog before building and validates
 wheel/sdist metadata before publication. CI runs examples, compiles Python doc
 fences, checks local file links and builds docs strictly on pull requests.
 Pages deployment is limited to main. [Roadmap](roadmap.md) tracks remaining work.
+
+## v0.9 lifecycle and evidence
+
+Task authority, reader access, redacted summaries and paired supervision measurements
+are available. See [the v0.9 guide](v0.9.md) for dispatch-time enforcement, migration
+and explicitly synthetic benchmark limits. Plan Critic evidence must be step-scoped.

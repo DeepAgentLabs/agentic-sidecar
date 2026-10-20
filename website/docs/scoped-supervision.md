@@ -60,9 +60,8 @@ The [MCP gateway example](examples.md) demonstrates a separate-process boundary,
 server-side checks and an unavailable raw tool; it does not sandbox a hostile OS
 user who can inspect gateway memory/files or change its launch environment.
 
-Only assigned exclusive context is returned/injected for each bound agent.
-End-to-end private-context isolation across framework memories, model providers,
-handoffs, outputs, logs and operator views remains v0.9 validation work. Native
-journals include context and decision reasons: store them with task-authorized
-access. Revocation/delegated authority and live shared configuration updates are
-also v0.9; reconfigure through a new trusted task rather than mutating a live binding.
+Only assigned exclusive context is returned through explicit host delivery. In 0.9,
+private goals/values are not evaluator/audit metadata. Reader access, context
+updates/expiry/revocation, redacted evidence and operator readers are documented in
+[v0.9](v0.9.md). Framework memory, prompt, result and output transport remain host
+responsibilities; there is no process isolation or automatic secret scrubbing.

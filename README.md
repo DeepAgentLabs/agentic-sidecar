@@ -6,7 +6,7 @@
 
 ## Status
 
-**Current checkout version: 0.8.5.** The runtime brings together deterministic
+**Current checkout version: 0.9.0.** The runtime brings together deterministic
 intent/policy/risk supervision, optional evaluators, budget accounting,
 narration, and the CLI. See the [roadmap](ROADMAP.md) for release history
 and upcoming capability stages.
@@ -21,12 +21,16 @@ and upcoming capability stages.
 | Judge | Explicit MockJudge; optional live OpenAI/Anthropic SDK providers, validated verdicts, timeouts and usage accounting |
 | Narration / CLI | Runtime-connected `status --endpoint ... --follow`, execution narration and `control`/`approve`; standalone narrator remains available |
 | Frameworks / integrations | LangGraph, AutoGen, CrewAI, OpenAI Agents, Google ADK and MCP; correlated Lens decisions and Chaos recovery |
-| Shared / Exclusive scopes | Context only, guardrails only, or both; explicit host context delivery and mandatory guardrail composition |
+| Shared / Exclusive scopes | Explicit delivery, reader access, context expiry/revocation and mandatory guardrails |
+| Task authority | Explicit tool bindings, narrowed delegation, ancestor revocation and dispatch-time expiry checks |
+| Supervision evidence | Offline paired dispatch fixtures, Chaos gate failure injection and optional Evals scoring |
 
 Live status, audit and Control Room: [usage and acceptance evidence](website/docs/live-operations.md).
 Authenticated provider smoke remains pending credentials.
 
-Next: **0.9 evaluation, privacy and authority → 1.0 stable schemas**.
+**0.9 adds task authority, narrowed delegation, context reader access and redacted
+summaries.** See the [v0.9 guide](website/docs/v0.9.md) for the APIs, migration
+notes and reproducible Agent Alone vs Sidecar evidence. Next: **1.0 stable schemas**.
 See [supported scope and limitations](website/docs/limitations.md) for operational details.
 
 ### Installation & Usage
@@ -377,8 +381,9 @@ result = reviewer.evaluate_plan(
 print(result.status)  # REPLAN
 ```
 
-A `before_tool_call` hook replaces the entire built-in pipeline, including
-budget and evaluators. See [API reference](website/docs/api-reference.md),
+A `before_tool_call` hook replaces the optional built-in pipeline, including
+budget and evaluators. Mandatory scoped checks and task authority remain enforced;
+hooks cannot rewrite the proposed action. See [API reference](website/docs/api-reference.md),
 [configuration](website/docs/configuration.md), and [runnable examples](examples/README.md).
 
 ## Planned Python API
@@ -480,8 +485,8 @@ Canonical release history, capability status, completion checklists, and future 
 context only, guardrails only, or both, independently Shared across a system/task
 or Exclusive to designated agent(s). Each agent receives shared plus assigned
 exclusive context; shared guardrails remain mandatory alongside exclusive rules.
-v0.8 provides scoped configuration, delivery and composition; v0.9 validates
-privacy, authority and lifecycle behavior; v1.0 stabilizes contracts. Use `ScopedSystem.bind()` and `BoundAgent.deliver()` for explicit host context
+v0.8 provides scoped configuration, delivery and composition; v0.9 adds explicit
+reader access, redacted summaries and authority lifecycle checks; v1.0 stabilizes contracts. Use `ScopedSystem.bind()` and `BoundAgent.deliver()` for explicit host context
 transport; this does not provide automatic prompt rewriting or process isolation.
 
 See the [deliverables and acceptance criteria](ROADMAP.md#shared--exclusive-context-and-guardrails).

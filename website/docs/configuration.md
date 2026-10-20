@@ -216,3 +216,5 @@ sidecar.set_intent(None)
 ```
 
 > **Note:** `set_intent()` raises `ValueError` if you pass an `IntentGuardian` but `"intent_guardian"` is not in `sidecar.roles`.
+
+See [v0.9 authority, privacy and migration](v0.9.md) for the current lifecycle APIs.

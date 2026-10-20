@@ -33,15 +33,10 @@ class Requester(BaseModel):
 class IntentEnvelope(BaseModel):
     """See concept.md §6 for the worked YAML example this mirrors.
 
-    `constraints` and `authority` are intentionally freeform dicts here --
-    what actually *enforces* them against a specific tool call is a list of
-    `ConstraintBinding`s (see `agentic_sidecar.intent.alignment`), not the
-    envelope itself. This keeps the envelope's shape stable (and
-    AIOS-alignable) independent of how any one Sidecar happens to wire its
-    bindings. v0.2 only builds enforcement for `constraints`; `authority`
-    is carried on the model now (matching concept.md §6's shape) but has no
-    binding/enforcement mechanism yet -- see alignment.py's module
-    docstring for why that's deliberately deferred.
+    Constraints use explicit ConstraintBindings. Optional AuthorityBindings on
+    IntentGuardian enforce boolean task grants with expiry and revocation.
+    The envelope alone does not enforce actions. See the v0.9 guide for the
+    native delegation contract and the distinction from policy rules.
     """
 
     id: str = Field(default_factory=lambda: str(uuid4()))
