@@ -37,6 +37,7 @@ from agentic_sidecar.gate import (
     EscalationHandler,
     EscalationRequest,
 )
+from agentic_sidecar.intent.authority import AuthorityBinding, AuthorityRegistry
 from agentic_sidecar.operations import EventJournal, RuntimeEvent, TaskRuntime
 from agentic_sidecar.operations.server import OperatorServer
 from agentic_sidecar.scopes import BoundAgent, ContextSpec, GuardrailSpec, ScopedSystem, ScopeLayer
@@ -49,6 +50,8 @@ from agentic_sidecar.status import (
 __version__ = "0.8.5"
 
 __all__ = [
+    "AuthorityBinding",
+    "AuthorityRegistry",
     "BoundAgent",
     "ContextSpec",
     "GuardrailSpec",

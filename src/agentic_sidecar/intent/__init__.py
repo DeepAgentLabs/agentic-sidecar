@@ -15,9 +15,12 @@ from agentic_sidecar.intent.alignment import (
     IntentGuardian,
     evaluate_alignment,
 )
+from agentic_sidecar.intent.authority import AuthorityBinding, AuthorityRegistry
 from agentic_sidecar.intent.envelope import IntentEnvelope, Requester
 
 __all__ = [
+    "AuthorityBinding",
+    "AuthorityRegistry",
     "AlignmentFinding",
     "AlignmentResult",
     "ConstraintBinding",

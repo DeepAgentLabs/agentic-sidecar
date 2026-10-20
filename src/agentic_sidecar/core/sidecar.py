@@ -261,7 +261,10 @@ class Sidecar:
         try:
             self._inject(context)
             self.runtime.propose(context)
-            if self.stopped:
+            authority = self.intent.check_authority(context) if self.intent is not None else None
+            if authority is not None and authority.status == "BLOCK":
+                decision = Decision(status="BLOCK", risk=None, reason=authority.reason)
+            elif self.stopped:
                 decision = Decision(status="BLOCK", risk=None, reason="Task stopped")
             else:
                 evaluator = self._hook or self._default_evaluate
@@ -290,12 +293,13 @@ class Sidecar:
                         context.boundary,
                         deepcopy(context.plan),
                     )
-                    evaluated = evaluator(context)
+                    evaluation_context = context.model_copy(deep=True) if self._hook else context
+                    evaluated = evaluator(evaluation_context)
                     if action != (
-                        context.tool_name,
-                        context.tool_args,
-                        context.boundary,
-                        context.plan,
+                        evaluation_context.tool_name,
+                        evaluation_context.tool_args,
+                        evaluation_context.boundary,
+                        evaluation_context.plan,
                     ):
                         raise ValueError("Evaluation must not modify the proposed action")
                     if not isinstance(evaluated, Decision):
