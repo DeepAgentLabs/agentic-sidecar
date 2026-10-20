@@ -563,3 +563,11 @@ No live-provider reliability or economic benefit is inferred from this fixture.
 See [AIOS v0.6 compatibility](docs/aios-v0.6.md) for canonical examples,
 namespace rules and native contract boundaries. AIOS artifacts remain
 `0.4-draft`; no runtime dependency bump or package release is required.
+
+## Control Tower 0.8.0 integration alignment
+
+Tower Phase 8 implements periodic detection, alerts, attributed lifecycle audit
+and incident console views. Explicit same-run native decisions join Tower incident evidence. Sidecar retains dispatch enforcement, scoped/private context and runtime approval authority.
+
+See [compatibility and operator example](docs/tower-0.8-live-operations.md).
+No sibling runtime change or patch release is required.
