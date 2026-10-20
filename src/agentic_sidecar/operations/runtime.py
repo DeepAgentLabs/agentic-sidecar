@@ -309,6 +309,12 @@ class TaskRuntime(EscalationHandler):
         if response.action == ApprovalAction.STOP_AGENT:
             self.control("stop", actor)
 
+    def replace_intent(self, intent: Any) -> None:
+        """Invalidate outstanding proposals on every public guardian replacement."""
+        with self._condition:
+            self._require_sidecar().intent = intent
+            self._epoch += 1
+
     def modify_intent(self, envelope: dict[str, Any], actor: str) -> None:
         """Replace a full task envelope and invalidate all earlier verdicts."""
         from agentic_sidecar.intent.alignment import IntentGuardian
@@ -328,7 +334,6 @@ class TaskRuntime(EscalationHandler):
                 },
             )
             sidecar.set_intent(IntentGuardian(validated, sidecar.intent.bindings))
-            self._epoch += 1
 
     def control(self, action: str, actor: str) -> dict[str, Any]:
         if action == "stop":

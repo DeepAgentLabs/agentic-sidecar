@@ -187,7 +187,8 @@ class Sidecar:
                 "consulted. Add 'intent_guardian' to roles, or don't pass "
                 "intent."
             )
-        self.intent = intent
+        if self.intent is not intent:
+            self.runtime.replace_intent(intent)
 
     def before_tool_call(self, func: DecisionHook) -> DecisionHook:
         """Register a custom decision hook, overriding the default
@@ -283,7 +284,20 @@ class Sidecar:
                         },
                     )
                 else:
+                    action = (
+                        context.tool_name,
+                        deepcopy(context.tool_args),
+                        context.boundary,
+                        deepcopy(context.plan),
+                    )
                     evaluated = evaluator(context)
+                    if action != (
+                        context.tool_name,
+                        context.tool_args,
+                        context.boundary,
+                        context.plan,
+                    ):
+                        raise ValueError("Evaluation must not modify the proposed action")
                     if not isinstance(evaluated, Decision):
                         raise TypeError("Decision hooks must return a Decision")
                     evaluated = Decision.model_validate(evaluated.model_dump())
@@ -491,6 +505,8 @@ class Sidecar:
     def _default_evaluate(self, context: DecisionContext) -> Decision:
         is_plan = context.boundary == "plan"
         plan_warnings: list[str] = []
+        plan_risk: RiskLevel | None = None
+        step_findings: list[dict[str, Any]] = []
         if is_plan:
             if not context.plan:
                 raise ValueError("Plan boundary requires at least one step")
@@ -510,8 +526,14 @@ class Sidecar:
                         reason="Plan step denied by policy",
                         decision_point="plan",
                     )
+                findings: dict[str, Any] = {"tool_name": step_context.tool_name}
+                step_findings.append(findings)
+                context._findings["plan_steps"] = step_findings
                 if "risk" in self.roles:
                     risk = self.risk.evaluate(step_context)
+                    findings["risk"] = risk.model_dump(mode="json")
+                    if plan_risk is None or RISK_ORDER[risk.risk] > RISK_ORDER[plan_risk]:
+                        plan_risk = risk.risk
                     if RISK_ORDER[risk.risk] >= RISK_ORDER[self.risk_block_threshold]:
                         return Decision(
                             status="BLOCK",
@@ -577,7 +599,7 @@ class Sidecar:
             if alignment_result.status == "BLOCK":
                 return Decision(
                     status="BLOCK",
-                    risk=risk_result.risk if risk_result else None,
+                    risk=risk_result.risk if risk_result else plan_risk,
                     reason=f"Intent Guardian: {alignment_result.reason}",
                     decision_point=context.boundary,
                     trigger_details={
@@ -600,7 +622,7 @@ class Sidecar:
             if budget_result.exceeded:
                 return Decision(
                     status="PAUSE",
-                    risk=risk_result.risk if risk_result else None,
+                    risk=risk_result.risk if risk_result else plan_risk,
                     reason=f"Budget Guardian: {budget_result.reason}",
                     decision_point=context.boundary,
                     trigger_details={
@@ -635,7 +657,7 @@ class Sidecar:
             if status not in ("ALLOW", "WARN"):
                 return Decision(
                     status=status,
-                    risk=risk_result.risk if risk_result else None,
+                    risk=risk_result.risk if risk_result else plan_risk,
                     reason=intervention_reason,
                     decision_point=context.boundary,
                     trigger_details={
@@ -668,7 +690,7 @@ class Sidecar:
         )
         return Decision(
             status=final_status,
-            risk=risk_result.risk if risk_result else None,
+            risk=risk_result.risk if risk_result else plan_risk,
             reason=reason,
             decision_point=context.boundary,
             trigger_details={"tool_name": context.tool_name, "arguments": context.tool_args},
