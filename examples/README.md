@@ -40,3 +40,12 @@ for 0.7, and additional adapters/integrations for 0.8.
 
 See the v0.8 scoped-agent, correlated-evidence and MCP gateway examples described
 in [the examples guide](../website/docs/examples.md).
+
+## v0.9 authority and privacy
+
+- [Narrowed delegation and revocation](v0_9_authority_delegation.py)
+- [Private context readers and redacted evidence](v0_9_private_context.py)
+
+Run `uv run python scripts/supervision_benchmark.py` from the repository root for
+paired offline dispatch evidence; add `--extra validation` before `python` and
+`--ecosystem` after the script for Chaos injection and Evals scoring.

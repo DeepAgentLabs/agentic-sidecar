@@ -183,3 +183,5 @@ v0.8 provides AutoGen, CrewAI, OpenAI Agents, Google ADK and MCP boundaries in
 addition to LangGraph. Native SDK conformance covers all seven decisions and
 both modes. Verified correlated decisions reach Lens 0.7.1 incident timelines;
 Chaos recovery proposals retain native event IDs. See [integrations](integrations.md).
+
+See [v0.9 authority, privacy and migration](v0.9.md) for the current lifecycle APIs.

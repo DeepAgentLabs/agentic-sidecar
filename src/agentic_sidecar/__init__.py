@@ -3,8 +3,8 @@ supervision layer for autonomous AI agents.
 
     The Main Agent acts. The Sidecar observes, thinks, advises, and governs.
 
-0.8.0 adds scoped context/guardrails, native framework adapters and correlated
-ecosystem evidence. See docs/scoped-supervision.md and docs/integrations.md.
+0.9.0 adds task authority/delegation, protected context readers and redacted
+evidence. See website/docs/v0.9.md for lifecycle and validation limits.
 """
 
 from agentic_sidecar.core.context import DecisionContext
@@ -37,6 +37,7 @@ from agentic_sidecar.gate import (
     EscalationHandler,
     EscalationRequest,
 )
+from agentic_sidecar.intent.authority import AuthorityBinding, AuthorityRegistry
 from agentic_sidecar.operations import EventJournal, RuntimeEvent, TaskRuntime
 from agentic_sidecar.operations.server import OperatorServer
 from agentic_sidecar.scopes import BoundAgent, ContextSpec, GuardrailSpec, ScopedSystem, ScopeLayer
@@ -46,9 +47,11 @@ from agentic_sidecar.status import (
     ToolCallNarrative,
 )
 
-__version__ = "0.8.5"
+__version__ = "0.9.0"
 
 __all__ = [
+    "AuthorityBinding",
+    "AuthorityRegistry",
     "BoundAgent",
     "ContextSpec",
     "GuardrailSpec",

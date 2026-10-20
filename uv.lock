@@ -30,7 +30,7 @@ wheels = [
 
 [[package]]
 name = "agentic-evals"
-version = "0.7.1"
+version = "0.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jsonschema" },
@@ -38,14 +38,14 @@ dependencies = [
     { name = "pyyaml" },
     { name = "referencing" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/de/c4/8904c6f55178a79b67d3b564968c92c3d912b8f26d6255e52e9e5413a40b/agentic_evals-0.7.1.tar.gz", hash = "sha256:c78b16d51977fd61678fa7a115fa2871eef5376ff2337b65e086dde25467323c", size = 283028, upload-time = "2026-10-12T20:44:09.331Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/73/a0/5251e272e2cd86f94e5ba8a18a7be384e9d0ac6f7b8461314ca3577949c4/agentic_evals-0.9.0.tar.gz", hash = "sha256:20cbf206f914539c0295a0998f4baa373d0c2f06e516ef3da4d9c4d34bccd914", size = 365698, upload-time = "2026-10-19T20:18:45.869Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5b/b7/ad6d5678a10d5ae060b9ce292d188c92e67a6029987570175a6fa78c9d17/agentic_evals-0.7.1-py3-none-any.whl", hash = "sha256:e41e4b6b4f7cb50b9845afc4217f5e2516556edc107ffef431fad75044dc8fc5", size = 76781, upload-time = "2026-10-12T20:44:07.976Z" },
+    { url = "https://files.pythonhosted.org/packages/8f/85/5a42fa47244fef7ecc6327a9d4222f12a892762d4f1d6dd37a1aea9ec1fd/agentic_evals-0.9.0-py3-none-any.whl", hash = "sha256:fcc10dfbf359515a32d62f26bb07e6185455c247a84b48c01c2038040c2630d9", size = 106223, upload-time = "2026-10-19T20:18:44.38Z" },
 ]
 
 [[package]]
 name = "agentic-sidecar"
-version = "0.8.5"
+version = "0.9.0"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },
@@ -99,10 +99,16 @@ openai = [
 openai-agents = [
     { name = "openai-agents" },
 ]
+validation = [
+    { name = "agentic-chaos" },
+    { name = "agentic-evals" },
+]
 
 [package.metadata]
 requires-dist = [
     { name = "agentic-chaos", marker = "extra == 'agentic-chaos'", specifier = ">=0.5.3,<0.9" },
+    { name = "agentic-chaos", marker = "extra == 'validation'", specifier = ">=0.8,<0.9" },
+    { name = "agentic-evals", marker = "extra == 'validation'", specifier = ">=0.9,<1" },
     { name = "agenticlens", marker = "extra == 'agenticlens'", specifier = ">=0.7.1,<1" },
     { name = "anthropic", marker = "extra == 'anthropic'", specifier = ">=0.49,<2" },
     { name = "autogen-core", marker = "extra == 'autogen'", specifier = "==0.7.5" },
@@ -126,7 +132,7 @@ requires-dist = [
     { name = "typer", specifier = ">=0.9,<1" },
     { name = "types-pyyaml", marker = "extra == 'dev'", specifier = ">=6.0" },
 ]
-provides-extras = ["openai", "anthropic", "agenticlens", "agentic-chaos", "semantica", "autogen", "crewai", "openai-agents", "google-adk", "mcp", "langgraph", "dev", "docs"]
+provides-extras = ["openai", "anthropic", "agenticlens", "agentic-chaos", "semantica", "autogen", "crewai", "openai-agents", "google-adk", "mcp", "langgraph", "validation", "dev", "docs"]
 
 [[package]]
 name = "agenticlens"

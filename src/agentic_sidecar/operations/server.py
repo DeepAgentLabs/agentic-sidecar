@@ -68,15 +68,30 @@ catch(e){$('message').textContent=e.message;}};
 
 
 class OperatorServer(AbstractContextManager["OperatorServer"]):
-    """Explicit opt-in loopback server; one secret/actor and task per instance.
+    """Explicit opt-in loopback server; one operator and task per instance.
 
     The token must have at least 32 characters. All API reads and mutations
-    require it. It is never embedded in HTML, URLs or logs. No cross-origin API.
+    require an operator or configured reader token. Reader tokens permit only
+    redacted GET /status. Tokens never appear in HTML, URLs or logs. No cross-origin API.
     """
 
-    def __init__(self, runtime: TaskRuntime, *, token: str, actor: str, port: int = 0) -> None:
+    def __init__(
+        self,
+        runtime: TaskRuntime,
+        *,
+        token: str,
+        actor: str,
+        port: int = 0,
+        reader_tokens: dict[str, str] | None = None,
+    ) -> None:
         if len(token) < 32 or not actor:
             raise ValueError("A token of at least 32 characters and an actor are required")
+        self.reader_tokens = dict(reader_tokens or {})
+        if any(
+            len(secret) < 32 or not reader or secret == token
+            for secret, reader in self.reader_tokens.items()
+        ):
+            raise ValueError("Reader tokens must be distinct, at least 32 characters and named")
         self.runtime = runtime
         self.token = token
         self.actor = actor
@@ -120,7 +135,14 @@ class OperatorServer(AbstractContextManager["OperatorServer"]):
                     self._reply(404, {"error": "Unknown task"})
                     return
                 supplied = self.headers.get("Authorization", "")
-                if not hmac.compare_digest(supplied.encode(), ("Bearer " + owner.token).encode()):
+                operator = hmac.compare_digest(
+                    supplied.encode(), ("Bearer " + owner.token).encode()
+                )
+                reader = any(
+                    hmac.compare_digest(supplied.encode(), ("Bearer " + secret).encode())
+                    for secret in owner.reader_tokens
+                )
+                if not operator and not reader:
                     self._reply(401, {"error": "Operator authentication required"})
                     return
                 origin = self.headers.get("Origin")
@@ -128,6 +150,16 @@ class OperatorServer(AbstractContextManager["OperatorServer"]):
                     self._reply(403, {"error": "Cross-origin access denied"})
                     return
                 route = parsed.path[len(prefix) :]
+                if not operator:
+                    if mutation or route != "/status":
+                        self._reply(
+                            403, {"error": "Reader access is restricted to redacted status"}
+                        )
+                    else:
+                        from agentic_sidecar.scopes.privacy import redact_snapshot
+
+                        self._reply(200, redact_snapshot(owner.runtime.snapshot()))
+                    return
                 try:
                     if not mutation:
                         if route == "/status":

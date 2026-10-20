@@ -4,6 +4,40 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-19
+
+### Added
+
+- Explicit task-authority tool bindings, narrowed delegation with inherited
+  constraints/task scope, ancestor revocation and atomic dispatch-time expiry checks.
+- Context reader permissions, owner updates, expiry/revocation, redacted evidence
+  summaries and read-only redacted operator tokens. Private scope goals/values
+  are delivered explicitly rather than injected into evaluator/audit metadata.
+- Paired Agent Alone vs Sidecar dispatch measurements covering constraints,
+  plan/critic heuristics, mock judgement, gate failure and provider outage.
+  Optional validation extras compose Chaos 0.8 injection and Evals 0.9 scoring.
+- Authority/privacy examples, SDK conformance and lifecycle regression tests.
+
+### Fixed
+
+- Replacing intent invalidates outstanding authorizations.
+- Decision hooks cannot rewrite the proposed action while tools execute original
+  arguments; hook copies also preserve original evidence under fail_open.
+- Allowed plans retain highest step risk and per-step risk findings.
+- Critic verification metadata is scoped to each plan step.
+
+### Compatibility
+
+- Authority bindings are opt-in; constraint-only expiry warnings remain.
+- Authority-bearing intent changes require explicit harness re-delegation.
+  Stop revokes descendants; restart does not revive grants.
+- `sidecar.context` is an empty metadata compatibility marker; use explicit
+  context delivery and separately configured deterministic constraints.
+- Redacted summaries are not native/verifiable journal artifacts. Existing native
+  Decision and `sidecar.correlation/1` consumers remain compatible.
+- Offline evidence is descriptive synthetic data, with no live-model or production
+  isolation claim; optional model-backed Planner/Critic reasoning remains deferred.
+
 ## [0.8.5] - 2026-10-18
 
 ### Changed

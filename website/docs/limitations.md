@@ -1,6 +1,6 @@
 # Limitations
 
-Supported scope for the **0.8.0** API. See [Governance](governance.md) for usage
+Supported scope for the **0.9.0** API. See [Governance](governance.md) for usage
 and validation evidence, and [Roadmap](roadmap.md) for future priorities.
 
 ## Governance boundary
@@ -18,7 +18,8 @@ Use one Sidecar/Judge/Budget per task. Runtime approvals support concurrent
 proposals; evaluators and manual budget accounting are not a task transaction.
 
 APPROVE_ONCE authorizes the current invocation only. BLOCK cannot be approved.
-MODIFY_INTENT requires a full envelope, preserves bindings and reevaluates once;
+MODIFY_INTENT requires a full constraint-only envelope, preserves bindings and reevaluates once;
+authority-bearing intents require explicit harness re-delegation;
 another intervention returns control without an automatic prompt loop.
 STOP_AGENT latches the task; explicit runtime restart is required to run again. REJECT blocks that proposal. REPLAN returns control to the agent loop.
 
@@ -26,7 +27,8 @@ STOP_AGENT latches the task; explicit runtime restart is required to run again. 
 
 Policy/Risk use ordered tool patterns and argument comparisons. Intent requires
 explicit bindings; absent constraints/arguments are skipped. Expiry produces
-WARN. Authority bindings and delegated authority are planned for 0.9.
+WARN for constraint-only guardians. Opt-in authority bindings enforce granted/denied
+authority and ancestor expiry/revocation at dispatch; see [v0.9](v0.9.md).
 
 `evaluate_plan()` checks explicit step dictionaries; it does not discover or
 execute the agent's plan. Planner uses selected tool/goal patterns, contradictory

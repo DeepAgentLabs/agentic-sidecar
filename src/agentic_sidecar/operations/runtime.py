@@ -8,6 +8,7 @@ import re
 import threading
 import time
 from collections.abc import Callable
+from contextlib import nullcontext
 from copy import deepcopy
 from dataclasses import asdict
 from datetime import datetime, timezone
@@ -23,6 +24,7 @@ from agentic_sidecar.gate.escalation import (
     EscalationHandler,
     EscalationRequest,
 )
+from agentic_sidecar.intent.alignment import IntentGuardian
 from agentic_sidecar.operations.events import EventJournal
 
 if TYPE_CHECKING:
@@ -203,39 +205,54 @@ class TaskRuntime(EscalationHandler):
         """Reserve dispatch exactly once after enforcement; reject stale approvals."""
         with self._condition:
             sidecar = self._require_sidecar()
-            if self._stopped or sidecar.stopped:
+            guardian = sidecar.intent
+            reservation = guardian.registry.reservation() if guardian is not None else nullcontext()
+            with reservation:
+                return self._dispatch_authorized(context, decision, cancel=cancel)
+
+    def _dispatch_authorized(
+        self, context: DecisionContext, decision: Decision, *, cancel: Callable[[], None] | None
+    ) -> str:
+        sidecar = self._require_sidecar()
+        if sidecar.mode == "govern" and sidecar.intent is not None:
+            authority = sidecar.intent.check_authority(context)
+            if authority.status == "BLOCK":
                 raise SidecarBlockedError(
-                    Decision(status="BLOCK", risk=None, reason="Task stopped"), context
+                    Decision(status="BLOCK", risk=None, reason=authority.reason), context
                 )
-            if sidecar.mode == "govern" and decision.status not in {"ALLOW", "WARN"}:
-                if decision.status == "BLOCK":
-                    raise SidecarBlockedError(decision, context)
-                raise SidecarSuspendedError(decision, context)
-            if self._paused:
-                raise SidecarSuspendedError(
-                    Decision(status="PAUSE", risk=None, reason="Operator paused task"), context
-                )
-            self.validate_authorization(context, decision)
-            invocation_id = str(uuid4())
-            payload: dict[str, Any] = {
-                "invocation_id": invocation_id,
-                "decision_id": decision.decision_id,
-                "tool_name": context.tool_name,
-            }
-            try:
-                payload["arguments"] = context.model_dump(mode="json")["tool_args"]
-            except Exception as exc:
-                self._audit_errors.append(type(exc).__name__)
-                if sidecar.on_sidecar_failure == "fail_closed":
-                    raise
-                payload["arguments_unavailable"] = True
-            self._emit_execution("executed", payload)
-            self._executed += 1
-            self._dispatched.add(decision.decision_id)
-            self._running[invocation_id] = payload
-            if cancel is not None:
-                self._cancellers[invocation_id] = cancel
-            return invocation_id
+        if self._stopped or sidecar.stopped:
+            raise SidecarBlockedError(
+                Decision(status="BLOCK", risk=None, reason="Task stopped"), context
+            )
+        if sidecar.mode == "govern" and decision.status not in {"ALLOW", "WARN"}:
+            if decision.status == "BLOCK":
+                raise SidecarBlockedError(decision, context)
+            raise SidecarSuspendedError(decision, context)
+        if self._paused:
+            raise SidecarSuspendedError(
+                Decision(status="PAUSE", risk=None, reason="Operator paused task"), context
+            )
+        self.validate_authorization(context, decision)
+        invocation_id = str(uuid4())
+        payload: dict[str, Any] = {
+            "invocation_id": invocation_id,
+            "decision_id": decision.decision_id,
+            "tool_name": context.tool_name,
+        }
+        try:
+            payload["arguments"] = context.model_dump(mode="json")["tool_args"]
+        except Exception as exc:
+            self._audit_errors.append(type(exc).__name__)
+            if sidecar.on_sidecar_failure == "fail_closed":
+                raise
+            payload["arguments_unavailable"] = True
+        self._emit_execution("executed", payload)
+        self._executed += 1
+        self._dispatched.add(decision.decision_id)
+        self._running[invocation_id] = payload
+        if cancel is not None:
+            self._cancellers[invocation_id] = cancel
+        return invocation_id
 
     def complete(self, invocation_id: str, error: BaseException | None = None) -> None:
         with self._condition:
@@ -292,6 +309,8 @@ class TaskRuntime(EscalationHandler):
                 from agentic_sidecar.intent.envelope import IntentEnvelope
 
                 sidecar = self._require_sidecar()
+                if sidecar.intent is not None and sidecar.intent.grant_id is not None:
+                    raise ValueError("Authority-bearing intent requires explicit re-delegation")
                 if sidecar.intent is None or response.modified_intent is None:
                     raise ValueError("Active intent and a complete envelope required")
                 IntentEnvelope.model_validate(response.modified_intent)
@@ -309,6 +328,12 @@ class TaskRuntime(EscalationHandler):
         if response.action == ApprovalAction.STOP_AGENT:
             self.control("stop", actor)
 
+    def replace_intent(self, intent: IntentGuardian | None) -> None:
+        """Invalidate outstanding proposals on every public guardian replacement."""
+        with self._condition:
+            self._require_sidecar().intent = intent
+            self._epoch += 1
+
     def modify_intent(self, envelope: dict[str, Any], actor: str) -> None:
         """Replace a full task envelope and invalidate all earlier verdicts."""
         from agentic_sidecar.intent.alignment import IntentGuardian
@@ -319,6 +344,8 @@ class TaskRuntime(EscalationHandler):
             sidecar = self._require_sidecar()
             if self._stopped or sidecar.intent is None:
                 raise ValueError("An active, non-stopped intent task is required")
+            if sidecar.intent.grant_id is not None:
+                raise ValueError("Authority-bearing intent requires explicit re-delegation")
             self.journal.append(
                 "intent_modified",
                 {
@@ -328,7 +355,6 @@ class TaskRuntime(EscalationHandler):
                 },
             )
             sidecar.set_intent(IntentGuardian(validated, sidecar.intent.bindings))
-            self._epoch += 1
 
     def control(self, action: str, actor: str) -> dict[str, Any]:
         if action == "stop":
@@ -357,6 +383,8 @@ class TaskRuntime(EscalationHandler):
                 self._stopped = True
                 sidecar.stopped = True
                 self._epoch += 1
+                if sidecar.intent is not None and sidecar.intent.grant_id is not None:
+                    sidecar.intent.revoke()
                 self._condition.notify_all()
             receipt: dict[str, Any] = {
                 "action": action,

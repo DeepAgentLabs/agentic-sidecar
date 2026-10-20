@@ -187,7 +187,8 @@ class Sidecar:
                 "consulted. Add 'intent_guardian' to roles, or don't pass "
                 "intent."
             )
-        self.intent = intent
+        if self.intent is not intent:
+            self.runtime.replace_intent(intent)
 
     def before_tool_call(self, func: DecisionHook) -> DecisionHook:
         """Register a custom decision hook, overriding the default
@@ -260,7 +261,10 @@ class Sidecar:
         try:
             self._inject(context)
             self.runtime.propose(context)
-            if self.stopped:
+            authority = self.intent.check_authority(context) if self.intent is not None else None
+            if authority is not None and authority.status == "BLOCK":
+                decision = Decision(status="BLOCK", risk=None, reason=authority.reason)
+            elif self.stopped:
                 decision = Decision(status="BLOCK", risk=None, reason="Task stopped")
             else:
                 evaluator = self._hook or self._default_evaluate
@@ -283,7 +287,21 @@ class Sidecar:
                         },
                     )
                 else:
-                    evaluated = evaluator(context)
+                    action = (
+                        context.tool_name,
+                        deepcopy(context.tool_args),
+                        context.boundary,
+                        deepcopy(context.plan),
+                    )
+                    evaluation_context = context.model_copy(deep=True) if self._hook else context
+                    evaluated = evaluator(evaluation_context)
+                    if action != (
+                        evaluation_context.tool_name,
+                        evaluation_context.tool_args,
+                        evaluation_context.boundary,
+                        evaluation_context.plan,
+                    ):
+                        raise ValueError("Evaluation must not modify the proposed action")
                     if not isinstance(evaluated, Decision):
                         raise TypeError("Decision hooks must return a Decision")
                     evaluated = Decision.model_validate(evaluated.model_dump())
@@ -480,6 +498,14 @@ class Sidecar:
 
     def _inject(self, context: DecisionContext) -> None:
         context.metadata.update(deepcopy(self._context_metadata))
+        if self.intent is not None and self.intent.grant_id is not None:
+            context.metadata["sidecar.authority"] = {
+                "grant_id": self.intent.grant_id,
+                "task_id": self.intent.task_id,
+                "agent_id": self.intent.agent_id,
+                "intent_id": self.intent.envelope.id,
+                "parent_intent_id": self.intent.envelope.metadata.get("parent_intent_id"),
+            }
         history = [
             HistoryEntry(tool_name=c.tool_name, tool_args=c.tool_args, status=d.status)
             for c, d in self.decisions
@@ -491,6 +517,8 @@ class Sidecar:
     def _default_evaluate(self, context: DecisionContext) -> Decision:
         is_plan = context.boundary == "plan"
         plan_warnings: list[str] = []
+        plan_risk: RiskLevel | None = None
+        step_findings: list[dict[str, Any]] = []
         if is_plan:
             if not context.plan:
                 raise ValueError("Plan boundary requires at least one step")
@@ -503,28 +531,38 @@ class Sidecar:
                     intent=context.intent,
                     history=context.history,
                 )
-                if "policy" in self.roles and self.policy.evaluate(step_context).effect == "deny":
-                    return Decision(
-                        status="BLOCK",
-                        risk=None,
-                        reason="Plan step denied by policy",
-                        decision_point="plan",
-                    )
+                findings: dict[str, Any] = {"tool_name": step_context.tool_name}
+                step_findings.append(findings)
+                context._findings["plan_steps"] = step_findings
+                if "policy" in self.roles:
+                    policy = self.policy.evaluate(step_context)
+                    findings["policy"] = policy.model_dump(mode="json")
+                    if policy.effect == "deny":
+                        return Decision(
+                            status="BLOCK",
+                            risk=plan_risk,
+                            reason="Plan step denied by policy",
+                            decision_point="plan",
+                        )
                 if "risk" in self.roles:
                     risk = self.risk.evaluate(step_context)
+                    findings["risk"] = risk.model_dump(mode="json")
+                    if plan_risk is None or RISK_ORDER[risk.risk] > RISK_ORDER[plan_risk]:
+                        plan_risk = risk.risk
                     if RISK_ORDER[risk.risk] >= RISK_ORDER[self.risk_block_threshold]:
                         return Decision(
                             status="BLOCK",
-                            risk=risk.risk,
+                            risk=plan_risk,
                             reason=risk.reason,
                             decision_point="plan",
                         )
                 if self.intent is not None and "intent_guardian" in self.roles:
                     alignment = self.intent.evaluate(step_context)
+                    findings["alignment"] = alignment.model_dump(mode="json")
                     if alignment.status == "BLOCK":
                         return Decision(
                             status=alignment.status,
-                            risk=None,
+                            risk=plan_risk,
                             reason=alignment.reason,
                             decision_point="plan",
                         )
@@ -577,7 +615,7 @@ class Sidecar:
             if alignment_result.status == "BLOCK":
                 return Decision(
                     status="BLOCK",
-                    risk=risk_result.risk if risk_result else None,
+                    risk=risk_result.risk if risk_result else plan_risk,
                     reason=f"Intent Guardian: {alignment_result.reason}",
                     decision_point=context.boundary,
                     trigger_details={
@@ -600,7 +638,7 @@ class Sidecar:
             if budget_result.exceeded:
                 return Decision(
                     status="PAUSE",
-                    risk=risk_result.risk if risk_result else None,
+                    risk=risk_result.risk if risk_result else plan_risk,
                     reason=f"Budget Guardian: {budget_result.reason}",
                     decision_point=context.boundary,
                     trigger_details={
@@ -635,7 +673,7 @@ class Sidecar:
             if status not in ("ALLOW", "WARN"):
                 return Decision(
                     status=status,
-                    risk=risk_result.risk if risk_result else None,
+                    risk=risk_result.risk if risk_result else plan_risk,
                     reason=intervention_reason,
                     decision_point=context.boundary,
                     trigger_details={
@@ -668,7 +706,7 @@ class Sidecar:
         )
         return Decision(
             status=final_status,
-            risk=risk_result.risk if risk_result else None,
+            risk=risk_result.risk if risk_result else plan_risk,
             reason=reason,
             decision_point=context.boundary,
             trigger_details={"tool_name": context.tool_name, "arguments": context.tool_args},

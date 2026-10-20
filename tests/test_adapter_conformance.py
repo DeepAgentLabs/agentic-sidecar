@@ -181,3 +181,38 @@ def test_crewai_schema_preserves_defaults() -> None:
     (tool,) = attach(Sidecar(on_sidecar_failure="fail_closed"), [read])
     assert tool.args_schema.model_validate({}).amount == 10
     assert tool.run() == "10"
+
+
+@pytest.mark.parametrize("adapter", SDK_MODULES)
+@pytest.mark.parametrize("asynchronous", [False, True])
+def test_native_sdk_enforces_task_authority(adapter, asynchronous):
+    from agentic_sidecar import AuthorityBinding
+    from agentic_sidecar.intent import IntentEnvelope, IntentGuardian
+
+    guardian = IntentGuardian(
+        IntentEnvelope(
+            goal="Read only", requested_by={"id": "operator"}, authority={"refund": False}
+        ),
+        authority_bindings=[AuthorityBinding(authority="refund", tool="refund")],
+        task_id="ticket",
+        agent_id="researcher",
+    )
+    sidecar = Sidecar(
+        on_sidecar_failure="fail_closed", mode="govern", roles=["intent_guardian"], intent=guardian
+    )
+    calls = []
+
+    def refund(amount: int) -> int:
+        """Refund a synthetic amount."""
+        calls.append(amount)
+        return amount
+
+    async def arefund(amount: int) -> int:
+        """Refund a synthetic amount."""
+        calls.append(amount)
+        return amount
+
+    arefund.__name__ = "refund"
+    with pytest.raises(SidecarBlockedError):
+        dispatch(adapter, sidecar, arefund if asynchronous else refund, asynchronous=asynchronous)
+    assert calls == []

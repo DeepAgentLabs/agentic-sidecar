@@ -1,6 +1,6 @@
 # API Reference
 
-Python API for `agentic-sidecar` **0.8.5** (unchanged from 0.8.0). Imports below identify the supported
+Python API for `agentic-sidecar` **0.9.0** (unchanged from 0.8.0). Imports below identify the supported
 module for each symbol; intent and policy/risk types live in their subpackages.
 
 ```python
@@ -347,7 +347,7 @@ optional durable JSONL persistence. See [Live operations](live-operations.md).
 
 ```python
 from agentic_sidecar import __version__
-print(__version__)  # "0.8.5"
+print(__version__)  # "0.9.0"
 ```
 
 ## Runtime operations
@@ -371,3 +371,5 @@ included in audit policy fingerprints.
 
 `integrations.correlation.Correlation` and `export_decisions()` provide native
 versioned projections. See [integration contracts](integrations.md).
+
+See [v0.9 authority, privacy and migration](v0.9.md) for the current lifecycle APIs.

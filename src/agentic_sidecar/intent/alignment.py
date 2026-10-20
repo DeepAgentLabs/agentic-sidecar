@@ -1,28 +1,22 @@
 """Intent Guardian -- drift detection and constraint validation against an
 active `IntentEnvelope` (concept.md §8/§9).
 
-v0.2 scope is deliberately narrow: constraint validation only (numeric/
-enum/allow-list fields, e.g. `maximum_refund: 500` vs. a proposed `850`) --
-concept.md §9 and ROADMAP.md's v0.2 scope both frame this as the *first*
-concrete semantic-authorization check, not the only one ever needed.
-Authority-based blocking (`IntentEnvelope.authority`, e.g.
-`refund_allowed: false`) is left for a later version: the envelope already
-carries the field (see envelope.py), but there's no concrete tool-to-
-authority binding shape yet, and Design Constraint 4's spirit applies here
-too -- that shape deserves a real scenario before being built, not
-speculative generality.
+Constraint bindings and optional task-authority grants are deterministic.
+Authority requires explicit tool bindings and trusted task/agent identities.
 """
 
 from __future__ import annotations
 
 import fnmatch
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, Field
 
 from agentic_sidecar.core.context import DecisionContext
 from agentic_sidecar.core.operators import ArgOp, compare
-from agentic_sidecar.intent.envelope import IntentEnvelope
+from agentic_sidecar.intent.authority import AuthorityBinding, AuthorityRegistry
+from agentic_sidecar.intent.envelope import IntentEnvelope, Requester
 
 AlignmentStatus = Literal["ALLOW", "WARN", "BLOCK"]
 
@@ -140,9 +134,77 @@ class IntentGuardian:
         self,
         envelope: IntentEnvelope,
         bindings: list[ConstraintBinding] | None = None,
+        *,
+        authority_bindings: list[AuthorityBinding] | None = None,
+        registry: AuthorityRegistry | None = None,
+        task_id: str = "",
+        agent_id: str = "",
+        parent_grant: str | None = None,
     ) -> None:
-        self.envelope = envelope
-        self.bindings = bindings or []
+        self.envelope = envelope.model_copy(deep=True)
+        self.bindings = [binding.model_copy(deep=True) for binding in bindings or []]
+        self.authority_bindings = tuple(authority_bindings or ())
+        self.registry = registry or AuthorityRegistry()
+        self.task_id = task_id
+        self.agent_id = agent_id
+        self.grant_id = (
+            self.registry.grant(envelope, task_id=task_id, agent_id=agent_id, parent=parent_grant)
+            if self.authority_bindings
+            else None
+        )
 
     def evaluate(self, context: DecisionContext) -> AlignmentResult:
+        authority = self.check_authority(context)
+        if authority.status == "BLOCK":
+            return authority
         return evaluate_alignment(context, self.envelope, self.bindings)
+
+    def check_authority(self, context: DecisionContext) -> AlignmentResult:
+        if self.grant_id is None:
+            return AlignmentResult(status="ALLOW", reason="No authority bindings configured")
+        reason = self.registry.invalid_reason(self.grant_id)
+        if reason:
+            return AlignmentResult(status="BLOCK", reason=reason)
+        names = (
+            [step["tool_name"] for step in context.plan]
+            if context.boundary == "plan"
+            else [context.tool_name]
+        )
+        for name in names:
+            for binding in self.authority_bindings:
+                if fnmatch.fnmatch(name, binding.tool) and not self.registry.permits(
+                    self.grant_id, binding.authority
+                ):
+                    return AlignmentResult(
+                        status="BLOCK", reason=f"Task authority required: {binding.authority}"
+                    )
+        return AlignmentResult(status="ALLOW", reason="Task authority granted")
+
+    def revoke(self) -> None:
+        if self.grant_id is None:
+            raise ValueError("No task authority grant configured")
+        self.registry.revoke(self.grant_id)
+
+    def delegate(
+        self, *, agent_id: str, authority: dict[str, bool], expires: datetime | None = None
+    ) -> IntentGuardian:
+        """Narrow permissions and expiry; preserve all inherited constraints/bindings."""
+        if self.grant_id is None:
+            raise ValueError("Delegation requires task authority bindings")
+        child = IntentEnvelope(
+            goal=self.envelope.goal,
+            requested_by=Requester(type="agent", id=self.agent_id),
+            constraints=self.envelope.constraints,
+            authority=authority,
+            expires=expires if expires is not None else self.envelope.expires,
+            metadata={"parent_intent_id": self.envelope.id},
+        )
+        return IntentGuardian(
+            child,
+            self.bindings,
+            authority_bindings=list(self.authority_bindings),
+            registry=self.registry,
+            task_id=self.task_id,
+            agent_id=agent_id,
+            parent_grant=self.grant_id,
+        )
