@@ -1,154 +1,179 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Companion intelligence and real-time decision supervision layer for autonomous AI agents. Evaluates every tool call against policy, risk, intent, and budget before execution.">
-  <meta property="og:title" content="Agentic Sidecar — Runtime Governance for AI Agents">
-  <meta property="og:description" content="Evaluate agent decisions against policy, risk, intent, and budget limits before execution.">
-  <meta property="og:image" content="https://deepagentlabs.io/agentic-sidecar/og.png">
-  <meta property="og:url" content="https://deepagentlabs.io/agentic-sidecar/">
+  <meta name="description" content="Evaluate proposed agent actions against policy, risk, intent, and budget before they execute. Observe decisions or govern them with explicit intervention and approval boundaries.">
+  <meta name="theme-color" content="#07110e">
+  <meta property="og:title" content="Agentic Sidecar — DeepAgentLabs">
+  <meta property="og:description" content="Evaluate proposed agent actions against policy, risk, intent, and budget before they execute. Observe decisions or govern them with explicit intervention and approval boundaries.">
   <meta property="og:type" content="website">
+  <link rel="canonical" href="https://deepagentlabs.io/agentic-sidecar/">
+  <meta property="og:image" content="https://deepagentlabs.io/assets/img/ecosystem.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Agentic Sidecar — Runtime Governance for AI Agents">
-  <meta name="twitter:description" content="Evaluate agent decisions against policy, risk, intent, and budget limits before execution.">
-  <meta name="twitter:image" content="https://deepagentlabs.io/agentic-sidecar/og.png">
-  <title>Agentic Sidecar — Runtime Governance for AI Agents</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="site.css">
+  <title>Agentic Sidecar — DeepAgentLabs</title>
+  <link rel="icon" href="https://deepagentlabs.io/assets/img/dal-logo.png">
+  <link rel="stylesheet" href="https://deepagentlabs.github.io/assets/css/styles.css">
+  <link rel="stylesheet" href="https://deepagentlabs.github.io/assets/css/enhance.css">
+  <link rel="stylesheet" href="https://deepagentlabs.github.io/assets/css/nav.css">
+  <link rel="stylesheet" href="https://deepagentlabs.github.io/assets/css/theme.css">
+  <link rel="stylesheet" href="https://deepagentlabs.github.io/assets/css/background.css">
+  <link rel="stylesheet" href="https://deepagentlabs.github.io/assets/css/copy.css">
+  <link rel="stylesheet" href="https://deepagentlabs.github.io/assets/css/polish.css">
+  <link rel="stylesheet" href="https://deepagentlabs.github.io/assets/css/product.css">
+  <link rel="stylesheet" href="https://deepagentlabs.github.io/assets/css/footer.css">
+  <link rel="stylesheet" href="https://deepagentlabs.github.io/assets/css/beam.css">
+  <link rel="stylesheet" href="https://deepagentlabs.github.io/assets/css/product-uniform.css">
+  <link rel="stylesheet" href="https://deepagentlabs.github.io/assets/css/simulations.css">
+  <script src="https://deepagentlabs.github.io/assets/js/site.js" defer></script>
+  <script src="https://deepagentlabs.github.io/assets/js/usecases-data.js" defer></script>
+  <script src="https://deepagentlabs.github.io/assets/js/usecases.js" defer></script>
+  <script src="https://deepagentlabs.github.io/assets/js/nav.js" defer></script>
+  <script src="https://deepagentlabs.github.io/assets/js/background.js" defer></script>
+  <script src="https://deepagentlabs.github.io/assets/js/copy.js" defer></script>
+  <script src="https://deepagentlabs.github.io/assets/js/product.js" defer></script>
+  <script src="https://deepagentlabs.github.io/assets/js/beam.js" defer></script>
+  <script src="https://deepagentlabs.github.io/assets/js/simulations.js" defer></script>
 </head>
-<body>
-
-  <!-- Navigation Bar -->
-  <header class="nav shell" id="top">
-    <a class="brand" href="https://deepagentlabs.io" aria-label="DeepAgentLabs home">
-      <span class="brand-mark"></span>
-      DeepAgentLabs
+<body class="product-page uniform-product" data-product="sidecar">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="https://deepagentlabs.io/" aria-label="DeepAgentLabs home">
+      <span class="brand-logo" aria-hidden="true"></span>
+      <span>DeepAgentLabs</span>
     </a>
-    <nav class="nav-links" aria-label="Main navigation">
-      <div class="nav-item" data-nav>
-        <a class="nav-tab" href="#top">Product</a>
-        <button class="nav-caret" type="button" aria-expanded="false" aria-controls="menu-product" aria-label="Show Product menu">
-          <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="nav-menu" id="menu-product" role="menu" aria-label="Product">
-          <a role="menuitem" href="#top">Overview</a>
-          <a role="menuitem" href="#playground">Live Demo</a>
-          <a role="menuitem" href="#architecture">Architecture</a>
-          <a role="menuitem" href="#modules">Capabilities</a>
-          <a role="menuitem" href="#modes">Observe vs Govern</a>
-          <a role="menuitem" href="#quickstart">Quickstart</a>
-          <a role="menuitem" href="#ecosystem">Ecosystem</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Primary navigation">
+      <div class="nav-item has-mega">
+        <button class="nav-trigger" type="button" aria-expanded="false" aria-controls="mega-platform">Platform</button>
+        <div class="mega mega-compact mega-narrow" id="mega-platform">
+          <div class="mega-main">
+            <p class="mega-label">On this site</p>
+            <ul class="mega-grid">
+              <li><a class="mega-link mega-link-plain" href="https://deepagentlabs.io/#loop"><span class="mega-text"><strong>The operating loop <i aria-hidden="true">→</i></strong><small>Define, observe, stress, evaluate, improve.</small></span></a></li>
+              <li><a class="mega-link mega-link-plain" href="https://deepagentlabs.io/#dashboards"><span class="mega-text"><strong>Dashboards <i aria-hidden="true">→</i></strong><small>What each product shows you.</small></span></a></li>
+              <li><a class="mega-link mega-link-plain" href="https://deepagentlabs.io/#why"><span class="mega-text"><strong>Why DeepAgentLabs <i aria-hidden="true">→</i></strong><small>How we differ from dashboards and SDK evals.</small></span></a></li>
+            </ul>
+          </div>
+          <a class="mega-side" href="https://deepagentlabs.io/roadmap.html">
+            <span class="mega-label">Roadmap</span>
+            <strong>Step 1 of 8: v0.1 in review.</strong>
+            <span class="mega-side-copy">See where the specification is headed, phase by phase.</span>
+            <span class="mega-side-cta">View roadmap <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </a>
         </div>
       </div>
-      <div class="nav-item" data-nav>
-        <a class="nav-tab" href="docs/">Docs</a>
-        <button class="nav-caret" type="button" aria-expanded="false" aria-controls="menu-docs" aria-label="Show Docs menu">
-          <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="nav-menu" id="menu-docs" role="menu" aria-label="Docs">
-          <a role="menuitem" href="docs/">Documentation home</a>
-          <a role="menuitem" href="docs/getting-started/">Getting started</a>
-          <a role="menuitem" href="docs/architecture/">Architecture</a>
-          <a role="menuitem" href="docs/features/">Features</a>
-          <a role="menuitem" href="docs/configuration/">Configuration</a>
-          <a role="menuitem" href="docs/api-reference/">API reference</a>
-          <a role="menuitem" href="docs/cli-reference/">CLI reference</a>
-          <a role="menuitem" href="docs/integrations/">Integrations</a>
-          <a role="menuitem" href="docs/examples/">Examples</a>
+      <div class="nav-item has-mega">
+        <button class="nav-trigger" type="button" aria-expanded="false" aria-controls="mega-products">Products</button>
+        <div class="mega" id="mega-products">
+          <div class="mega-main">
+            <p class="mega-label">Products</p>
+            <ul class="mega-grid">
+              <li><a class="mega-link" href="https://deepagentlabs.io/agenticlens"><span class="mega-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/><circle cx="11" cy="11" r="2"/></svg></span><span class="mega-text"><strong>AgenticLens <i aria-hidden="true">→</i></strong><small>Observe — OTLP traces, cost and latency on live traffic.</small></span></a></li>
+              <li><a class="mega-link" href="https://deepagentlabs.io/agentic-chaos"><span class="mega-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 5 13h6l-1 9 8-11h-6l1-9z"/></svg></span><span class="mega-text"><strong>Agentic Chaos <i aria-hidden="true">→</i></strong><small>Stress — fault injection and drift testing across frameworks.</small></span></a></li>
+              <li><a class="mega-link" href="https://deepagentlabs.io/agentic-sidecar"><span class="mega-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6l-8-3z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="mega-text"><strong>Agentic Sidecar <i aria-hidden="true">→</i></strong><small>Govern — allow, warn or block actions against intent and policy.</small></span></a></li>
+              <li><a class="mega-link" href="https://deepagentlabs.io/agentic-evals"><span class="mega-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></span><span class="mega-text"><strong>Agentic Evals <i aria-hidden="true">→</i></strong><small>Evaluate — deterministic and LLM-judge scoring behind a CI gate.</small></span></a></li>
+              <li><a class="mega-link" href="https://deepagentlabs.io/mcp"><span class="mega-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0V7zM12 16v5"/></svg></span><span class="mega-text"><strong>MCP Server <i aria-hidden="true">→</i></strong><small>Connect — every tool exposed through one MCP interface.</small></span></a></li>
+              <li><a class="mega-link" href="https://deepagentlabs.io/control-tower"><span class="mega-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span class="mega-text"><strong>Control Tower <i aria-hidden="true">→</i></strong><small>Operate — registry and console for every stage.</small></span></a></li>
+            </ul>
+          </div>
+          <a class="mega-side" href="https://github.com/DeepAgentLabs/ai-operations-spec">
+            <span class="mega-label">The shared contract</span>
+            <strong>AI Operations Specification</strong>
+            <span class="mega-side-copy">One vendor-neutral spec every product implements — so runs, steps and evaluations mean the same thing everywhere.</span>
+            <span class="mega-side-cta">Read the spec <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </a>
         </div>
       </div>
-      <div class="nav-item" data-nav>
-        <a class="nav-tab" href="https://deepagentlabs.io/agentic-sidecar/usecases/">Use Cases</a>
-        <button class="nav-caret" type="button" aria-expanded="false" aria-controls="menu-usecases" aria-label="Show Use Cases menu">
-          <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="nav-menu" id="menu-usecases" role="menu" aria-label="Use Cases">
-          <a role="menuitem" href="https://deepagentlabs.io/agentic-sidecar/usecases/">All use cases</a>
-          <a role="menuitem" href="usecases/prevent-unauthorized-refunds/">Prevent Unauthorized Refunds</a>
-          <a role="menuitem" href="usecases/governed-customer-support-agent/">Governed Customer Support Agent</a>
-          <a role="menuitem" href="usecases/govern-langgraph-agent-workflows/">Govern LangGraph Workflows</a>
+      <div class="nav-item has-mega">
+        <button class="nav-trigger" type="button" aria-expanded="false" aria-controls="mega-docs">Docs</button>
+        <div class="mega" id="mega-docs">
+          <div class="mega-main">
+            <p class="mega-label">Documentation</p>
+            <ul class="mega-grid">
+              <li><a class="mega-link" href="https://deepagentlabs.io/agenticlens/docs"><span class="mega-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span><span class="mega-text"><strong>AgenticLens docs <i aria-hidden="true">→</i></strong><small><code>pip install agenticlens</code></small></span></a></li>
+              <li><a class="mega-link" href="https://deepagentlabs.io/agentic-chaos/docs"><span class="mega-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span><span class="mega-text"><strong>Agentic Chaos docs <i aria-hidden="true">→</i></strong><small><code>pip install agentic-chaos</code></small></span></a></li>
+              <li><a class="mega-link" href="https://deepagentlabs.io/agentic-sidecar/docs"><span class="mega-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span><span class="mega-text"><strong>Agentic Sidecar docs <i aria-hidden="true">→</i></strong><small><code>pip install agentic-sidecar</code></small></span></a></li>
+              <li><a class="mega-link" href="https://deepagentlabs.io/agentic-evals/docs"><span class="mega-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span><span class="mega-text"><strong>Agentic Evals docs <i aria-hidden="true">→</i></strong><small><code>pip install agentic-evals</code></small></span></a></li>
+              <li><a class="mega-link" href="https://deepagentlabs.io/mcp/docs"><span class="mega-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span><span class="mega-text"><strong>MCP Server docs <i aria-hidden="true">→</i></strong><small>Tools, resources and client setup.</small></span></a></li>
+              <li><a class="mega-link" href="https://deepagentlabs.io/control-tower/docs"><span class="mega-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span><span class="mega-text"><strong>Control Tower docs <i aria-hidden="true">→</i></strong><small><code>pip install agenticops-control-tower</code></small></span></a></li>
+            </ul>
+          </div>
+          <div class="mega-side mega-side-static">
+            <span class="mega-label">Start here</span>
+            <strong>Up and running in a minute.</strong>
+            <code class="mega-code">pip install agenticlens</code>
+            <span class="mega-side-copy">Instrument one agent, see its first trace, then add evals and chaos when you're ready.</span>
+            <span class="mega-label mega-pypi-label">On PyPI</span>
+            <div class="mega-pypi"><a href="https://pypi.org/project/agenticlens/" target="_blank" rel="noopener noreferrer">AgenticLens <span aria-hidden="true">↗</span></a><a href="https://pypi.org/project/agentic-chaos/" target="_blank" rel="noopener noreferrer">Chaos <span aria-hidden="true">↗</span></a><a href="https://pypi.org/project/agentic-evals/" target="_blank" rel="noopener noreferrer">Evals <span aria-hidden="true">↗</span></a><a href="https://pypi.org/project/agentic-sidecar/" target="_blank" rel="noopener noreferrer">Sidecar <span aria-hidden="true">↗</span></a><a href="https://pypi.org/project/deep-agentic-core-mcp/" target="_blank" rel="noopener noreferrer">MCP <span aria-hidden="true">↗</span></a><a href="https://pypi.org/project/agenticops-control-tower/" target="_blank" rel="noopener noreferrer">Control Tower <span aria-hidden="true">↗</span></a></div>
+            <a class="mega-side-cta" href="https://deepagentlabs.io/agenticlens/docs">AgenticLens quickstart <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
         </div>
       </div>
+      <!-- USE CASES MENU: content comes from assets/js/usecases-data.js (edit it there, not here).
+           assets/js/usecases.js fills the [data-uc-list] and [data-uc-most-asked] slots below. -->
+      <div class="nav-item has-mega">
+        <button class="nav-trigger" type="button" aria-expanded="false" aria-controls="mega-usecases">Use cases</button>
+        <div class="mega mega-usecases" id="mega-usecases">
+          <div class="mega-main">
+            <p class="mega-label">Use cases</p>
+            <ul class="mega-grid" data-uc-list></ul>
+          </div>
+          <div class="mega-side mega-side-static">
+            <span class="mega-label">Start here</span>
+            <strong>See it on a real agent.</strong>
+            <span class="mega-side-copy">Each use case walks through the problem, the setup and the result, step by step.</span>
+            <span class="mega-label mega-pypi-label">Most asked</span>
+            <div class="mega-pypi" data-uc-most-asked></div>
+            <a class="mega-side-cta" href="https://discord.gg/fEqPFWgcDG" target="_blank" rel="noopener noreferrer">Share your use case <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <!-- /USE CASES MENU -->
+      <a href="https://deepagentlabs.io/#architecture">Architecture</a>
+      <a href="https://deepagentlabs.io/#faq">FAQ</a>
+      <a href="https://github.com/DeepAgentLabs/ai-operations-spec">Specification</a>
+      <a href="https://deepagentlabs.io/roadmap.html">Roadmap</a>
+      <a href="https://mcp.deepagentlabs.io" target="_blank" rel="noopener noreferrer">Remote MCP</a>
+      <a class="nav-cta" href="https://github.com/DeepAgentLabs">GitHub <span aria-hidden="true">↗</span></a>
     </nav>
-
-    <a class="button button-small button-ghost" href="https://github.com/DeepAgentLabs/agentic-sidecar" target="_blank" rel="noopener">
-      GitHub <span>↗</span>
-    </a>
   </header>
-
-  <!-- Hero Section -->
-  <section class="hero shell" id="agentic-sidecar-top">
-    <div class="hero-copy">
-      <div class="eyebrow">
-        <span class="live-dot"></span> Open-source · Local-first · Real-time Decision Supervision
+  <main id="main">
+    <section class="pp-hero pp-enter" id="top">
+      <div class="pp-hero-copy">
+        <p class="pp-crumbs"><a href="https://deepagentlabs.io/">Home</a><span aria-hidden="true">/</span><span>Products</span><span aria-hidden="true">/</span><b>Agentic Sidecar</b></p>
+        <p class="section-label">Agentic Sidecar · Supervise</p>
+        <h1>Before the action,<br><span class="hl">check the intent.</span></h1>
+        <p class="pp-lede">Evaluate proposed agent actions against policy, risk, intent, and budget before they execute. Observe decisions or govern them with explicit intervention and approval boundaries.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#simulation">Try the simulation <span aria-hidden="true">↘</span></a><a class="button button-secondary" href="docs/">Read the docs <span aria-hidden="true">→</span></a></div>
+        <code class="tl-pip pp-pip">pip install agentic-sidecar</code>
+        <ul class="pp-facts" aria-label="Key facts"><li>Open source</li><li>Observe and Govern modes</li><li>Explicit approval boundaries</li></ul>
       </div>
-      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-        <h1 style="margin-bottom:0">Agentic Sidecar — <span>Runtime Governance</span></h1>
+      <aside class="product-preview" aria-label="Agentic Sidecar example preview">
+        <p class="product-preview-label">DECISION SUPERVISION · EXAMPLE <span>● Simulated</span></p>
+        <h2>Keep the user in control.</h2>
+        <div class="product-preview-stats"><div><strong>2</strong><span>allowed</span></div><div><strong>1</strong><span>approval needed</span></div><div><strong>0</strong><span>real actions</span></div></div>
+        <ul class="product-preview-rows"><li><span>order_lookup</span><b class="">ALLOW</b></li><li><span>check_refund_policy</span><b class="">ALLOW</b></li><li><span>issue_refund · $120</span><b class="is-alert">PAUSE</b></li><li><span>draft_response</span><b class="">PENDING</b></li></ul>
+        <p class="product-preview-caption">Review original intent, switch modes, and approve or reject a sample action.</p>
+        <a href="#simulation">Explore this example <span aria-hidden="true">→</span></a>
+      </aside>
+    </section>
+    <!-- product-simulation:start -->
+    <section class="dal-demo-section" id="simulation" aria-labelledby="simulation-sidecar">
+      <div class="dal-demo-intro"><small>Interactive example</small><h2 id="simulation-sidecar">Inspect decisions before actions execute.</h2><p>Follow a sample agent plan through policy, intent, and budget checks, including a blocked action and human escalation.</p></div>
+      <div class="dal-demo" data-product-simulation="sidecar">
+        <div class="dal-demo-top"><span>Decision supervision · support-agent</span><span class="dal-demo-badge">Simulated</span></div>
+        <div class="dal-demo-metrics"><div><strong data-sim-metric>1</strong><span>Allowed</span></div><div><strong data-sim-metric>0</strong><span>Blocked</span></div><div><strong data-sim-metric>0</strong><span>Escalated</span></div></div>
+        <ul class="dal-demo-rows"><li class="dal-demo-row" data-sim-row data-tone="ok" style="--span-start:0%;--span-width:100%"><span>order_lookup</span><span class="dal-demo-result" data-sim-result>ALLOW</span><span class="dal-demo-detail" data-sim-detail>read scope</span></li><li class="dal-demo-row" data-sim-row data-tone="muted" style="--span-start:0%;--span-width:100%"><span>check_refund_policy</span><span class="dal-demo-result" data-sim-result>pending</span><span class="dal-demo-detail" data-sim-detail>policy check</span></li><li class="dal-demo-row" data-sim-row data-tone="muted" style="--span-start:0%;--span-width:100%"><span>issue_refund</span><span class="dal-demo-result" data-sim-result>pending</span><span class="dal-demo-detail" data-sim-detail>authority check</span></li><li class="dal-demo-row" data-sim-row data-tone="muted" style="--span-start:0%;--span-width:100%"><span>draft_response</span><span class="dal-demo-result" data-sim-result>pending</span><span class="dal-demo-detail" data-sim-detail>intent check</span></li></ul>
+        <div class="dal-demo-event"><small>RECENT ACTIVITY</small><p data-sim-event>Order lookup allowed: read access is within the task’s permitted scope.</p></div>
+        <div class="dal-demo-controls" data-sim-controls hidden><div><button type="button" data-sim-toggle aria-pressed="false">Play demo</button><button type="button" data-sim-next>Next step →</button></div><small>Step <span data-sim-step>1 / 3</span></small></div>
+        <p class="dal-demo-note">Example data, simulated in your browser. No live telemetry or real actions.</p>
+        <script type="application/json" data-sim-frames>[{"metrics": ["1", "0", "0"], "rows": [["ALLOW", "read scope", "ok"], ["pending", "policy check", "muted"], ["pending", "authority check", "muted"], ["pending", "intent check", "muted"]], "event": "Order lookup allowed: read access is within the task\u2019s permitted scope."}, {"metrics": ["2", "0", "1"], "rows": [["ALLOW", "read scope", "ok"], ["ALLOW", "policy checked", "ok"], ["ESCALATE", "approval needed", "warn"], ["pending", "intent check", "muted"]], "event": "Order and policy checked. Refund escalated for human approval; it has not executed."}, {"metrics": ["3", "0", "1"], "rows": [["ALLOW", "read scope", "ok"], ["ALLOW", "policy checked", "ok"], ["ESCALATE", "awaiting human", "warn"], ["ALLOW", "intent aligned", "ok"]], "event": "Safe response draft allowed. The refund remains pending human approval; no real action is performed."}]</script>
       </div>
-      <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
-        <span class="maturity-badge">Pre-Alpha</span>
-        <span style="font-family:var(--font-mono); font-size:13px; color:var(--cyan);">v0.8.0</span>
-        <a href="https://pypi.org/project/agentic-sidecar/" style="font-size:12px; color:var(--text-dim); border:1px solid var(--line); padding:2px 8px; border-radius:4px; font-family:var(--font-mono);" target="_blank" rel="noopener">PyPI</a>
-      </div>
-      <p class="hero-lead">
-        Agentic Sidecar attaches to your agent harness and evaluates every proposed tool call against policy, risk, intent, and budget limits <em>before</em> execution—without taking over the agent loop.
-      </p>
-      <div class="hero-actions">
-        <a class="button button-primary" href="docs/">Read Docs <span>→</span></a>
-        <button class="copy-command" id="copy-install" title="Copy install command">
-          <code>pip install agentic-sidecar</code>
-          <span>⧉</span>
-        </button>
-      </div>
-      <div class="hero-stats">
-        <div class="stat-item">
-          <strong>402</strong>
-          <span>Tests Passing</span>
-        </div>
-        <div class="stat-item">
-          <strong>93%</strong>
-          <span>Code Coverage</span>
-        </div>
-        <div class="stat-item">
-          <strong>v0.8.0</strong>
-          <span>Latest Release</span>
-        </div>
-        <div class="stat-item">
-          <strong>0</strong>
-          <span>Required Services</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Hero Architecture Box -->
-    <div class="hero-visual" aria-label="Sidecar Decision Pipeline">
-      <div style="font-size: 11px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 16px; font-family: var(--font-mono);">
-        Sidecar Execution Flow
-      </div>
-      <div class="pipeline-box">
-        <div><strong>1. Agent Action Proposed</strong><br><span style="color: var(--text-muted); font-size: 12px;">issue_refund(amount=$850)</span></div>
-        <span class="tag tag-blue">LangGraph Adapter</span>
-      </div>
-      <div class="pipeline-box">
-        <div><strong>2. Decision Gate Evaluation</strong><br><span style="color: var(--text-muted); font-size: 12px;">Policy → Risk → Intent Guardian</span></div>
-        <span class="tag tag-purple">Sidecar Runtime</span>
-      </div>
-      <div class="pipeline-box" style="border-color: rgba(255,94,126,0.3);">
-        <div><strong>3. Gate Verdict: BLOCK</strong><br><span style="color: var(--red); font-size: 12px;">Exceeds max refund constraint ($500)</span></div>
-        <span class="tag tag-red">Govern Mode</span>
-      </div>
-      <div class="pipeline-box">
-        <div><strong>4. Adapter Action</strong><br><span style="color: var(--green); font-size: 12px;">Raises SidecarBlockedError (Tool Stopped)</span></div>
-        <span class="tag tag-green">Enforcement</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Interactive Demo Section -->
-  <section class="section shell" id="playground">
+    </section>
+    <!-- product-simulation:end -->
+    <div class="product-content">
+<section class="section shell" id="playground">
     <div class="section-header">
       <div class="eyebrow">Interactive Playground</div>
       <h2 class="section-title">Governed Customer Support Agent Demo</h2>
@@ -158,7 +183,7 @@
     <div class="demo-card">
       <div class="demo-controls">
         <div>
-          <span style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-right: 12px;">Operation Mode:</span>
+          <span style="font-size: 13px; font-weight: 600; margin-right: 12px;">Operation Mode:</span>
           <div class="mode-toggle">
             <button class="mode-btn" id="mode-observe">Observe Mode</button>
             <button class="mode-btn active" id="mode-govern">Govern Mode</button>
@@ -178,11 +203,11 @@
         <div>
           <div class="console-header">
             <span>Execution Terminal</span>
-            <span style="color: var(--green);">● Active Runtime</span>
+            <span style="">● Active Runtime</span>
           </div>
           <div class="console-box" id="demo-console">
-            <div style="color: var(--text-dim); margin-bottom: 8px;">[SYSTEM] Governed Customer Support Agent initialized in GOVERN mode.</div>
-            <div style="color: var(--text-muted); margin-bottom: 8px;">Click an action button above to evaluate tool calls against Sidecar rules.</div>
+            <div style=" margin-bottom: 8px;">[SYSTEM] Governed Customer Support Agent initialized in GOVERN mode.</div>
+            <div style=" margin-bottom: 8px;">Click an action button above to evaluate tool calls against Sidecar rules.</div>
           </div>
         </div>
 
@@ -190,16 +215,14 @@
         <div>
           <div class="console-header">
             <span>Decision Payload Inspector</span>
-            <span style="color: var(--cyan);">JSON Data</span>
+            <span style="">JSON Data</span>
           </div>
-          <pre class="console-box" id="json-console" style="color: #9ec1e6;">// Select an action to view the serialized Decision & DecisionContext payload.</pre>
+          <pre class="console-box" id="json-console" style="">// Select an action to view the serialized Decision & DecisionContext payload.</pre>
         </div>
       </div>
     </div>
   </section>
-
-  <!-- Architecture Section -->
-  <section class="section shell" id="architecture">
+<section class="section shell" id="architecture">
     <div class="section-header">
       <div class="eyebrow">Design & Rationale</div>
       <h2 class="section-title">Core Architecture & Design Principles</h2>
@@ -216,19 +239,17 @@
       <div class="feature-card">
         <div class="card-icon">🔌</div>
         <h3>Framework Independence</h3>
-        <p>The Sidecar runtime (<code style="color:var(--cyan)">core/</code>) has zero dependencies on specific framework adapters. It attaches to LangGraph, CrewAI, or custom loops seamlessly.</p>
+        <p>The Sidecar runtime (<code style="">core/</code>) has zero dependencies on specific framework adapters. It attaches to LangGraph, CrewAI, or custom loops seamlessly.</p>
       </div>
 
       <div class="feature-card">
         <div class="card-icon">🛡️</div>
         <h3>Fail-Safe Failure Modes</h3>
-        <p>Requires an explicit <code style="color:var(--cyan)">on_sidecar_failure</code> setting (<code style="color:var(--cyan)">fail_closed</code> or <code style="color:var(--cyan)">fail_open</code>). If evaluation errors, governance is guaranteed.</p>
+        <p>Requires an explicit <code style="">on_sidecar_failure</code> setting (<code style="">fail_closed</code> or <code style="">fail_open</code>). If evaluation errors, governance is guaranteed.</p>
       </div>
     </div>
   </section>
-
-  <!-- Capabilities Section -->
-  <section class="section shell" id="modules">
+<section class="section shell" id="modules">
     <div class="section-header">
       <div class="eyebrow">Modules & Capabilities</div>
       <h2 class="section-title">Composable Decision Gate Modules</h2>
@@ -239,7 +260,7 @@
       <div class="feature-card">
         <div class="card-icon">📋</div>
         <h3>Policy Advisor</h3>
-        <p>YAML-driven allow/deny permission rules matching tool names via glob patterns (<code style="color:var(--cyan)">delete_*</code>).</p>
+        <p>YAML-driven allow/deny permission rules matching tool names via glob patterns (<code style="">delete_*</code>).</p>
       </div>
 
       <div class="feature-card">
@@ -251,13 +272,13 @@
       <div class="feature-card">
         <div class="card-icon">🎯</div>
         <h3>Intent Guardian</h3>
-        <p>Validates tool parameters against structured user <code style="color:var(--cyan)">IntentEnvelope</code> constraints and detects drift.</p>
+        <p>Validates tool parameters against structured user <code style="">IntentEnvelope</code> constraints and detects drift.</p>
       </div>
 
       <div class="feature-card">
         <div class="card-icon">💰</div>
         <h3>Budget Guardian</h3>
-        <p>Enforces per-task spend (USD) and token ceilings, returning <code style="color:var(--amber)">PAUSE</code> for human approval when exceeded.</p>
+        <p>Enforces per-task spend (USD) and token ceilings, returning <code style="">PAUSE</code> for human approval when exceeded.</p>
       </div>
 
       <div class="feature-card">
@@ -273,9 +294,7 @@
       </div>
     </div>
   </section>
-
-  <!-- Observe vs Govern Modes -->
-  <section class="section shell" id="modes">
+<section class="section shell" id="modes">
     <div class="section-header">
       <div class="eyebrow">Operating Modes</div>
       <h2 class="section-title">Observe Mode vs. Govern Mode</h2>
@@ -294,13 +313,13 @@
         </thead>
         <tbody>
           <tr>
-            <td><strong style="color: var(--cyan);">Observe Mode</strong></td>
+            <td><strong style="">Observe Mode</strong></td>
             <td>Evaluates tool calls, computes decision verdicts, and logs audit trails.</td>
             <td><span class="verdict-badge badge-allow">Always Executes</span></td>
             <td>Initial deployment, shadow auditing, and baseline evaluation.</td>
           </tr>
           <tr>
-            <td><strong style="color: var(--green);">Govern Mode</strong></td>
+            <td><strong style="">Govern Mode</strong></td>
             <td>ALLOW/WARN proceed. BLOCK stops; other outcomes resolve through approval or suspend execution.</td>
             <td><span class="verdict-badge badge-block">Blocked via Exception</span></td>
             <td>Production enforcement, financial boundary control, and safety gating.</td>
@@ -309,9 +328,7 @@
       </table>
     </div>
   </section>
-
-  <!-- Quickstart & API Code -->
-  <section class="section shell" id="quickstart">
+<section class="section shell" id="quickstart">
     <div class="section-header">
       <div class="eyebrow">Developer Quickstart</div>
       <h2 class="section-title">Integration Code Snippets</h2>
@@ -341,9 +358,7 @@ tools = attach(sidecar, [read_order, issue_refund, delete_customer])
 agent = create_react_agent(model, tools=tools)</pre>
     </div>
   </section>
-
-  <!-- Use Cases Section -->
-  <section class="section shell" id="usecases">
+<section class="section shell" id="usecases">
     <div class="section-header">
       <div class="eyebrow">End-to-End Walkthroughs</div>
       <h2 class="section-title">Production Use Cases</h2>
@@ -355,7 +370,7 @@ agent = create_react_agent(model, tools=tools)</pre>
         <div class="card-icon">💸</div>
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
           <span class="tag tag-blue">Getting Value Fast</span>
-          <span style="font-size:11px; color:var(--text-dim); font-family:var(--font-mono);">~10 min</span>
+          <span style="font-size:11px;">~10 min</span>
         </div>
         <h3>Prevent Unauthorized High-Value Refunds</h3>
         <p>Intercept agent tool calls and enforce policy limits to block unauthorized monetary refunds in under 10 minutes.</p>
@@ -366,7 +381,7 @@ agent = create_react_agent(model, tools=tools)</pre>
         <div class="card-icon">🎧</div>
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
           <span class="tag tag-purple">Realistic Workflow</span>
-          <span style="font-size:11px; color:var(--text-dim); font-family:var(--font-mono);">~15 min</span>
+          <span style="font-size:11px;">~15 min</span>
         </div>
         <h3>Run a Governed Customer Support Agent</h3>
         <p>Combine Policy Advisor, Intent Guardian, Risk Evaluator, and Budget Guardrails into a unified synchronous supervision sidecar.</p>
@@ -377,7 +392,7 @@ agent = create_react_agent(model, tools=tools)</pre>
         <div class="card-icon">🦜</div>
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
           <span class="tag tag-green">Integration</span>
-          <span style="font-size:11px; color:var(--text-dim); font-family:var(--font-mono);">~15 min</span>
+          <span style="font-size:11px;">~15 min</span>
         </div>
         <h3>Govern LangGraph Agent Workflows</h3>
         <p>Attach Agentic Sidecar's native LangGraph adapter to intercept graph tool invocations and enforce intent constraints in govern mode.</p>
@@ -388,10 +403,7 @@ agent = create_react_agent(model, tools=tools)</pre>
       <a class="button button-primary" href="usecases/">Explore All Use Cases <span>→</span></a>
     </div>
   </section>
-
-  <!-- DeepAgentLabs Ecosystem & Footer -->
-  <footer id="ecosystem">
-    <div class="shell">
+<section id="ecosystem">
 
       <!-- Integrations strip -->
       <div class="section-header" style="margin-bottom:32px;">
@@ -403,7 +415,7 @@ agent = create_react_agent(model, tools=tools)</pre>
         <div class="feature-card" style="padding:20px 24px;">
           <div class="card-icon" style="font-size:16px;">🦜</div>
           <h3 style="font-size:15px;">LangGraph <span class="tag tag-green" style="font-size:10px; vertical-align:middle;">Available</span></h3>
-          <p>Wrap tool lists with <code style="color:var(--cyan)">attach(sidecar, tools)</code> — works with <code style="color:var(--cyan)">create_react_agent</code>.</p>
+          <p>Wrap tool lists with <code style="">attach(sidecar, tools)</code> — works with <code style="">create_react_agent</code>.</p>
         </div>
         <div class="feature-card" style="padding:20px 24px;">
           <div class="card-icon" style="font-size:16px;">🤖</div>
@@ -428,7 +440,7 @@ agent = create_react_agent(model, tools=tools)</pre>
         <div class="feature-card" style="padding:20px 24px;">
           <div class="card-icon" style="font-size:16px;">🔧</div>
           <h3 style="font-size:15px;">Any Python Agent <span class="tag tag-green" style="font-size:10px; vertical-align:middle;">Available</span></h3>
-          <p>Use <code style="color:var(--cyan)">sidecar.evaluate(context)</code> directly in any custom agent loop.</p>
+          <p>Use <code style="">sidecar.evaluate(context)</code> directly in any custom agent loop.</p>
         </div>
       </div>
 
@@ -455,44 +467,30 @@ agent = create_react_agent(model, tools=tools)</pre>
         </div>
       </div>
 
-      <div class="footer-grid">
-        <div>
-          <div class="brand" style="margin-bottom: 12px;">
-            <span class="brand-mark"></span>
-            <a href="https://deepagentlabs.io" style="color:inherit;">DeepAgentLabs</a>
-          </div>
-          <p style="color: var(--text-muted); font-size: 14px; max-width: 400px;">
-            Open-source infrastructure for autonomous AI systems: Trace (AgenticLens), Supervise (Agentic Sidecar), Connect (Agentic MCP), Test (Agentic Chaos).
-          </p>
-        </div>
-        <div>
-          <h4 style="color: var(--text); margin-bottom: 12px;">Ecosystem</h4>
-          <ul style="list-style: none; display: grid; gap: 8px; font-size: 13px;">
-            <li><a href="https://deepagentlabs.io/agenticlens/" style="color: var(--cyan);">AgenticLens (Observe)</a></li>
-            <li><a href="https://deepagentlabs.io/agentic-sidecar/" style="color: var(--cyan);">Agentic Sidecar (Govern)</a></li>
-            <li><a href="https://deepagentlabs.io/deep-agenticcore-mcp/" style="color: var(--cyan);">Agentic MCP (Connect)</a></li>
-            <li><a href="https://deepagentlabs.io/agentic-chaos/" style="color: var(--cyan);">Agentic Chaos (Test)</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 style="color: var(--text); margin-bottom: 12px;">Resources</h4>
-          <ul style="list-style: none; display: grid; gap: 8px; font-size: 13px;">
-            <li><a href="docs/">Documentation</a></li>
-            <li><a href="usecases/">Use Cases</a></li>
-            <li><a href="https://github.com/DeepAgentLabs/agentic-sidecar">GitHub</a></li>
-            <li><a href="https://pypi.org/project/agentic-sidecar/">PyPI</a></li>
-            <li><a href="https://github.com/DeepAgentLabs/agentic-sidecar/tree/main/examples">Examples</a></li>
-            <li><a href="https://github.com/DeepAgentLabs/agentic-sidecar/blob/main/CONTRIBUTING.md">Contributing</a></li>
-            <li><a href="https://github.com/DeepAgentLabs/agentic-sidecar/blob/main/LICENSE">License (MIT)</a></li>
-          </ul>
-        </div>
+      </section>
+    </div>
+    <section class="cta section-shell pp-cta product-end">
+      <div><p class="section-label">Start building</p><h2>Put Agentic Sidecar to work.</h2><p>Start with the documentation, explore the examples, or contribute on GitHub.</p></div>
+      <div class="hero-actions"><a class="button button-primary" href="docs/">Read the docs →</a><a class="button button-secondary" href="https://github.com/DeepAgentLabs/agentic-sidecar">View on GitHub ↗</a></div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="ft-inner">
+      <div class="ft-about">
+        <p class="ft-statement">Open infrastructure for <em>observable, efficient and resilient</em> AI agents, built in the open.</p>
+        <ul class="ft-values" aria-label="Principles"><li>Spec comes first</li><li>Works with any framework</li><li>Runs on your machine</li><li>Free and open source</li></ul>
       </div>
-      <div style="border-top: 1px solid var(--line); padding-top: 24px; text-align: center; font-size: 12px; color: var(--text-dim);">
-        © 2026 <a href="https://deepagentlabs.io" style="color:var(--text-muted);">DeepAgentLabs</a>. Open-source under MIT License.
-      </div>
+      <nav class="ft-col" aria-label="Products"><p class="ft-title">Products</p><ul><li><a href="https://github.com/DeepAgentLabs/agenticlens" target="_blank" rel="noopener noreferrer">AgenticLens</a></li><li><a href="https://github.com/DeepAgentLabs/agentic-evals" target="_blank" rel="noopener noreferrer">Agentic Evals</a></li><li><a href="https://github.com/DeepAgentLabs/agentic-sidecar" target="_blank" rel="noopener noreferrer">Agentic Sidecar</a></li><li><a href="https://github.com/DeepAgentLabs/agentic-chaos" target="_blank" rel="noopener noreferrer">Agentic Chaos</a></li><li><a href="https://github.com/DeepAgentLabs/mcp-server" target="_blank" rel="noopener noreferrer">MCP Server</a></li><li><a href="https://github.com/DeepAgentLabs/agenticops-control-tower" target="_blank" rel="noopener noreferrer">Control Tower</a></li></ul></nav>
+      <nav class="ft-col" aria-label="Explore"><p class="ft-title">Explore</p><ul><li><a href="https://github.com/DeepAgentLabs/ai-operations-spec" target="_blank" rel="noopener noreferrer">Specification</a></li><li><a href="https://deepagentlabs.io/roadmap.html">Roadmap</a></li><li><a href="https://deepagentlabs.io/#architecture">Capability map</a></li><li><a href="https://deepagentlabs.io/#dashboards">Frameworks</a></li><li><a href="https://deepagentlabs.io/#faq">FAQ</a></li><li><a href="https://mcp.deepagentlabs.io" target="_blank" rel="noopener noreferrer">Remote MCP</a></li></ul></nav>
+      <nav class="ft-col" aria-label="Community"><p class="ft-title">Community</p><ul><li><a href="https://discord.gg/fEqPFWgcDG" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-discord" aria-hidden="true"></i> Discord</a></li><li><a href="https://www.linkedin.com/company/deepagentlabs" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i> LinkedIn</a></li><li><a href="https://www.instagram.com/deepagentlabs.io" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram" aria-hidden="true"></i> Instagram</a></li><li><a href="https://github.com/DeepAgentLabs" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a></li></ul></nav>
+    </div>
+    <div class="ft-word" aria-hidden="true"><span class="ft-word-text"><span class="ft-w1">DeepAgent</span><span class="ft-w2">Labs</span></span></div>
+    <div class="ft-bottom">
+      <p>© <span id="year">2026</span> DeepAgentLabs</p>
+      <p class="ft-status"><i aria-hidden="true"></i>AI Operations Specification · v0.1 in review</p>
+      <a class="ft-top" href="#top">Back to top <span aria-hidden="true">↑</span></a>
     </div>
   </footer>
-
   <script src="site.js"></script>
 </body>
 </html>
