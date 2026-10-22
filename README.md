@@ -708,3 +708,8 @@ See [operator compatibility and ownership](docs/tower-0.8-live-operations.md) fo
 periodic detection, durable alerts, acknowledgements and joined incident console
 views. Existing native contracts and optional dependency ranges remain compatible;
 no runtime or patch release is required here.
+
+The three hosted use-case pages record public page-load totals with Hits through
+`usecase-views.js` on deepagentlabs.io. Local previews do not increment counters;
+the main website index displays totals refreshed hourly. These are page loads,
+not unique visitors, and counting begins when the script is deployed.

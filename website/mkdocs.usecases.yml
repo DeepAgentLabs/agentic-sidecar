@@ -21,3 +21,4 @@ extra_javascript:
   - assets/scripts/refund-flow.js
   - assets/scripts/support-flow.js
   - assets/scripts/langgraph-flow.js
+  - https://deepagentlabs.io/assets/js/usecase-views.js
