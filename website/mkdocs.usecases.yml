@@ -11,3 +11,13 @@ nav:
   - Govern LangGraph agent workflows: govern-langgraph-agent-workflows.md
   - Back to docs: https://deepagentlabs.io/agentic-sidecar/docs/
   - Back to Agentic Sidecar: https://deepagentlabs.io/agentic-sidecar/
+
+extra_css:
+  - assets/stylesheets/extra.css
+  - assets/stylesheets/refund-flow.css
+  - assets/stylesheets/support-flow.css
+  - assets/stylesheets/langgraph-flow.css
+extra_javascript:
+  - assets/scripts/refund-flow.js
+  - assets/scripts/support-flow.js
+  - assets/scripts/langgraph-flow.js

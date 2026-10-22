@@ -18,9 +18,27 @@ Attempting to embed hardcoded validation logic inside every LangGraph tool or no
 
 ## Architecture
 
-![Flow](assets/diagrams/govern-langgraph-agent-workflows-flow.png)
-
-*Figure 1: Agentic Sidecar LangGraph adapter wrapping tool declarations before passing them to a `create_react_agent` state graph.*
+<figure class="refund-flow lg-flow" data-langgraph-flow aria-labelledby="lg-flow-title">
+  <div class="refund-flow-header"><div><span class="refund-eyebrow">LANGGRAPH ADAPTER / GOVERN MODE</span><h3 id="lg-flow-title">Keep the graph. Govern the tool boundary.</h3></div><span class="refund-sim-label">Browser-only illustration</span></div>
+  <div class="refund-controls"><div><button type="button" data-lg-play hidden>Pause animation</button><button type="button" data-lg-replay hidden>Replay example</button></div><span data-lg-playback>Illustrative result · $850 request blocked</span></div>
+  <label class="lg-picker" data-lg-picker hidden>Example request<select data-lg-select><option value="850" selected>$850 · exceeds the authorized limit</option><option value="120">$120 · within the authorized limit</option></select></label>
+  <div class="refund-progress" aria-hidden="true"><span></span></div>
+  <div class="lg-setup"><span>WIRE ONCE / BEFORE GRAPH CREATION</span><code>governed_tools = attach(sidecar, [issue_refund])</code><i aria-hidden="true">↓</i><code>create_react_agent(model, tools=governed_tools)</code><small>Core graph logic stays unchanged. The adapter wraps the callable tools.</small></div>
+  <div class="lg-intent"><span>AUTHORIZED INTENT</span><p><strong>refund_customer</strong> · requester <code>user123</code> · order <code>A100</code></p><code>issue_refund.amount ≤ maximum_refund ($500)</code><small>Policy: default allow · Risk: LOW · Sidecar failure: fail_closed</small></div>
+  <div class="lg-map">
+    <ol class="lg-stages">
+      <li class="lg-node lg-blue" data-lg-node="0"><div class="lg-node-top"><span>01 / GRAPH AGENT NODE</span><span class="lg-check" aria-label="Complete">✓</span></div><i class="lg-icon" aria-hidden="true">◈</i><h4>A model proposes a call.</h4><code>AIMessage.tool_calls</code><p data-lg-call>issue_refund("A100", 850)</p><small data-lg-status="0">TOOL CALL EMITTED</small></li>
+      <li class="lg-node lg-purple" data-lg-node="1"><div class="lg-node-top"><span>02 / SIDECAR ADAPTER</span><span class="lg-check" aria-label="Complete">✓</span></div><i class="lg-icon" aria-hidden="true">⇄</i><h4>Intercept before execution.</h4><code>governed_tools</code><p>The wrapped callable checks the proposed arguments before invoking the original tool.</p><small data-lg-status="1">BOUNDARY INTERCEPTED</small></li>
+      <li class="lg-node lg-teal failed" data-lg-node="2"><div class="lg-node-top"><span>03 / INTENT GUARDIAN</span><span class="lg-check" aria-label="Constraint violated">×</span></div><i class="lg-icon" aria-hidden="true">◇</i><h4 data-lg-verdict>BLOCK</h4><code data-lg-comparison>$850 &gt; $500</code><p data-lg-intent-detail>The amount violates the user-authorized maximum. Risk remains LOW.</p><small data-lg-status="2">INTENT CONSTRAINT VIOLATED</small></li>
+      <li class="lg-node lg-amber skipped" data-lg-node="3"><div class="lg-node-top"><span>04 / ORIGINAL TOOL</span><span class="lg-check" aria-label="Not called">–</span></div><i class="lg-icon" aria-hidden="true">⌁</i><h4 data-lg-tool-title>Tool not called.</h4><code>issue_refund()</code><p data-lg-tool-detail>The block prevents the original callable from executing.</p><small data-lg-status="3">NOT DISPATCHED</small></li>
+      <li class="lg-node lg-red" data-lg-node="4"><div class="lg-node-top"><span>05 / GRAPH OUTCOME</span><span class="lg-check" aria-label="Complete">✓</span></div><i class="lg-icon" aria-hidden="true">↩</i><h4 data-lg-outcome>Exception reaches the caller.</h4><code data-lg-return-code>SidecarBlockedError</code><p data-lg-return-detail>The surrounding try/except catches the blocked invocation. No successful final reply is produced.</p><small data-lg-status="4">agent.invoke RAISES</small></li>
+      <li class="lg-node lg-green active" data-lg-node="5"><div class="lg-node-top"><span>06 / DECISION PROVENANCE</span><span class="lg-check" aria-label="Complete">✓</span></div><i class="lg-icon" aria-hidden="true">▤</i><h4>The verdict stays inspectable.</h4><code>sidecar.decisions</code><p data-lg-record-summary>BLOCK · issue_refund · risk LOW · Intent Guardian constraint violation.</p><small data-lg-status="5">ILLUSTRATIVE DECISION LOG</small></li>
+    </ol>
+  </div>
+  <div class="lg-story" role="status" aria-live="off"><div><span class="refund-eyebrow" data-lg-phase>06 / DECISION PROVENANCE</span><h4 data-lg-heading>Blocked at the tool boundary.</h4><p data-lg-story>The $850 attempt raises SidecarBlockedError before the real tool runs. The graph’s host handles the exception.</p></div><div class="lg-metrics"><div><b data-lg-calls>0</b><span>Simulated tool calls</span></div><div><b data-lg-funds>$0</b><span>Simulated funds issued</span></div></div></div>
+  <details class="lg-record"><summary>Inspect the illustrative graph result</summary><pre data-lg-record>{"simulation":true,"amount":850,"decision":"BLOCK","risk":"LOW","reason":"maximum_refund constraint violated","tool_executed":false,"exception":"SidecarBlockedError","final_message":null}</pre></details>
+  <figcaption>Animated illustration of the scripted LangGraph example below: $850 is blocked by the intent constraint; $120 runs and returns “Refund issued.” Both have default LOW risk. Setup wraps the tools before graph creation; it does not modify graph logic. No model, LangGraph runtime or payment API is invoked by this animation.</figcaption>
+</figure>
 
 ## Prerequisites
 

@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Documentation
+
+- Replace the LangGraph use case's Architecture PNG display with a responsive adapter/Intent Guardian animation, preserving the PNG asset. Show tool wrapping at setup, the $850 exception path and the $120 successful graph response with LOW risk in both cases; include animated wires, ticks, decision records and reduced-motion/static fallbacks.
+
+- Replace the governed customer-support Architecture PNG display with a native multi-gate animation, preserving the original image. Show allowed reads/refunds, risk blocks, policy denial, Observe-mode execution and a budget PAUSE variation, with accurate short-circuiting, audit records, responsive wiring and reduced-motion behavior.
+
+- Replace the refund use case's Architecture PNG display with a responsive HTML/CSS/SVG animation of RiskEvaluator checks, block/allow verdicts and tool-boundary outcomes. Keep the PNG asset unchanged. Include pause/replay, reduced-motion support and browser checks for both the $850 blocked and $300 allowed examples.
+
 ## [0.9.0] - 2026-10-19
 
 ### Added

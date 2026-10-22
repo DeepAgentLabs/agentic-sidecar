@@ -1,5 +1,12 @@
 # agentic-sidecar
 
+
+[Animated refund-policy walkthrough](website/usecases/prevent-unauthorized-refunds.md): see a blocked $850 request and an allowed $300 request at the governed tool boundary. The website animation is illustrative and makes no payment calls.
+
+[Animated multi-gate support walkthrough](website/usecases/governed-customer-support-agent.md): follow Policy, Risk, Intent and Budget decisions, early returns, Observe versus Govern enforcement and illustrative audit provenance.
+
+[Animated LangGraph adapter walkthrough](website/usecases/govern-langgraph-agent-workflows.md): see governed tool wrapping, an intent-based $850 block and the allowed $120 graph response. The animation executes no graph or payment API.
+
 **A companion intelligence and real-time supervision layer for autonomous AI agents.**
 
 > The Main Agent acts. The Sidecar observes, thinks, advises, and governs.

@@ -18,9 +18,26 @@ Existing approaches rely on wrapping tool functions with manual `if amount > 500
 
 ## Architecture
 
-![Flow](assets/diagrams/prevent-unauthorized-refunds-flow.png)
+<figure class="refund-flow" data-refund-flow aria-labelledby="refund-flow-title">
+  <div class="refund-flow-header">
+    <div><span class="refund-eyebrow">PRE-ACTION SUPERVISION / GOVERN MODE</span><h3 id="refund-flow-title">A refund request. A boundary that holds.</h3></div>
+    <span class="refund-sim-label">Browser-only illustration</span>
+  </div>
+  <div class="refund-controls"><div><button type="button" data-refund-play hidden>Pause animation</button><button type="button" data-refund-replay hidden>Replay $850 block</button></div><span data-refund-playback>Illustrative result · $850 request blocked</span></div>
+  <div class="refund-progress" aria-hidden="true"><span></span></div>
+  <div class="refund-rule"><span>DETERMINISTIC RULE</span><code>amount &gt; $500 → HIGH risk → BLOCK</code><small>No model call. No approval override.</small></div>
+  <div class="refund-map">
+    <ol class="refund-stages">
+      <li class="refund-stage refund-blue" data-refund-stage="0"><div class="refund-stage-top"><span>01 / AGENT CALL</span><span class="refund-check" aria-label="Complete">✓</span></div><i class="refund-icon" aria-hidden="true">⌁</i><h4>Propose the refund</h4><code>issue_refund()</code><p>Order <strong>ORD-101</strong></p><b class="refund-amount" data-refund-amount>$850</b><small data-refund-stage-status="0">PROPOSAL CAPTURED</small></li>
+      <li class="refund-stage refund-purple" data-refund-stage="1"><div class="refund-stage-top"><span>02 / RISK EVALUATION</span><span class="refund-check" aria-label="Complete">✓</span></div><i class="refund-icon" aria-hidden="true">◇</i><h4>Check the policy</h4><code>RiskEvaluator</code><p>Configured limit <strong>$500</strong></p><b class="refund-comparison" data-refund-comparison>$850 &gt; $500</b><small data-refund-stage-status="1">HIGH RISK</small></li>
+      <li class="refund-stage refund-red" data-refund-stage="2"><div class="refund-stage-top"><span>03 / GATE VERDICT</span><span class="refund-check" aria-label="Complete">✓</span></div><i class="refund-icon" aria-hidden="true">⊘</i><h4 data-refund-verdict>BLOCK</h4><code>govern mode</code><p data-refund-reason>The request exceeds the configured limit.</p><b class="refund-decision" data-refund-risk>Risk: HIGH</b><small data-refund-stage-status="2">DISPATCH DENIED</small></li>
+      <li class="refund-stage refund-amber active" data-refund-stage="3"><div class="refund-stage-top"><span>04 / TOOL BOUNDARY</span><span class="refund-check" aria-label="Complete">✓</span></div><i class="refund-icon" aria-hidden="true">▣</i><h4 data-refund-tool-title>Execution halted</h4><code data-refund-exception>SidecarBlockedError</code><p data-refund-tool-detail>The inner refund function is never invoked.</p><b class="refund-decision" data-refund-funds>$0 issued</b><small data-refund-stage-status="3">TOOL NOT CALLED</small></li>
+    </ol>
+  </div>
+  <div class="refund-result" role="status" aria-live="off"><div><span class="refund-eyebrow" data-refund-phase>04 / TOOL BOUNDARY</span><h4 data-refund-result>Blocked before money can move.</h4><p data-refund-detail>The $850 request is above the $500 threshold. Govern mode raises SidecarBlockedError before issue_refund executes.</p></div><div class="refund-metrics"><div><b data-refund-call-count>0</b><span>Simulated tool calls</span></div><div><b data-refund-result-funds>$0</b><span>Simulated funds issued</span></div></div></div>
+  <figcaption>Animated illustration of the Risk Evaluator example below. The $850 request is blocked; the $300 request is allowed. No real tool, model or payment service is called.</figcaption>
+</figure>
 
-*Figure 1: Agentic Sidecar Risk Evaluator intercepting `issue_refund` calls and enforcing risk thresholds in govern mode.*
 
 ## Prerequisites
 
