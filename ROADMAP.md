@@ -534,6 +534,15 @@ decisions stay separate from scores and gates. Agent Alone versus Agent +
 Sidecar evidence remains Sidecar v0.9 work. No dependency or release is
 needed. See [the compatibility note](docs/evals-0.9-judge-reliability.md).
 
+## Evals 0.10.0 evaluation evidence
+
+Evals 0.10.0 exports scores as AIOS `0.4-draft` `evaluation` evidence merged
+into a Run. Sidecar decisions, authority and redacted evidence are not
+exported as evaluations. A target stopped by supervision has no observed output
+and is reported rather than exported, and an aligned Run is not proof of
+containment (Evals v0.11). The `validation` extra already admits 0.10.0; no
+release is needed. See [the compatibility note](docs/evals-0.10-aios-evidence.md).
+
 ## MCP 0.4.0 unified release checks
 
 MCP 0.4.0's unified workflows do not consume Sidecar evidence; MCP keeps
