@@ -16,7 +16,10 @@ Consumers that do not check `0.6-draft` must reject provenance records under
 
 ## Agentic Sidecar
 
-Decisions, authority grants and the native `sidecar.correlation/1` convention stay native. A provenance finding is descriptive: it grants no authority, cannot approve an action and cannot bypass supervision, whatever its `status` or `confidence`. Sidecar does not emit provenance records.
+Decisions, authority grants and the native `sidecar.correlation/1` convention stay native. A provenance finding is descriptive: it grants no authority, cannot approve an action and cannot bypass supervision, whatever its `status` or `confidence`. Sidecar does not emit AIOS `0.6-draft` provenance records. Its native decision
+provenance (`AuditRecord`, `CausalLink`, `DecisionRationale` and the
+`DecisionTrigger` shapes) is a separate Sidecar-local audit export, not an AIOS
+provenance record, and keeps its existing contract.
 
 ## Dependencies
 
