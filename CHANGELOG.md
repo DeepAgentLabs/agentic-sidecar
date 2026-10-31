@@ -4,6 +4,16 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-10-31
+
+### Changed
+
+- The optional `agentic-chaos` extra admits Agentic Chaos 0.9
+  (`>=0.5.3,<0.10`), and the `validation` extra admits it too
+  (`>=0.8,<0.10`). Recovery proposals keep native Chaos event IDs in scored
+  0.9 reports (`tests/test_ecosystem_exports.py`). No governance behavior
+  changes. See `website/docs/chaos-0.9.md`.
+
 ### Documentation
 
 - Replace the LangGraph use case's Architecture PNG display with a responsive adapter/Intent Guardian animation, preserving the PNG asset. Show tool wrapping at setup, the $850 exception path and the $120 successful graph response with LOW risk in both cases; include animated wires, ticks, decision records and reduced-motion/static fallbacks.
