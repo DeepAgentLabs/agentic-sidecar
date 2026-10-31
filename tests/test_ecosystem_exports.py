@@ -145,3 +145,31 @@ def test_chaos_v08_workflow_events_retain_native_recovery_identity() -> None:
     with pytest.raises(SidecarBlockedError):
         evaluate_recovery(sidecar, event, tool_name="delete", arguments={})
     assert sidecar.decisions[0][0].metadata["chaos.event_id"] == event["id"]
+
+
+def test_chaos_v09_scored_reports_retain_native_recovery_identity() -> None:
+    pytest.importorskip("agentic_chaos", minversion="0.9.0")
+    from agentic_chaos import PoisonedResponseFault, Scope, chaos_call, chaos_run
+    from agentic_chaos.probes import FunctionProbe
+
+    from agentic_sidecar.gate.policy import PolicyAdvisor, PolicyRule
+
+    report = chaos_run(
+        lambda: chaos_call(lambda: "safe", step_name="planner"),
+        [PoisonedResponseFault("policy_bypass", seed=7, scope=Scope(steps=["planner"]))],
+        probes=[FunctionProbe(lambda: "ok", name="ping")],
+    )
+    (event,) = report.model_dump(mode="json")["chaos_events"]
+    assert report.resilience is not None
+    # Sidecar containment does not make a poisoned response "recovered" in the
+    # Chaos score: without a fidelity judge it stays unverified.
+    assert report.resilience["faults"][0]["verdicts"] == {"unverified": 1}
+
+    sidecar = Sidecar(
+        on_sidecar_failure="fail_closed",
+        mode="govern",
+        policy=PolicyAdvisor([PolicyRule(tool="delete", effect="deny")]),
+    )
+    with pytest.raises(SidecarBlockedError):
+        evaluate_recovery(sidecar, event, tool_name="delete", arguments={})
+    assert sidecar.decisions[0][0].metadata["chaos.event_id"] == event["id"]
