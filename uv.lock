@@ -136,7 +136,7 @@ provides-extras = ["openai", "anthropic", "agenticlens", "agentic-chaos", "seman
 
 [[package]]
 name = "agenticlens"
-version = "0.10.0"
+version = "0.11.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "agentic-evals" },
@@ -147,9 +147,9 @@ dependencies = [
     { name = "rich" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/36/17/11288dd22d65d17a263be8baf88f3f58d6263fba26b32bc99c0cd166d32a/agenticlens-0.10.0.tar.gz", hash = "sha256:0f3d6ad7d6669e31e6cec4da18bd8729257434a0c1cad15f0b9020782cf53cb0", size = 2272236, upload-time = "2026-10-19T03:19:49.919Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/02/eb/4d97e0899cb918dc7ebd680a1d05f0b778b29872fae8a108e4c36d509cea/agenticlens-0.11.0.tar.gz", hash = "sha256:bb999bcfdfeb95e52a473e68857fe9693b6540166f2aceaead0b8e0feb635c83", size = 11734709, upload-time = "2026-10-31T08:08:05.78Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8a/75/05c3b58ef22517ce82557b9a582ef29aaffff1c825b50e54912f0a93f935/agenticlens-0.10.0-py3-none-any.whl", hash = "sha256:849a450dcb17b5f43c7fde77b6cc58fde4f8d92658c28c4bb164d611d72cef43", size = 308662, upload-time = "2026-10-19T03:19:48.362Z" },
+    { url = "https://files.pythonhosted.org/packages/cb/5d/6d648517af2fadfb6063a6100c31eabf183c5b581018d5492333f22afa8a/agenticlens-0.11.0-py3-none-any.whl", hash = "sha256:56e6a68029677246008e3c42589995c64323bf3b5c774e7d69e3ff6998b06891", size = 342421, upload-time = "2026-10-31T08:08:04.212Z" },
 ]
 
 [[package]]
