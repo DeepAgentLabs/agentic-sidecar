@@ -686,6 +686,15 @@ decisions stay separate from scores and gates. Agent Alone versus Agent +
 Sidecar evidence remains Sidecar v0.9 work. No dependency or release is
 needed. See [the compatibility note](docs/evals-0.9-judge-reliability.md).
 
+## Evals 0.10.0 evaluation evidence
+
+Evals 0.10.0 exports scores as AIOS `0.4-draft` `evaluation` evidence merged
+into a Run. Sidecar decisions, authority and redacted evidence are not
+exported as evaluations. A target stopped by supervision has no observed output
+and is reported rather than exported, and an aligned Run is not proof of
+containment (Evals v0.11). The `validation` extra already admits 0.10.0; no
+release is needed. See [the compatibility note](docs/evals-0.10-aios-evidence.md).
+
 ## MCP 0.4.0 unified release checks
 
 [MCP 0.4.0](https://github.com/DeepAgentLabs/mcp-server/releases/tag/v0.4.0) completes Phase 4 with its unified workflows: `core.compare_runs`, a fail-closed `core.release_check`, `core.incident_summary` and `core.export_report`. MCP judges nothing itself; it composes Lens comparisons, the Evals release gate and Chaos run reports. Malformed or failed-call evidence always blocks readiness, and so does missing evidence of a required kind; all three kinds are required by default and `required_evidence` narrows that.
