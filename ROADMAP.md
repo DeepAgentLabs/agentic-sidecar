@@ -639,3 +639,9 @@ containment. No new shared schema, automatic adapter or hosted execution
 capability is introduced.
 
 Sidecar 0.9.1 widens its optional `agentic-chaos` extra to `>=0.5.3,<0.10` and its `validation` extra to `>=0.8,<0.10`. Recovery proposals keep native Chaos event IDs in scored reports. A poisoned response that Sidecar contains is still `unverified` in the Chaos score unless a fidelity judge scored it. Sidecar decisions do not feed the score, and the score does not drive Sidecar governance. This packaging patch changes no governance behavior.
+
+## AIOS v0.6.1 provenance and conformance suite
+
+See [AIOS v0.6.1 compatibility](docs/aios-0.6.1.md) for the new `0.6-draft` provenance
+records, portable conformance suite and naming conventions. Exports stay
+`0.4-draft`; no runtime dependency bump or package release is required.
