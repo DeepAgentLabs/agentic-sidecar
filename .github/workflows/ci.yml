@@ -95,7 +95,7 @@ jobs:
       - uses: astral-sh/setup-uv@v7
       - run: uv python install 3.12
       - run: uv sync --locked --python 3.12 --extra dev --extra agenticlens --extra agentic-chaos --extra validation
-      - run: uv run --no-sync python -c "import agenticlens; assert agenticlens.__version__.startswith('0.10.'), agenticlens.__version__"
+      - run: uv run --no-sync python -c "import agenticlens; assert agenticlens.__version__.startswith('0.11.'), agenticlens.__version__"
       - run: uv run --no-sync pytest tests/test_ecosystem_exports.py tests/validation/test_supervision_evidence.py
       - run: uv run --no-sync python scripts/supervision_benchmark.py --ecosystem --output supervision-evidence.json
       - uses: actions/upload-artifact@v4
