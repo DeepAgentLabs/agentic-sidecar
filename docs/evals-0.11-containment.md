@@ -29,6 +29,7 @@ and expected scope belong to the host, never the evaluated sample.
 
 Native report/gate schema 1.0 is unchanged. Existing optional ranges remain
 sufficient except MCP's exact pin, which requires its 0.6.1 patch release.
-Documentation alignment alone requires no other package release.
+Lens 0.12.1 raises its Evals floor to 0.11.0 for the synchronized embedded schema.
+Lens 0.12.1 also refreshes embedded Evals schemas/examples and preserves failed live-target trials. Other documentation alignment needs no package release.
 
 Sidecar still enforces dispatch, authority and stop/revoke. Its validation extra already allows Evals 0.11. Copy actual scope, versions and effective receipts into host-bound evidence before sealing; do not synthesize containment from Decision.status.
