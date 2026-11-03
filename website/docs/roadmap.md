@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated **2026-10-19 · Current version: 0.9.0**.
+Updated **2026-11-02 · Current version: 0.9.2**.
 The [root ROADMAP.md](https://github.com/DeepAgentLabs/agentic-sidecar/blob/main/ROADMAP.md)
 is the canonical plan with detailed deliverables and acceptance criteria.
 Future version targets describe priorities, not committed delivery dates.
@@ -108,3 +108,10 @@ now admits 0.8. [Workflow evidence and limits](chaos-0.8.md).
 
 The v0.9 evidence, privacy and task-authority milestone ships in 0.9.0.
 See [acceptance evidence and limitations](v0.9.md); stable shared schemas remain v1.0.
+
+## MCP Phase 6 paired compatibility
+
+MCP 0.6.0 / Chaos 0.10.0 / Sidecar 0.9.2 use Lens 0.12.0 authenticated
+snapshots and native stop/dispatch evidence. See the
+[operator guide and limitations](https://github.com/DeepAgentLabs/mcp-server/blob/c18f73decdc75aaac3e2e95004ae88589d587e75/docs/phase6-containment.md).
+Evals v0.11 reusable containment scoring remains planned.
