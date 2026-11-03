@@ -15,7 +15,7 @@ resolution-markers = [
 
 [[package]]
 name = "agentic-chaos"
-version = "0.9.0"
+version = "0.10.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
@@ -23,9 +23,9 @@ dependencies = [
     { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f8/5d/469a7562c1dfb1d0a8ee3da99f3a298bae6d75448a805b8e5708cb742f64/agentic_chaos-0.9.0.tar.gz", hash = "sha256:ffee9457b669e043a5c976e50d591a8162c6d0a60ba2e66a143d2d00e1bb4781", size = 9490389, upload-time = "2026-10-31T10:30:41.59Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/87/9a/f3894d975c9df4a91b657a5b52c0ae40803b5872b43537a0247117d44019/agentic_chaos-0.10.0.tar.gz", hash = "sha256:898bf589ddd22a480d1834f174b3f74b3df3b99caae7a15bcae0d2de625dfe91", size = 9501714, upload-time = "2026-11-03T05:57:41.638Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b6/a6/9029d1bbc86cd2730c566f16241a7f107bbf4201555964a3d696da42024b/agentic_chaos-0.9.0-py3-none-any.whl", hash = "sha256:ad0735b05d83239d01ee46fe79175f9d9592f82f9d36def105aa797c420975e3", size = 164426, upload-time = "2026-10-31T10:30:39.682Z" },
+    { url = "https://files.pythonhosted.org/packages/d6/c9/0607926e6795efe60b922ee97d2ec694b2c267b823c14f0e1b59314147fc/agentic_chaos-0.10.0-py3-none-any.whl", hash = "sha256:15082965e7c15240b5017135d94bac37329c3ca06ae585240c1bd0a2e42ac71f", size = 167117, upload-time = "2026-11-03T05:57:39.89Z" },
 ]
 
 [[package]]
@@ -136,7 +136,7 @@ provides-extras = ["openai", "anthropic", "agenticlens", "agentic-chaos", "seman
 
 [[package]]
 name = "agenticlens"
-version = "0.11.0"
+version = "0.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "agentic-evals" },
@@ -147,9 +147,9 @@ dependencies = [
     { name = "rich" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/02/eb/4d97e0899cb918dc7ebd680a1d05f0b778b29872fae8a108e4c36d509cea/agenticlens-0.11.0.tar.gz", hash = "sha256:bb999bcfdfeb95e52a473e68857fe9693b6540166f2aceaead0b8e0feb635c83", size = 11734709, upload-time = "2026-10-31T08:08:05.78Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/dc/34/d476f832283c0930ba7b1dfde24b0f1df015a0d98e8e7ad97c6afa53f298/agenticlens-0.12.0.tar.gz", hash = "sha256:4fbd8777b45933cb6f3ee2f0910d4ebc7cfe2e67a7515a8f9b7c802e4837b65a", size = 11761034, upload-time = "2026-11-03T00:26:05.089Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cb/5d/6d648517af2fadfb6063a6100c31eabf183c5b581018d5492333f22afa8a/agenticlens-0.11.0-py3-none-any.whl", hash = "sha256:56e6a68029677246008e3c42589995c64323bf3b5c774e7d69e3ff6998b06891", size = 342421, upload-time = "2026-10-31T08:08:04.212Z" },
+    { url = "https://files.pythonhosted.org/packages/2c/04/8382ac95ccea505c412db60d85000e22dbda899e448346cc4b5e5e3317fc/agenticlens-0.12.0-py3-none-any.whl", hash = "sha256:114078943bb30efa37606c9f4577d6af083acc2cb1603e25fa535d810f0a2c8e", size = 360490, upload-time = "2026-11-03T00:26:03.1Z" },
 ]
 
 [[package]]
