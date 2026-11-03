@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
-## [0.9.2] - 2026-11-02
+## [0.9.2] - 2026-11-03
 
 - Admit Chaos 0.10 in the optional chaos and validation extras for the paired MCP
   0.6 containment release. Runtime enforcement and native contracts are unchanged.
