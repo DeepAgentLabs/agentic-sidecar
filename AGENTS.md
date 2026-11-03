@@ -62,7 +62,7 @@ from deployment health.
 
 The canonical roadmap was realigned on 2026-10-10: v0.6.x governance/evaluator enhancements,
 v0.7 implemented live status/audit/Control Room, v0.8 adapters/integrations, v0.9 evaluation
-and authority, then v1.0 stable schemas. Release tags do not imply milestone
+and authority, then v0.10 contract readiness; v1.0 is reserved for the coordinated ecosystem release. Release tags do not imply milestone
 completion. Governance outcomes, local approvals, full-plan context and judge
 limits/accounting are implemented in 0.6.1; explicit MockJudge is offline, and
 OpenAI/Anthropic providers use optional live SDKs. Live smoke evidence remains
@@ -243,3 +243,12 @@ and does both of the following from the same tag:
 The GitHub Release title is the tag name, and its body is copied from the
 matching `CHANGELOG.md` section so the changelog, tag, PyPI release, and
 GitHub Releases page stay aligned.
+
+## Coordinated major release policy
+
+Keep the remaining local roadmap phases on minor versions. Reserve v1.0 for
+one coordinated ecosystem release after each project's acceptance and
+compatibility gates pass. Follow the current minor target in ROADMAP.md and
+[the shared release policy](https://github.com/DeepAgentLabs/.github/blob/main/profile/RELEASE_POLICY.md).
+A documentation-only roadmap update does not bump package metadata or publish
+a new package release. Schema versions remain independent of package versions.
