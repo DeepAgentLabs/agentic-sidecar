@@ -1,5 +1,14 @@
 # agentic-sidecar — Roadmap & Architecture
 
+## Release sequencing
+
+The final package-local roadmap phase uses **v0.10**, followed by further
+minor releases as needed. **v1.0 is reserved for one coordinated DeepAgentLabs
+ecosystem release**, after the shared readiness and compatibility gates pass.
+Completing this minor milestone does not independently declare stable APIs or
+AIOS conformance. Existing acceptance criteria remain required. See the
+[ecosystem release policy](https://github.com/DeepAgentLabs/.github/blob/main/profile/RELEASE_POLICY.md).
+
 > **Updated 2026-11-02 · Current checkout: 0.9.2.**
 > This is the canonical capability roadmap. Each stage builds on the existing
 > runtime with explicit deliverables and acceptance criteria. Future version
@@ -55,7 +64,7 @@ checks. See [acceptance evidence](website/docs/governance.md) for scope and live
 ## Shared & Exclusive Context and Guardrails
 
 **Status: v0.8 configuration, delivery and composition implemented.** Privacy,
-authority/lifecycle acceptance evidence ships in 0.9.0; stable contracts remain v1.0 work. Users can configure context/intent only,
+authority/lifecycle acceptance evidence ships in 0.9.0; contract-readiness work continues in v0.10 before the coordinated ecosystem v1.0 release. Users can configure context/intent only,
 guardrails only, or both, with independent scopes for each:
 
 | Scope | Context / intent | Guardrails |
@@ -88,7 +97,7 @@ the other's exclusive context by default.
   views. Test authorized updates, expiry, revocation, delegation narrowing and
   concurrent agents without state contamination or stale authorization. Do not
   claim private-context isolation before these acceptance checks pass.
-- **v1.0 — Stable contracts:** publish versioned scope, inheritance, conflict,
+- **v0.10 — Contract readiness:** publish versioned scope, inheritance, conflict,
   access and propagation semantics with AIOS mappings, compatibility tests and
   migration guarantees.
 
@@ -154,7 +163,7 @@ contracts, and `Validate in` for integration checks.
 
 | Project | Relationship and ownership | Target |
 | --- | --- | --- |
-| `ai-operations-spec` | Coordinate envelope/decision terminology and mappings now; publish versioned schemas only once tested and stable | Informal alignment now; formal contract v1.0 |
+| `ai-operations-spec` | Coordinate envelope/decision terminology and mappings now; publish versioned schemas only once tested and stable | Informal alignment now; contract readiness v0.10; freeze at coordinated v1.0 |
 | `agenticlens` | Coordinate optional decision export and common run/trace/decision IDs; Lens owns instrumentation and retrospective analysis. Lens 0.7.0 diagnosis (incident timeline, faulty-step attribution) is the planned consumer of exported decisions, so a correlated BLOCK/ESCALATE can appear on the run's timeline | v0.8 |
 | `agentic-evals` | Validate standalone scoring and release-gate reports; Sidecar owns supervision experiments, not another generic scoring engine | v0.9 |
 | `agentic-chaos` | Validate gate/provider timeout, malformed response, and recovery scenarios; optional same-run integration needs its own interface | Failure tests v0.6.x; optional integration v0.8 |
@@ -311,7 +320,7 @@ Local-model risk classification, automatic framework usage extraction,
 caching, and sampling remain conditional follow-ups, not mandatory release
 features. Schedule them only when performance/cost measurements justify them.
 
-### v1.0 — Stable Interoperability Contract
+### v0.10 — Interoperability Contract Readiness
 
 **Depends on:** validated runtime behavior and coordinated AIOS schema work.
 

@@ -63,7 +63,7 @@ Implemented in 0.8.0; see [compatibility and usage](integrations.md).
 - Implement task-authority bindings from a concrete use case and test delegation/handoff.
 - Add model-backed plan/critic reasoning only where evidence supports it.
 
-## v1.0 — Stable Interoperability Contract
+## v0.10 — Interoperability Contract Readiness
 
 - Publish versioned Intent Envelope and Decision/audit schemas with AI Operations Specification.
 - Test cross-instance/agent propagation, schema compatibility, and migration behavior.
@@ -74,7 +74,7 @@ context only, guardrails only, or both, independently Shared across a system/tas
 or Exclusive to designated agent(s). Each agent receives shared plus assigned
 exclusive context; shared guardrails remain mandatory alongside exclusive rules.
 v0.8 provides scoped configuration, delivery and composition; v0.9 validates
-privacy, authority and lifecycle behavior; v1.0 stabilizes contracts. Host context
+privacy, authority and lifecycle behavior; v0.10 prepares contracts for the coordinated ecosystem v1.0 freeze. Host context
 delivery is explicit; it does not automatically rewrite agent
 prompts or provide process isolation.
 
@@ -107,7 +107,7 @@ Chaos 0.8 compatibility ships in Sidecar 0.8.5: the optional dependency
 now admits 0.8. [Workflow evidence and limits](chaos-0.8.md).
 
 The v0.9 evidence, privacy and task-authority milestone ships in 0.9.0.
-See [acceptance evidence and limitations](v0.9.md); stable shared schemas remain v1.0.
+See [acceptance evidence and limitations](v0.9.md); schema-readiness work continues in v0.10; the stable freeze belongs to the coordinated ecosystem v1.0 release.
 
 ## MCP Phase 6 paired compatibility
 
