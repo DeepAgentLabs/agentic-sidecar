@@ -805,3 +805,8 @@ compatible; no runtime or patch release is required here.
 Compatibility, ownership, dependency ranges and reproducible containment acceptance
 for MCP 0.6.0 / Chaos 0.10.0 / Sidecar 0.9.2 are documented in the
 [Phase 6 guide](docs/phase6-containment.md).
+
+## Evals 0.11 containment scoring
+
+Sidecar still enforces dispatch, authority and stop/revoke. Its validation extra already allows Evals 0.11. Copy actual scope, versions and effective receipts into host-bound evidence before sealing; do not synthesize containment from Decision.status.
+See [the compatibility matrix and operator example](docs/evals-0.11-containment.md).
