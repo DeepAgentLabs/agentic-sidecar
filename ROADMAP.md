@@ -667,3 +667,8 @@ stop/revoke, hosted Tower user bindings and authenticated native assertions.
 See the [tested matrix, limitations and commands](docs/phase6-containment.md).
 Release acceptance requires CI and publication of the paired wheels. Evals
 v0.11 reusable containment scoring remains the following milestone.
+
+## Evals 0.11 containment scoring
+
+Sidecar still enforces dispatch, authority and stop/revoke. Its validation extra already allows Evals 0.11. Copy actual scope, versions and effective receipts into host-bound evidence before sealing; do not synthesize containment from Decision.status.
+See [the compatibility matrix and operator example](docs/evals-0.11-containment.md).
