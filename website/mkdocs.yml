@@ -39,6 +39,7 @@ validation:
 
 nav:
   - MCP Phase 6 Containment: phase6-containment.md
+  - Evals 0.11 Containment Scoring: evals-0.11-containment.md
   - v0.9 Authority and privacy: v0.9.md
   - Chaos 0.8 Compatibility: chaos-0.8.md
   - Chaos 0.9 Compatibility: chaos-0.9.md
