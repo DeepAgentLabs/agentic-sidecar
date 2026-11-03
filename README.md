@@ -1,5 +1,14 @@
 # agentic-sidecar
 
+## Release sequencing
+
+The final package-local roadmap phase uses **v0.10**, followed by further
+minor releases as needed. **v1.0 is reserved for one coordinated DeepAgentLabs
+ecosystem release**, after the shared readiness and compatibility gates pass.
+Completing this minor milestone does not independently declare stable APIs or
+AIOS conformance. Existing acceptance criteria remain required. See the
+[ecosystem release policy](https://github.com/DeepAgentLabs/.github/blob/main/profile/RELEASE_POLICY.md).
+
 
 [Animated refund-policy walkthrough](website/usecases/prevent-unauthorized-refunds.md): see a blocked $850 request and an allowed $300 request at the governed tool boundary. The website animation is illustrative and makes no payment calls.
 
@@ -37,7 +46,7 @@ Authenticated provider smoke remains pending credentials.
 
 **0.9 adds task authority, narrowed delegation, context reader access and redacted
 summaries.** See the [v0.9 guide](website/docs/v0.9.md) for the APIs, migration
-notes and reproducible Agent Alone vs Sidecar evidence. Next: **1.0 stable schemas**.
+notes and reproducible Agent Alone vs Sidecar evidence. Next: **v0.10 interoperability contract readiness**, ahead of the coordinated ecosystem v1.0 release.
 See [supported scope and limitations](website/docs/limitations.md) for operational details.
 
 ### Installation & Usage
@@ -444,11 +453,11 @@ If every hop in a delegation chain can answer *what was originally
 requested, who authorized it, what constraints apply, what authority was
 actually delegated, and whether intent has since changed* — that's no
 longer just a feature of one package. It's closer to an interoperability
-concern for autonomous systems generally, which is why v1.0 targets
+concern for autonomous systems generally, which is why v0.10 targets
 publishing the envelope as a versioned schema in `ai-operations-spec`
-rather than keeping it as an internal Sidecar structure (see the v1.0 entry
+rather than keeping it as an internal Sidecar structure (see the v0.10 entry
 in [ROADMAP.md](ROADMAP.md#build-order)).
-This is explicitly a v1.0 target, not something v0.1 needs to anticipate —
+This is explicitly a v0.10 readiness target, not something v0.1 needs to anticipate —
 noted here because it's the reason the envelope's shape deserves care early,
 even though nothing consumes it across process boundaries yet.
 
@@ -493,7 +502,7 @@ context only, guardrails only, or both, independently Shared across a system/tas
 or Exclusive to designated agent(s). Each agent receives shared plus assigned
 exclusive context; shared guardrails remain mandatory alongside exclusive rules.
 v0.8 provides scoped configuration, delivery and composition; v0.9 adds explicit
-reader access, redacted summaries and authority lifecycle checks; v1.0 stabilizes contracts. Use `ScopedSystem.bind()` and `BoundAgent.deliver()` for explicit host context
+reader access, redacted summaries and authority lifecycle checks; v0.10 prepares contracts for the coordinated ecosystem v1.0 freeze. Use `ScopedSystem.bind()` and `BoundAgent.deliver()` for explicit host context
 transport; this does not provide automatic prompt rewriting or process isolation.
 
 See the [deliverables and acceptance criteria](ROADMAP.md#shared--exclusive-context-and-guardrails).
