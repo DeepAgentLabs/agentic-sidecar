@@ -82,7 +82,6 @@
   "properties": {
     "schema_version": {
       "const": "sidecar.transfer/1",
-      "default": "sidecar.transfer/1",
       "title": "Schema Version",
       "type": "string"
     },
@@ -111,6 +110,7 @@
     }
   },
   "required": [
+    "schema_version",
     "parent_intent_id",
     "parent_grant_id",
     "task_id",

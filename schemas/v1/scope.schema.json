@@ -205,7 +205,6 @@
   "properties": {
     "schema_version": {
       "const": "sidecar.scope/1",
-      "default": "sidecar.scope/1",
       "title": "Schema Version",
       "type": "string"
     },
@@ -239,6 +238,7 @@
     }
   },
   "required": [
+    "schema_version",
     "system_id",
     "task_id",
     "agents"

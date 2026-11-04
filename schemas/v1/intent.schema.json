@@ -81,7 +81,6 @@
   "properties": {
     "schema_version": {
       "const": "sidecar.intent/1",
-      "default": "sidecar.intent/1",
       "title": "Schema Version",
       "type": "string"
     },
@@ -90,6 +89,7 @@
     }
   },
   "required": [
+    "schema_version",
     "intent"
   ],
   "title": "IntentContract",

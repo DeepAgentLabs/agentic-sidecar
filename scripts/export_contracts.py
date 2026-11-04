@@ -25,27 +25,35 @@ intent = IntentEnvelope(
     metadata={"parent_intent_id": "intent-parent"},
 )
 examples = {
-    "intent": IntentContract(intent=intent),
+    "intent": IntentContract(schema_version="sidecar.intent/1", intent=intent),
     "decision": DecisionContract(
+        schema_version="sidecar.decision/1",
         decision=Decision(
             decision_id="decision-1",
             status="BLOCK",
             risk=None,
             reason="gate unavailable",
             causal_link="decision-parent",
-        )
+        ),
     ),
     "audit": AuditContract(
+        schema_version="sidecar.audit/1",
         audit=AuditRecord(
             decision_id="decision-1",
             timestamp=datetime(2026, 11, 4, tzinfo=timezone.utc),
             outcome="BLOCK",
             trigger=DecisionTrigger(boundary_type="tool_call", tool_name="read"),
             rationale=DecisionRationale(reason="gate unavailable"),
-        )
+        ),
     ),
-    "scope": ScopeContract(system_id="warehouse", task_id="inventory", agents=["worker"]),
+    "scope": ScopeContract(
+        schema_version="sidecar.scope/1",
+        system_id="warehouse",
+        task_id="inventory",
+        agents=["worker"],
+    ),
     "transfer": IntentTransfer(
+        schema_version="sidecar.transfer/1",
         parent_intent_id="intent-parent",
         parent_grant_id="grant-parent",
         task_id="inventory",

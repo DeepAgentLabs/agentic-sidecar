@@ -20,7 +20,9 @@ child = IntentTransfer.model_validate_json(wire).receive(parent, agent_id="worke
 assert child.check_authority(DecisionContext(tool_name="read_inventory")).status == "ALLOW"
 parent.revoke()
 assert child.check_authority(DecisionContext(tool_name="read_inventory")).status == "BLOCK"
-scope = ScopeContract(system_id="warehouse", task_id="inventory", agents=["worker"])
+scope = ScopeContract(
+    schema_version="sidecar.scope/1", system_id="warehouse", task_id="inventory", agents=["worker"]
+)
 scope.build().bind("worker", on_sidecar_failure="fail_closed")
 assert contract_schema("transfer")["properties"]["schema_version"]["const"] == "sidecar.transfer/1"
 print("Cross-instance intent preserved; ancestor revocation blocks subsequent calls.")
