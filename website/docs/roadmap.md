@@ -115,3 +115,9 @@ MCP 0.6.0 / Chaos 0.10.0 / Sidecar 0.9.2 use Lens 0.12.0 authenticated
 snapshots and native stop/dispatch evidence. See the
 [operator guide and limitations](https://github.com/DeepAgentLabs/mcp-server/blob/c18f73decdc75aaac3e2e95004ae88589d587e75/docs/phase6-containment.md).
 Evals v0.11 reusable containment scoring remains planned.
+
+## v0.10 contract readiness — 2026-11-04
+
+Candidate intent, decision, audit, scope and propagation contracts ship in 0.10.0.
+See [migration, supported versions and acceptance](v0.10.md).
+AIOS remains draft; coordinated ecosystem v1.0 acceptance remains open.

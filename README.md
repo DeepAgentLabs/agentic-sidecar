@@ -832,3 +832,9 @@ no package patch release is needed. See [compatibility and offline example](docs
 See [the candidate API, unchanged native schema and support matrix](website/docs/evals-0.12.md).
 Existing compatible dependency ranges remain sufficient; coordinated ecosystem
 v1.0 acceptance remains open.
+
+## v0.10 contract readiness — 2026-11-04
+
+Candidate intent, decision, audit, scope and propagation contracts ship in 0.10.0.
+See [migration, supported versions and acceptance](website/docs/v0.10.md).
+AIOS remains draft; coordinated ecosystem v1.0 acceptance remains open.

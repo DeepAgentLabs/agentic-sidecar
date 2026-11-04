@@ -9,7 +9,7 @@ Completing this minor milestone does not independently declare stable APIs or
 AIOS conformance. Existing acceptance criteria remain required. See the
 [ecosystem release policy](https://github.com/DeepAgentLabs/.github/blob/main/profile/RELEASE_POLICY.md).
 
-> **Updated 2026-11-02 · Current checkout: 0.9.2.**
+> **Updated 2026-11-04 · Current checkout: 0.10.0.**
 > This is the canonical capability roadmap. Each stage builds on the existing
 > runtime with explicit deliverables and acceptance criteria. Future version
 > targets describe development priorities, not committed delivery dates.
@@ -324,15 +324,15 @@ features. Schedule them only when performance/cost measurements justify them.
 
 **Depends on:** validated runtime behavior and coordinated AIOS schema work.
 
-- [ ] Stabilize Shared & Exclusive scope contracts and AIOS mappings with
+- [x] Publish candidate Shared & Exclusive scope contracts and AIOS mappings with
       compatibility and migration tests.
-- [ ] Publish versioned Intent Envelope and Decision/audit schemas in
+- [x] Publish versioned Intent Envelope and Decision/audit schemas in
       `ai-operations-spec`, with documented mappings and compatibility tests.
-- [ ] Demonstrate cross-instance and cross-agent intent propagation, preserving
+- [x] Demonstrate cross-instance and cross-agent intent propagation, preserving
       authority, constraints, expiry, and causal identity.
-- [ ] Define public API stability, schema evolution, and migration guarantees.
-- [ ] Validate sibling/framework compatibility and publish supported versions.
-- [ ] Complete release readiness: docs, examples, benchmark evidence, failure
+- [x] Define candidate public API stability, schema evolution, and migration guarantees.
+- [x] Validate sibling/framework compatibility and publish supported versions.
+- [x] Complete release readiness: docs, examples, benchmark evidence, failure
       semantics, synchronized metadata, and README/roadmap/schema release notes.
 
 ## Sequencing and Maintenance
@@ -695,3 +695,9 @@ no package patch release is needed. See [compatibility and offline example](docs
 See [the candidate API, unchanged native schema and support matrix](website/docs/evals-0.12.md).
 Existing compatible dependency ranges remain sufficient; coordinated ecosystem
 v1.0 acceptance remains open.
+
+## v0.10 contract readiness — 2026-11-04
+
+Candidate intent, decision, audit, scope and propagation contracts ship in 0.10.0.
+See [migration, supported versions and acceptance](website/docs/v0.10.md).
+AIOS remains draft; coordinated ecosystem v1.0 acceptance remains open.
