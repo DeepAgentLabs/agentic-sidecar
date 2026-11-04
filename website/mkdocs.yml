@@ -38,6 +38,7 @@ validation:
   anchors: warn
 
 nav:
+  - Tower 0.10 contract readiness: tower-0.10-compatibility.md
   - Lens 0.13 readiness: lens-0.13.md
   - v0.10 Contracts and migration: v0.10.md
   - Evals 0.12 compatibility: evals-0.12.md
