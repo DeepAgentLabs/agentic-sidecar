@@ -43,11 +43,15 @@ def parent():
 
 def test_native_migration_preserves_identity_and_unknown_markers_fail():
     decision = Decision(status="BLOCK", risk=None, reason="gate failed", causal_link="parent")
-    migrated = DecisionContract(decision=Decision.model_validate(decision.model_dump()))
+    migrated = DecisionContract(
+        schema_version="sidecar.decision/1", decision=Decision.model_validate(decision.model_dump())
+    )
     assert DecisionContract.model_validate_json(migrated.model_dump_json()).decision == decision
     intent = parent().envelope
     assert (
-        IntentContract.model_validate_json(IntentContract(intent=intent).model_dump_json()).intent
+        IntentContract.model_validate_json(
+            IntentContract(schema_version="sidecar.intent/1", intent=intent).model_dump_json()
+        ).intent
         == intent
     )
     with pytest.raises(ValidationError):
@@ -122,6 +126,7 @@ def test_identity_expiry_and_restart_fail_closed():
 
 def test_scope_roundtrip_conflicts_and_reader_privacy():
     scope = ScopeContract(
+        schema_version="sidecar.scope/1",
         system_id="system",
         task_id="task",
         agents=["a", "b"],
@@ -198,3 +203,40 @@ def test_portable_example_roundtrip(model, kind):
     path = Path(__file__).parents[1] / "schemas" / "v1" / f"{kind}.example.json"
     data = json.loads(path.read_text())
     assert model.model_validate(data).model_dump(mode="json") == data
+
+
+@pytest.mark.parametrize(
+    "model,kind",
+    [
+        (IntentContract, "intent"),
+        (DecisionContract, "decision"),
+        (AuditContract, "audit"),
+        (ScopeContract, "scope"),
+        (IntentTransfer, "transfer"),
+    ],
+)
+def test_missing_marker_is_not_silently_migrated(model, kind):
+    path = Path(__file__).parents[1] / "schemas" / "v1" / f"{kind}.example.json"
+    data = json.loads(path.read_text())
+    del data["schema_version"]
+    with pytest.raises(ValidationError, match="schema_version"):
+        model.model_validate(data)
+    assert "schema_version" in contract_schema(kind)["required"]
+
+
+@pytest.mark.parametrize("identity", ["", "   ", "parent"])
+def test_child_identity_cannot_be_empty_or_reuse_parent(identity):
+    root = parent()
+    wire = IntentTransfer.propose(root, agent_id="worker", authority={}).model_dump(mode="json")
+    wire["intent"]["id"] = root.envelope.id if identity == "parent" else identity
+    with pytest.raises(ValueError):
+        IntentTransfer.model_validate(wire).receive(root, agent_id="worker")
+
+
+def test_receipt_rejects_expired_child_before_registering_grant():
+    root = parent()
+    proposal = IntentTransfer.propose(root, agent_id="worker", authority={})
+    wire = proposal.model_dump(mode="json")
+    wire["intent"]["expires"] = (datetime.now(timezone.utc) - timedelta(seconds=1)).isoformat()
+    with pytest.raises(ValueError):
+        IntentTransfer.model_validate(wire).receive(root, agent_id="worker")

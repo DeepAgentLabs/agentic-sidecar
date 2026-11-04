@@ -24,17 +24,17 @@ class _Contract(BaseModel):
 
 
 class IntentContract(_Contract):
-    schema_version: Literal["sidecar.intent/1"] = "sidecar.intent/1"
+    schema_version: Literal["sidecar.intent/1"]
     intent: IntentEnvelope
 
 
 class DecisionContract(_Contract):
-    schema_version: Literal["sidecar.decision/1"] = "sidecar.decision/1"
+    schema_version: Literal["sidecar.decision/1"]
     decision: Decision
 
 
 class AuditContract(_Contract):
-    schema_version: Literal["sidecar.audit/1"] = "sidecar.audit/1"
+    schema_version: Literal["sidecar.audit/1"]
     audit: AuditRecord
 
     @field_validator("audit")
@@ -46,7 +46,7 @@ class AuditContract(_Contract):
 
 
 class ScopeContract(_Contract):
-    schema_version: Literal["sidecar.scope/1"] = "sidecar.scope/1"
+    schema_version: Literal["sidecar.scope/1"]
     system_id: str = Field(min_length=1)
     task_id: str = Field(min_length=1)
     agents: list[str] = Field(min_length=1)
@@ -71,7 +71,7 @@ class IntentTransfer(_Contract):
     registry is required: disconnected replicas cannot prove revocation state.
     """
 
-    schema_version: Literal["sidecar.transfer/1"] = "sidecar.transfer/1"
+    schema_version: Literal["sidecar.transfer/1"]
     parent_intent_id: str = Field(min_length=1)
     parent_grant_id: str = Field(min_length=1)
     task_id: str = Field(min_length=1)
@@ -81,7 +81,10 @@ class IntentTransfer(_Contract):
     def receive(self, parent: IntentGuardian, *, agent_id: str) -> IntentGuardian:
         """Revalidate scope, expiry, constraints and authority in the live registry."""
         if (
-            not parent.authority_bindings
+            not self.intent.id.strip()
+            or self.intent.id == self.parent_intent_id
+            or self.intent.is_expired()
+            or not parent.authority_bindings
             or self.parent_intent_id != parent.envelope.id
             or self.parent_grant_id != parent.grant_id
             or self.task_id != parent.task_id
@@ -121,6 +124,7 @@ class IntentTransfer(_Contract):
         if parent.registry.invalid_reason(parent.grant_id):
             raise ValueError("Parent authority is no longer valid")
         return cls(
+            schema_version="sidecar.transfer/1",
             parent_intent_id=parent.envelope.id,
             parent_grant_id=parent.grant_id,
             task_id=parent.task_id,
@@ -148,4 +152,4 @@ def contract_schema(kind: str) -> dict[str, Any]:
 
 def export_audit(record: AuditRecord) -> dict[str, Any]:
     """Validate and serialize an existing audit; no timestamps or IDs invented."""
-    return AuditContract(audit=record).model_dump(mode="json")
+    return AuditContract(schema_version="sidecar.audit/1", audit=record).model_dump(mode="json")
