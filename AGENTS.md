@@ -52,7 +52,7 @@ practice, the package covers both supervision and governance.
 
 ### Current Roadmap Focus
 
-The checkout targets v0.10.0, including optional Chaos 0.10 compatibility for
+The checkout targets v0.10.1, including optional Chaos 0.10 compatibility for
 the coordinated MCP 0.6 containment release. Read website/docs/v0.10.md and docs/phase6-containment.md. Runtime code includes Decision Gate outcomes,
 Intent Guardian, evaluator modules, budget/escalation handling, narration and
 CLI commands. Native AutoGen, CrewAI, OpenAI Agents, Google ADK and MCP boundaries are implemented;
