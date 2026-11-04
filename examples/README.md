@@ -49,3 +49,9 @@ in [the examples guide](../website/docs/examples.md).
 Run `uv run python scripts/supervision_benchmark.py` from the repository root for
 paired offline dispatch evidence; add `--extra validation` before `python` and
 `--ecosystem` after the script for Chaos injection and Evals scoring.
+
+## v0.10 contract readiness — 2026-11-04
+
+Candidate intent, decision, audit, scope and propagation contracts ship in 0.10.0.
+See [migration, supported versions and acceptance](../website/docs/v0.10.md).
+AIOS remains draft; coordinated ecosystem v1.0 acceptance remains open.
