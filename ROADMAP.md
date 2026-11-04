@@ -706,3 +706,7 @@ AIOS remains draft; coordinated ecosystem v1.0 acceptance remains open.
 
 The optional Lens extra `>=0.7.1,<1` already admits 0.13.0. Native sidecar.correlation/1 decisions and dispatch evidence stay unchanged. Lens roles govern stored artifacts, never Sidecar runtime authority, approvals or interception.
 See [compatibility, boundaries and offline operator example](website/docs/lens-0.13.md).
+
+## Tower 0.10 capability contract readiness
+
+See [compatibility, operator example and dependency boundaries](docs/tower-0.10-compatibility.md). Tower publishes the local candidate `tower.capabilities.v1` with Python/Node HTTP validation. Sidecar owns runtime supervision and task authority. Tower inventory does not confer authority or prove containment. Existing optional dependencies remain sufficient; no package release or stable ecosystem claim is introduced.
