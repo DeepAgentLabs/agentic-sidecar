@@ -38,6 +38,7 @@ validation:
   anchors: warn
 
 nav:
+  - v0.10 Contracts and migration: v0.10.md
   - Evals 0.12 compatibility: evals-0.12.md
   - MCP Phase 6 Containment: phase6-containment.md
   - Evals 0.11 Containment Scoring: evals-0.11-containment.md
