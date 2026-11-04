@@ -15,7 +15,7 @@ resolution-markers = [
 
 [[package]]
 name = "agentic-chaos"
-version = "0.10.0"
+version = "0.11.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
@@ -23,9 +23,9 @@ dependencies = [
     { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/87/9a/f3894d975c9df4a91b657a5b52c0ae40803b5872b43537a0247117d44019/agentic_chaos-0.10.0.tar.gz", hash = "sha256:898bf589ddd22a480d1834f174b3f74b3df3b99caae7a15bcae0d2de625dfe91", size = 9501714, upload-time = "2026-11-03T05:57:41.638Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/29/d5/46edcc829cdbeab386e5e968c698e3d4578c5019472c9c03a5d2b202253b/agentic_chaos-0.11.0.tar.gz", hash = "sha256:3023e8874ce4f816ed52d579cd36e17064a543f8918924a58e029df5c3c92566", size = 9632283, upload-time = "2026-11-04T20:26:14.943Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d6/c9/0607926e6795efe60b922ee97d2ec694b2c267b823c14f0e1b59314147fc/agentic_chaos-0.10.0-py3-none-any.whl", hash = "sha256:15082965e7c15240b5017135d94bac37329c3ca06ae585240c1bd0a2e42ac71f", size = 167117, upload-time = "2026-11-03T05:57:39.89Z" },
+    { url = "https://files.pythonhosted.org/packages/e8/95/73f110d1981fb4b40c8af75a075a27cd2feadd1a7634ae40200caab61aab/agentic_chaos-0.11.0-py3-none-any.whl", hash = "sha256:b34c98955ce06358f132efc004c3609580a11b4d0d6843c7dc111bbbe2d32ad6", size = 174665, upload-time = "2026-11-04T20:26:12.92Z" },
 ]
 
 [[package]]
@@ -45,7 +45,7 @@ wheels = [
 
 [[package]]
 name = "agentic-sidecar"
-version = "0.10.0"
+version = "0.10.1"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },
@@ -106,8 +106,8 @@ validation = [
 
 [package.metadata]
 requires-dist = [
-    { name = "agentic-chaos", marker = "extra == 'agentic-chaos'", specifier = ">=0.5.3,<0.11" },
-    { name = "agentic-chaos", marker = "extra == 'validation'", specifier = ">=0.8,<0.11" },
+    { name = "agentic-chaos", marker = "extra == 'agentic-chaos'", specifier = ">=0.5.3,<0.12" },
+    { name = "agentic-chaos", marker = "extra == 'validation'", specifier = ">=0.8,<0.12" },
     { name = "agentic-evals", marker = "extra == 'validation'", specifier = ">=0.9,<1" },
     { name = "agenticlens", marker = "extra == 'agenticlens'", specifier = ">=0.7.1,<1" },
     { name = "anthropic", marker = "extra == 'anthropic'", specifier = ">=0.49,<2" },

@@ -9,7 +9,7 @@
 | Field | Value |
 |---|---|
 | **Package** | `agentic-sidecar` |
-| **Checkout version** | `0.9.0` |
+| **Checkout version** | `0.10.1` |
 | **Maturity** | Pre-Alpha |
 | **License** | MIT |
 | **Python** | ≥ 3.10 |

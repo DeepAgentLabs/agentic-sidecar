@@ -4,6 +4,16 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-11-04
+
+### Changed
+
+- Admit agentic-chaos 0.11 in the optional integration and validation extras
+  (`<0.12`). The lockfile and locked CI now exercise published Chaos 0.11.0.
+  Runtime supervision and containment evidence are unchanged.
+- Document ChaosHub recipe ownership, explicit plugin loading and offline usage.
+
+
 ## [0.10.0] - 2026-11-04
 
 ### Added

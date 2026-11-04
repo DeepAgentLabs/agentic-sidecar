@@ -22,7 +22,7 @@ AIOS conformance. Existing acceptance criteria remain required. See the
 
 ## Status
 
-**Current checkout version: 0.10.0.** The runtime brings together deterministic
+**Current checkout version: 0.10.1.** The runtime brings together deterministic
 intent/policy/risk supervision, optional evaluators, budget accounting,
 narration, and the CLI. See the [roadmap](ROADMAP.md) for release history
 and upcoming capability stages.
@@ -847,3 +847,8 @@ See [compatibility, boundaries and offline operator example](website/docs/lens-0
 ## Tower 0.10 capability contract readiness
 
 See [compatibility, operator example and dependency boundaries](docs/tower-0.10-compatibility.md). Tower publishes the local candidate `tower.capabilities.v1` with Python/Node HTTP validation. Sidecar owns runtime supervision and task authority. Tower inventory does not confer authority or prove containment. Existing optional dependencies remain sufficient; no package release or stable ecosystem claim is introduced.
+
+## Chaos 0.11 ChaosHub compatibility — 2026-11-04
+
+Sidecar 0.10.1 widens both optional Chaos ranges to `<0.12` so the 0.11 wheel can be installed. Governance decisions and the live stop/revoke bridge keep their native meaning; recipe execution is caller-owned and does not prove containment.
+See [the compatibility guide and offline operator example](docs/chaos-0.11-chaoshub.md).
