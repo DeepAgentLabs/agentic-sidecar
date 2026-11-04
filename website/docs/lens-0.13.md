@@ -6,6 +6,9 @@ pattern redaction, trace retention and reproducible Evals release receipts.
 
 The optional Lens extra `>=0.7.1,<1` already admits 0.13.0. Native sidecar.correlation/1 decisions and dispatch evidence stay unchanged. Lens roles govern stored artifacts, never Sidecar runtime authority, approvals or interception.
 
+Evals owns scoring and gate computation; Lens composes the saved native Evals
+report and policy into its release receipt.
+
 Native trace, evaluation and integrity contracts retain their existing meanings.
 Audit integrity is explicitly not verified; compliance export is not certification.
 No new automatic sibling reader or shared conformance claim is introduced.
