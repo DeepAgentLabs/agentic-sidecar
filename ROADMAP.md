@@ -701,3 +701,8 @@ v1.0 acceptance remains open.
 Candidate intent, decision, audit, scope and propagation contracts ship in 0.10.0.
 See [migration, supported versions and acceptance](website/docs/v0.10.md).
 AIOS remains draft; coordinated ecosystem v1.0 acceptance remains open.
+
+## Lens 0.13 readiness compatibility — 2026-11-04
+
+The optional Lens extra `>=0.7.1,<1` already admits 0.13.0. Native sidecar.correlation/1 decisions and dispatch evidence stay unchanged. Lens roles govern stored artifacts, never Sidecar runtime authority, approvals or interception.
+See [compatibility, boundaries and offline operator example](website/docs/lens-0.13.md).
