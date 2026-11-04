@@ -1,0 +1,97 @@
+{
+  "$defs": {
+    "IntentEnvelope": {
+      "description": "See concept.md \u00a76 for the worked YAML example this mirrors.\n\nConstraints use explicit ConstraintBindings. Optional AuthorityBindings on\nIntentGuardian enforce boolean task grants with expiry and revocation.\nThe envelope alone does not enforce actions. See the v0.9 guide for the\nnative delegation contract and the distinction from policy rules.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "goal": {
+          "title": "Goal",
+          "type": "string"
+        },
+        "requested_by": {
+          "$ref": "#/$defs/Requester"
+        },
+        "constraints": {
+          "additionalProperties": true,
+          "title": "Constraints",
+          "type": "object"
+        },
+        "authority": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "title": "Authority",
+          "type": "object"
+        },
+        "expires": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "goal",
+        "requested_by"
+      ],
+      "title": "IntentEnvelope",
+      "type": "object"
+    },
+    "Requester": {
+      "description": "Who asked for this -- concept.md \u00a76's `requested_by: {type, id}`.",
+      "properties": {
+        "type": {
+          "default": "human",
+          "enum": [
+            "human",
+            "agent",
+            "system"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Requester",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "sidecar.intent/1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "intent": {
+      "$ref": "#/$defs/IntentEnvelope"
+    }
+  },
+  "required": [
+    "schema_version",
+    "intent"
+  ],
+  "title": "IntentContract",
+  "type": "object"
+}

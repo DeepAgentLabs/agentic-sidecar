@@ -1,0 +1,13 @@
+{
+  "schema_version": "sidecar.decision/1",
+  "decision": {
+    "decision_id": "decision-1",
+    "status": "BLOCK",
+    "risk": null,
+    "reason": "gate unavailable",
+    "decision_point": null,
+    "trigger_details": null,
+    "escalation_required": false,
+    "causal_link": "decision-parent"
+  }
+}

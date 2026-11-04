@@ -2,14 +2,9 @@
 human (or a delegating agent) actually asked for: goal, requester,
 constraints, granted/denied authority, and expiry (concept.md §6).
 
-Informal `ai-operations-spec` alignment note (ROADMAP.md's Cross-Project
-Dependencies -- formal publication as a versioned schema is a v1.0 target,
-not v0.2): the field shape here -- `goal` / `requested_by {type, id}` /
-`constraints` / `authority` / `expires` -- mirrors what an AIOS operational-
-intent object is expected to need, so the shape shouldn't require reworking
-later. `metadata` is the escape hatch for task-specific context
-(concept.md's worked example's `customer`/`reason` fields) that doesn't yet
-have a settled home in that alignment.
+The candidate `sidecar.intent/1` wrapper is available from
+`agentic_sidecar.contracts`. AIOS mappings are non-normative; schema maturity
+and coordinated v1.0 acceptance remain independent of package versions.
 """
 
 from __future__ import annotations

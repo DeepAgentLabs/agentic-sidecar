@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "IntentEnvelope": {
+      "description": "See concept.md \u00a76 for the worked YAML example this mirrors.\n\nConstraints use explicit ConstraintBindings. Optional AuthorityBindings on\nIntentGuardian enforce boolean task grants with expiry and revocation.\nThe envelope alone does not enforce actions. See the v0.9 guide for the\nnative delegation contract and the distinction from policy rules.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "goal": {
+          "title": "Goal",
+          "type": "string"
+        },
+        "requested_by": {
+          "$ref": "#/$defs/Requester"
+        },
+        "constraints": {
+          "additionalProperties": true,
+          "title": "Constraints",
+          "type": "object"
+        },
+        "authority": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "title": "Authority",
+          "type": "object"
+        },
+        "expires": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "goal",
+        "requested_by"
+      ],
+      "title": "IntentEnvelope",
+      "type": "object"
+    },
+    "Requester": {
+      "description": "Who asked for this -- concept.md \u00a76's `requested_by: {type, id}`.",
+      "properties": {
+        "type": {
+          "default": "human",
+          "enum": [
+            "human",
+            "agent",
+            "system"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Requester",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Untrusted proposal until a receiving host checks its live parent grant.\n\nBindings come exclusively from the host's parent guardian. The shared\nregistry is required: disconnected replicas cannot prove revocation state.",
+  "properties": {
+    "schema_version": {
+      "const": "sidecar.transfer/1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "parent_intent_id": {
+      "minLength": 1,
+      "title": "Parent Intent Id",
+      "type": "string"
+    },
+    "parent_grant_id": {
+      "minLength": 1,
+      "title": "Parent Grant Id",
+      "type": "string"
+    },
+    "task_id": {
+      "minLength": 1,
+      "title": "Task Id",
+      "type": "string"
+    },
+    "agent_id": {
+      "minLength": 1,
+      "title": "Agent Id",
+      "type": "string"
+    },
+    "intent": {
+      "$ref": "#/$defs/IntentEnvelope"
+    }
+  },
+  "required": [
+    "schema_version",
+    "parent_intent_id",
+    "parent_grant_id",
+    "task_id",
+    "agent_id",
+    "intent"
+  ],
+  "title": "IntentTransfer",
+  "type": "object"
+}

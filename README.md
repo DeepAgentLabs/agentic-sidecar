@@ -22,7 +22,7 @@ AIOS conformance. Existing acceptance criteria remain required. See the
 
 ## Status
 
-**Current checkout version: 0.9.2.** The runtime brings together deterministic
+**Current checkout version: 0.10.0.** The runtime brings together deterministic
 intent/policy/risk supervision, optional evaluators, budget accounting,
 narration, and the CLI. See the [roadmap](ROADMAP.md) for release history
 and upcoming capability stages.
@@ -832,3 +832,9 @@ no package patch release is needed. See [compatibility and offline example](docs
 See [the candidate API, unchanged native schema and support matrix](website/docs/evals-0.12.md).
 Existing compatible dependency ranges remain sufficient; coordinated ecosystem
 v1.0 acceptance remains open.
+
+## v0.10 contract readiness — 2026-11-04
+
+Candidate intent, decision, audit, scope and propagation contracts ship in 0.10.0.
+See [migration, supported versions and acceptance](website/docs/v0.10.md).
+AIOS remains draft; coordinated ecosystem v1.0 acceptance remains open.

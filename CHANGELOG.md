@@ -4,6 +4,23 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-11-04
+
+### Added
+
+- Candidate versioned intent, decision, audit, scope and transfer contracts,
+  offline JSON Schema accessors and synchronized specification draft schemas.
+- Trusted-host cross-instance intent transfer with live parent-grant validation,
+  narrowed authority, inherited constraints, expiry and causal identity.
+- Migration, privacy, failure-path and schema parity tests, runnable propagation
+  example, compatibility matrix and documented API/schema evolution policy.
+
+### Compatibility
+
+- Existing native Decision, IntentEnvelope, journals and correlation/1 remain
+  unchanged. Wrappers are opt-in and never execution or approval receipts.
+- AIOS remains draft; coordinated ecosystem v1.0 and live provider evidence stay open.
+
 ## [0.9.2] - 2026-11-03
 
 - Admit Chaos 0.10 in the optional chaos and validation extras for the paired MCP

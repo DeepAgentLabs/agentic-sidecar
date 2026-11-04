@@ -1,0 +1,13 @@
+{
+  "schema_version": "sidecar.scope/1",
+  "system_id": "warehouse",
+  "task_id": "inventory",
+  "agents": [
+    "worker"
+  ],
+  "shared": {
+    "context": null,
+    "guardrails": null
+  },
+  "exclusive": {}
+}
