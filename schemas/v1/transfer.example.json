@@ -1,0 +1,23 @@
+{
+  "schema_version": "sidecar.transfer/1",
+  "parent_intent_id": "intent-parent",
+  "parent_grant_id": "grant-parent",
+  "task_id": "inventory",
+  "agent_id": "worker",
+  "intent": {
+    "id": "intent-child",
+    "goal": "Read inventory",
+    "requested_by": {
+      "type": "agent",
+      "id": "planner"
+    },
+    "constraints": {},
+    "authority": {
+      "read": true
+    },
+    "expires": null,
+    "metadata": {
+      "parent_intent_id": "intent-parent"
+    }
+  }
+}

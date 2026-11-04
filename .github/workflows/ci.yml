@@ -47,6 +47,8 @@ jobs:
       - name: Run offline examples and validate documentation snippets
         run: |
           for example in examples/*.py; do uv run python "$example"; done
+          uv run python scripts/export_contracts.py
+          git diff --exit-code -- schemas/v1
           uv run python scripts/check_docs.py
           uv run python scripts/intent_benchmark.py
           uv run python scripts/validate_release.py

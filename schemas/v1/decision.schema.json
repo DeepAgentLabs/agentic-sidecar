@@ -1,0 +1,112 @@
+{
+  "$defs": {
+    "Decision": {
+      "description": "The outcome of a single Decision Gate evaluation for one proposed\naction (tool call).\n\n`risk` is `None` only on the `on_sidecar_failure` path (core/sidecar.py)\n-- when the Sidecar itself errored before Policy/Risk ever ran, there is\nno risk classification to report, and reporting one would misrepresent\nwhat actually happened.\n\nv0.4 adds provenance fields for audit trail: `decision_point` (which\nboundary fired), `trigger_details` (tool/action + arguments), and\n`causal_link` (correlation to prior decisions). Escalation outcomes\n(PAUSE, ESCALATE) may populate `escalation_required`.\n\nFrozen: a `Decision` is a record of what was decided, not a value meant\nto be mutated after the fact.",
+      "properties": {
+        "decision_id": {
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ALLOW",
+            "WARN",
+            "BLOCK",
+            "CHALLENGE",
+            "REPLAN",
+            "PAUSE",
+            "ESCALATE"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "risk": {
+          "anyOf": [
+            {
+              "enum": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Risk"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "decision_point": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decision Point"
+        },
+        "trigger_details": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Details"
+        },
+        "escalation_required": {
+          "default": false,
+          "title": "Escalation Required",
+          "type": "boolean"
+        },
+        "causal_link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Causal Link"
+        }
+      },
+      "required": [
+        "status",
+        "risk",
+        "reason"
+      ],
+      "title": "Decision",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "sidecar.decision/1",
+      "default": "sidecar.decision/1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "decision": {
+      "$ref": "#/$defs/Decision"
+    }
+  },
+  "required": [
+    "decision"
+  ],
+  "title": "DecisionContract",
+  "type": "object"
+}

@@ -1,0 +1,248 @@
+{
+  "$defs": {
+    "ConstraintBinding": {
+      "description": "Binds one `IntentEnvelope.constraints` entry to a specific tool\nargument so it can be checked deterministically -- a constraint alone\n(e.g. `maximum_refund: 500`) doesn't say which tool call it applies to.\n\nA binding produces a finding when the tool argument does *not* satisfy\n`actual <op> constraint_value`. E.g. `ConstraintBinding(\nconstraint=\"maximum_refund\", tool=\"issue_refund\", arg_name=\"amount\",\nop=\"lte\")` flags any `issue_refund` call whose `amount` exceeds the\nenvelope's `maximum_refund`. A binding for a constraint the active\nenvelope doesn't declare, or a tool call missing the bound argument,\nsimply doesn't match -- same \"no rule matched\" philosophy as\n`gate/policy.py` and `gate/risk.py`.",
+      "properties": {
+        "constraint": {
+          "title": "Constraint",
+          "type": "string"
+        },
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        },
+        "arg_name": {
+          "title": "Arg Name",
+          "type": "string"
+        },
+        "op": {
+          "default": "lte",
+          "enum": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "contains"
+          ],
+          "title": "Op",
+          "type": "string"
+        },
+        "severity": {
+          "default": "BLOCK",
+          "enum": [
+            "WARN",
+            "BLOCK"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "constraint",
+        "tool",
+        "arg_name"
+      ],
+      "title": "ConstraintBinding",
+      "type": "object"
+    },
+    "ContextSpec": {
+      "additionalProperties": false,
+      "description": "Agent-visible instructions and structured context, without enforcement.",
+      "properties": {
+        "goal": {
+          "default": "",
+          "title": "Goal",
+          "type": "string"
+        },
+        "values": {
+          "additionalProperties": true,
+          "title": "Values",
+          "type": "object"
+        },
+        "readers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Readers",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "expires": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires"
+        }
+      },
+      "title": "ContextSpec",
+      "type": "object"
+    },
+    "GuardrailSpec": {
+      "additionalProperties": false,
+      "description": "A deterministic policy and bound constraints, independent of context.",
+      "properties": {
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/PolicyRule"
+          },
+          "title": "Rules",
+          "type": "array"
+        },
+        "default_effect": {
+          "default": "allow",
+          "enum": [
+            "allow",
+            "deny"
+          ],
+          "title": "Default Effect",
+          "type": "string"
+        },
+        "constraints": {
+          "additionalProperties": true,
+          "title": "Constraints",
+          "type": "object"
+        },
+        "bindings": {
+          "items": {
+            "$ref": "#/$defs/ConstraintBinding"
+          },
+          "title": "Bindings",
+          "type": "array"
+        }
+      },
+      "title": "GuardrailSpec",
+      "type": "object"
+    },
+    "PolicyRule": {
+      "description": "One allow/deny rule. `tool` is an `fnmatch` glob matched against\n`DecisionContext.tool_name` (e.g. `\"delete_*\"`, `\"*\"`). Rules are\nevaluated in order; the first match wins.",
+      "properties": {
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        },
+        "effect": {
+          "enum": [
+            "allow",
+            "deny"
+          ],
+          "title": "Effect",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "tool",
+        "effect"
+      ],
+      "title": "PolicyRule",
+      "type": "object"
+    },
+    "ScopeLayer": {
+      "additionalProperties": false,
+      "description": "Context only, guardrails only, or both at a shared/exclusive scope.",
+      "properties": {
+        "context": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContextSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "guardrails": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GuardrailSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "ScopeLayer",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "sidecar.scope/1",
+      "default": "sidecar.scope/1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "system_id": {
+      "minLength": 1,
+      "title": "System Id",
+      "type": "string"
+    },
+    "task_id": {
+      "minLength": 1,
+      "title": "Task Id",
+      "type": "string"
+    },
+    "agents": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Agents",
+      "type": "array"
+    },
+    "shared": {
+      "$ref": "#/$defs/ScopeLayer"
+    },
+    "exclusive": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ScopeLayer"
+      },
+      "title": "Exclusive",
+      "type": "object"
+    }
+  },
+  "required": [
+    "system_id",
+    "task_id",
+    "agents"
+  ],
+  "title": "ScopeContract",
+  "type": "object"
+}

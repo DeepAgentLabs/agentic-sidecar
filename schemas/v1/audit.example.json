@@ -1,0 +1,22 @@
+{
+  "schema_version": "sidecar.audit/1",
+  "audit": {
+    "decision_id": "decision-1",
+    "timestamp": "2026-11-04T00:00:00Z",
+    "outcome": "BLOCK",
+    "trigger": {
+      "boundary_type": "tool_call",
+      "tool_name": "read",
+      "arguments": {}
+    },
+    "rationale": {
+      "policy_findings": [],
+      "risk_findings": [],
+      "intent_findings": [],
+      "budget_findings": [],
+      "reason": "gate unavailable"
+    },
+    "causal_link": null,
+    "execution_context": {}
+  }
+}

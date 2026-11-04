@@ -1,0 +1,19 @@
+{
+  "schema_version": "sidecar.intent/1",
+  "intent": {
+    "id": "intent-child",
+    "goal": "Read inventory",
+    "requested_by": {
+      "type": "agent",
+      "id": "planner"
+    },
+    "constraints": {},
+    "authority": {
+      "read": true
+    },
+    "expires": null,
+    "metadata": {
+      "parent_intent_id": "intent-parent"
+    }
+  }
+}
