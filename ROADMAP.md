@@ -715,3 +715,12 @@ See [compatibility, operator example and dependency boundaries](docs/tower-0.10-
 
 Sidecar 0.10.1 widens both optional Chaos ranges to `<0.12` so the 0.11 wheel can be installed. Governance decisions and the live stop/revoke bridge keep their native meaning; recipe execution is caller-owned and does not prove containment.
 See [the compatibility guide and offline operator example](docs/chaos-0.11-chaoshub.md).
+
+
+## MCP 0.7 readiness alignment — 2026-11-04
+
+Documentation aligned with MCP 0.7.0's local readiness milestone and released
+sibling acceptance matrix. See [the integration note](docs/mcp-0.7-readiness.md).
+This does not close this project's independent production/stability gates or
+AIOS review gates. Native schemas and optional dependency ranges are unchanged;
+no package release is needed for this documentation-only alignment.

@@ -852,3 +852,11 @@ See [compatibility, operator example and dependency boundaries](docs/tower-0.10-
 
 Sidecar 0.10.1 widens both optional Chaos ranges to `<0.12` so the 0.11 wheel can be installed. Governance decisions and the live stop/revoke bridge keep their native meaning; recipe execution is caller-owned and does not prove containment.
 See [the compatibility guide and offline operator example](docs/chaos-0.11-chaoshub.md).
+
+
+## MCP 0.7 integration readiness
+
+The MCP 0.7 candidate baseline includes this project's released integration.
+Its read-only compatibility observations remain separate from runtime readiness
+and native producer verdicts. See [the matrix, example and boundaries](docs/mcp-0.7-readiness.md).
+No runtime dependency or native schema changes are required here.
