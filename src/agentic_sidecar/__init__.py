@@ -47,7 +47,7 @@ from agentic_sidecar.status import (
     ToolCallNarrative,
 )
 
-__version__ = "0.10.1"
+__version__ = "0.11.0"
 
 __all__ = [
     "AuthorityBinding",

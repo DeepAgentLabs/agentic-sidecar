@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "agentic-sidecar"
-version = "0.10.1"
+version = "0.11.0"
 description = "Companion intelligence and real-time decision supervision for autonomous AI agents."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -55,6 +55,7 @@ langgraph = [
 ]
 validation = ["agentic-evals>=0.9,<1", "agentic-chaos>=0.8,<0.12"]
 dev = [
+  "jsonschema[format]>=4.23,<5",
   "pytest>=8.0",
   "pytest-cov>=5.0",
   "ruff>=0.6",

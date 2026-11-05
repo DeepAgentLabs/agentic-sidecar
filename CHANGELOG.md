@@ -4,6 +4,17 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-11-04
+
+### Added
+
+- Export native audit decisions as source-attributed AIOS 0.8-draft audit events without copying private arguments, context or rationale.
+- Preserve governance versus execution semantics, causal identity and unknown actor attribution.
+- Add a required-provider smoke mode that fails on unrun providers; missing credentials remain an open acceptance gate.
+
+Independent review, live/deployment acceptance and the coordinated v1.0 freeze remain open.
+
+
 ## [0.10.1] - 2026-11-04
 
 ### Changed
