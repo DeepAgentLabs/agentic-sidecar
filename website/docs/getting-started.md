@@ -8,9 +8,9 @@ These examples run without a model, framework installation, or API key.
 Requires Python 3.10 or newer. Install the v0.9.0 package from PyPI:
 
 ```bash
-pip install agentic-sidecar==0.9.0
+pip install agentic-sidecar==0.11.0
 # Optional live Judge SDKs:
-pip install "agentic-sidecar[openai,anthropic]==0.9.0"
+pip install "agentic-sidecar[openai,anthropic]==0.11.0"
 ```
 
 For development from a checkout, run `uv sync --extra dev --extra langgraph --extra docs`.
