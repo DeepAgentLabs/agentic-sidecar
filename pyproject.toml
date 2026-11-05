@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "agentic-sidecar"
-version = "0.11.0"
+version = "1.0.0"
 description = "Companion intelligence and real-time decision supervision for autonomous AI agents."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -36,8 +36,8 @@ openai = ["openai>=1.68,<4"]
 anthropic = ["anthropic>=0.49,<2"]
 # Sibling runtime dependencies stay optional. Lens 0.7.1 supplies native readback;
 # later 0.x releases (0.9.0 adds ModelFit) keep sidecar.correlation/1 unchanged.
-agenticlens = ["agenticlens>=0.7.1,<1"]
-agentic-chaos = ["agentic-chaos>=0.5.3,<0.12"]
+agenticlens = ["agenticlens>=0.7.1,<2"]
+agentic-chaos = ["agentic-chaos>=0.5.3,<2"]
 # Reserved until the upstream provenance API is validated; no export claim.
 semantica = []
 autogen = ["autogen-core==0.7.5"]
@@ -53,7 +53,7 @@ langgraph = [
   "langchain-core>=0.3,<2",
   "langgraph>=1.0,<2",
 ]
-validation = ["agentic-evals>=0.9,<1", "agentic-chaos>=0.8,<0.12"]
+validation = ["agentic-evals>=0.9,<2", "agentic-chaos>=0.8,<2"]
 dev = [
   "jsonschema[format]>=4.23,<5",
   "pytest>=8.0",

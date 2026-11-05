@@ -1,15 +1,16 @@
 # agentic-sidecar — Roadmap & Architecture
 
-## Release sequencing
+## Coordinated 1.0.0 milestone
 
-The final package-local roadmap phase uses **v0.10**, followed by further
-minor releases as needed. **v1.0 is reserved for one coordinated DeepAgentLabs
-ecosystem release**, after the shared readiness and compatibility gates pass.
-Completing this minor milestone does not independently declare stable APIs or
-AIOS conformance. Existing acceptance criteria remain required. See the
-[ecosystem release policy](https://github.com/DeepAgentLabs/.github/blob/main/profile/RELEASE_POLICY.md).
+Version 1.0.0 marks the coordinated DeepAgentLabs milestone on 2026-11-05.
+Development and roadmap delivery continue after this release. Existing draft
+and candidate schema markers retain their maturity; package versions do not
+certify AIOS conformance or production deployment readiness. Independent review,
+independent implementations, security/deployment acceptance, live-provider
+validation and the stable contract freeze remain tracked follow-up work.
+See the [ecosystem release policy](https://github.com/DeepAgentLabs/.github/blob/main/profile/RELEASE_POLICY.md).
 
-> **Updated 2026-11-04 · Current checkout: 0.11.0.**
+> **Updated 2026-11-05 · Current checkout: 1.0.0.**
 > This is the canonical capability roadmap. Each stage builds on the existing
 > runtime with explicit deliverables and acceptance criteria. Future version
 > targets describe development priorities, not committed delivery dates.
@@ -736,5 +737,5 @@ optional adoption guidance; no runtime dependency or patch release is required.
 
 See [the implementation and migration guide](docs/coordinated-v1-readiness.md)
 for the current candidate scope, interoperability evidence and remaining gates.
-Current version: 0.11.0. Internal tests do not close independent review,
+Current version: 1.0.0. Internal tests do not close independent review,
 live-provider/deployment acceptance or the coordinated stable freeze.
