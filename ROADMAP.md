@@ -9,7 +9,7 @@ Completing this minor milestone does not independently declare stable APIs or
 AIOS conformance. Existing acceptance criteria remain required. See the
 [ecosystem release policy](https://github.com/DeepAgentLabs/.github/blob/main/profile/RELEASE_POLICY.md).
 
-> **Updated 2026-11-04 · Current checkout: 0.10.1.**
+> **Updated 2026-11-04 · Current checkout: 0.11.0.**
 > This is the canonical capability roadmap. Each stage builds on the existing
 > runtime with explicit deliverables and acceptance criteria. Future version
 > targets describe development priorities, not committed delivery dates.
@@ -731,3 +731,10 @@ See [the compatibility and adoption guide](docs/aios-0.8-operational-artifacts.m
 for the new exploratory verification, audit and investigation companions.
 Existing native contracts and supported AIOS markers are unchanged. This is
 optional adoption guidance; no runtime dependency or patch release is required.
+
+## Coordinated v1.0 engineering readiness
+
+See [the implementation and migration guide](docs/coordinated-v1-readiness.md)
+for the current candidate scope, interoperability evidence and remaining gates.
+Current version: 0.11.0. Internal tests do not close independent review,
+live-provider/deployment acceptance or the coordinated stable freeze.
