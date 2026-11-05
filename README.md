@@ -22,7 +22,7 @@ AIOS conformance. Existing acceptance criteria remain required. See the
 
 ## Status
 
-**Current checkout version: 0.10.1.** The runtime brings together deterministic
+**Current checkout version: 0.11.0.** The runtime brings together deterministic
 intent/policy/risk supervision, optional evaluators, budget accounting,
 narration, and the CLI. See the [roadmap](ROADMAP.md) for release history
 and upcoming capability stages.
@@ -867,3 +867,10 @@ See [the compatibility and adoption guide](docs/aios-0.8-operational-artifacts.m
 for the new exploratory verification, audit and investigation companions.
 Existing native contracts and supported AIOS markers are unchanged. This is
 optional adoption guidance; no runtime dependency or patch release is required.
+
+## Coordinated v1.0 engineering readiness
+
+See [the implementation and migration guide](docs/coordinated-v1-readiness.md)
+for the current candidate scope, interoperability evidence and remaining gates.
+Current version: 0.11.0. Internal tests do not close independent review,
+live-provider/deployment acceptance or the coordinated stable freeze.

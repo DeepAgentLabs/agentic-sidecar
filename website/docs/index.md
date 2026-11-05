@@ -9,7 +9,7 @@
 | Field | Value |
 |---|---|
 | **Package** | `agentic-sidecar` |
-| **Checkout version** | `0.10.1` |
+| **Checkout version** | `0.11.0` |
 | **Maturity** | Pre-Alpha |
 | **License** | MIT |
 | **Python** | ≥ 3.10 |
@@ -55,3 +55,5 @@ See [v0.9 authority, privacy and migration](v0.9.md) for the current lifecycle A
 ## AIOS 0.8 operational artifacts
 
 See [optional operational artifact adoption](aios-0.8-operational-artifacts.md). Native decision and audit contracts remain unchanged.
+
+See [coordinated readiness](coordinated-v1-readiness.md).

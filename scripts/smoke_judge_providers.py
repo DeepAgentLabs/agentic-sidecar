@@ -12,6 +12,9 @@ from agentic_sidecar import AnthropicJudge, JudgeEvaluator, OpenAIJudge
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--provider", choices=["openai", "anthropic", "all"], default="all")
 parser.add_argument("--model", help="Explicit model; use with a single provider")
+parser.add_argument(
+    "--require-all", action="store_true", help="Fail if any selected provider was not run"
+)
 args = parser.parse_args()
 if args.model and args.provider == "all":
     parser.error("--model requires a single --provider")
@@ -52,3 +55,6 @@ for name, cls, key, model_key in [
 print(json.dumps(results, indent=2))
 if any(result["status"] == "failed" for result in results):
     raise SystemExit(1)
+
+if args.require_all and any(result["status"] != "passed" for result in results):
+    raise SystemExit(2)
