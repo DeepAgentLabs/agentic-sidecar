@@ -51,3 +51,7 @@ All of this runs in either **Observe mode** (log decisions, never block) or **Go
 | [Roadmap](roadmap.md) | Release history and upcoming capability stages |
 
 See [v0.9 authority, privacy and migration](v0.9.md) for the current lifecycle APIs.
+
+## AIOS 0.8 operational artifacts
+
+See [optional operational artifact adoption](aios-0.8-operational-artifacts.md). Native decision and audit contracts remain unchanged.
