@@ -81,3 +81,20 @@ def test_release_smoke_fails_when_required_credentials_are_missing(monkeypatch):
         text=True,
     )
     assert run.returncode == 2 and '"status": "not_run"' in run.stdout
+
+
+@pytest.mark.parametrize("field", ["parent_decision_id", "correlation_id"])
+def test_supplied_empty_causal_identity_is_rejected(field):
+    record = native()
+    setattr(record.causal_link, field, "")
+    with pytest.raises(ValueError):
+        export_audit_event(record, target=TARGET, created_at=NOW)
+
+
+def test_absent_causal_identity_is_allowed():
+    record = native()
+    record.causal_link = CausalLink()
+    result = export_audit_event(record, target=TARGET, created_at=NOW)
+    assert_schema(result)
+    assert result["causal_event_ids"] == []
+    assert "correlation_id" not in result

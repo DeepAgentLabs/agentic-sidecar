@@ -48,8 +48,8 @@ def export_audit_event(
         "target": reference(target),
         "outcome": "denied" if record.outcome == "BLOCK" else "requested",
         "native_outcome": {"format": "sidecar.audit/1", "value": record.outcome},
-        "causal_event_ids": [f"sidecar:audit:{identifier(parent)}"] if parent else [],
+        "causal_event_ids": [f"sidecar:audit:{identifier(parent)}"] if parent is not None else [],
     }
-    if record.causal_link and record.causal_link.correlation_id:
+    if record.causal_link and record.causal_link.correlation_id is not None:
         result["correlation_id"] = identifier(record.causal_link.correlation_id)
     return result
