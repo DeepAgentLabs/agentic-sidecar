@@ -1,0 +1,43 @@
+{
+  "name": "Agentic Sidecar",
+  "scope": "Evaluate proposed actions and enforce decisions through configured adapters. Observe mode is not enforcement. Keep the failure policy, authority, and approval boundaries explicit.",
+  "references": [
+    {
+      "title": "Setup and task workflows",
+      "path": "website/docs/developer-guide.md"
+    },
+    {
+      "title": "Api Reference",
+      "path": "website/docs/api-reference.md"
+    },
+    {
+      "title": "Cli Reference",
+      "path": "website/docs/cli-reference.md"
+    },
+    {
+      "title": "Governance",
+      "path": "website/docs/governance.md"
+    },
+    {
+      "title": "Scoped Supervision",
+      "path": "website/docs/scoped-supervision.md"
+    },
+    {
+      "title": "Live Operations",
+      "path": "website/docs/live-operations.md"
+    },
+    {
+      "title": "Limitations",
+      "path": "website/docs/limitations.md"
+    }
+  ],
+  "contracts": [
+    "src/agentic_sidecar/__init__.py",
+    "src/agentic_sidecar/core/*.py",
+    "src/agentic_sidecar/gate/policy.py",
+    "src/agentic_sidecar/gate/risk.py"
+  ],
+  "schemas": [
+    "schemas/v1/*.schema.json"
+  ]
+}

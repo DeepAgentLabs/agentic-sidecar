@@ -1,0 +1,137 @@
+{
+  "product": "Agentic Sidecar",
+  "repository": "agentic-sidecar",
+  "distribution": "agentic-sidecar",
+  "document": "llms-full.txt",
+  "content_type": "text/markdown; charset=utf-8",
+  "sha256": "90d9cbe6f5d59a5592368eea34527304a732e2fda92c2b8b5a5d5bc39b5f4d54",
+  "source_hash_normalization": "UTF-8 text with LF newlines",
+  "human_guide": "developer-guide.md",
+  "sources": [
+    {
+      "path": "pyproject.toml",
+      "kind": "package-metadata",
+      "sha256": "c78e180d7bddf35609f482c3d375f55879f4ffbca9bd3570067162bbb1c27029"
+    },
+    {
+      "path": "website/docs/ai-docs.json",
+      "kind": "source-selection",
+      "sha256": "cfb11ba3f950ac6c0e79e4c7e030a63aacbd6890ec7e9c5ad859b2dc0d61a432"
+    },
+    {
+      "path": "website/docs/developer-guide.md",
+      "kind": "reference",
+      "sha256": "b705395e8cab240c7c5c1484f51d146024c22386f3d6c9c7f5d2782efffde1c4"
+    },
+    {
+      "path": "website/docs/api-reference.md",
+      "kind": "reference",
+      "sha256": "936a2f69a0695df869033f8665c28725bb81c5d377ac5db43c6075d2dbc52727"
+    },
+    {
+      "path": "website/docs/cli-reference.md",
+      "kind": "reference",
+      "sha256": "4a6916f856a47b19c271b828ef2aaa7478f5796f4603de63c14fba97defe5124"
+    },
+    {
+      "path": "website/docs/governance.md",
+      "kind": "reference",
+      "sha256": "9bc1c50027308a283bd87e0be2656f4b1a386f2a970e3467b279da1c67418939"
+    },
+    {
+      "path": "website/docs/scoped-supervision.md",
+      "kind": "reference",
+      "sha256": "148dceac54b50a7c5d2937db137054eda348f235526f84f8d3066c726e8ba2c8"
+    },
+    {
+      "path": "website/docs/live-operations.md",
+      "kind": "reference",
+      "sha256": "a13ef36e0db2140f9e44242a656774feba2a4542760bf5221e408e633dfe0606"
+    },
+    {
+      "path": "website/docs/limitations.md",
+      "kind": "reference",
+      "sha256": "ddcdae86d85ac287f7abeec69bfb5f92eec3c0f253661210c413d7c4d9a530df"
+    },
+    {
+      "path": "src/agentic_sidecar/__init__.py",
+      "kind": "source-contract",
+      "sha256": "007e8006311e808cae04c491b56e20d8d9ead346137b6fab87d3f2fa095e9521"
+    },
+    {
+      "path": "src/agentic_sidecar/core/__init__.py",
+      "kind": "source-contract",
+      "sha256": "0cdfcad323419f6441f2b534e020c834f017e7ca1949d4b7a63f69af3f1b03bf"
+    },
+    {
+      "path": "src/agentic_sidecar/core/context.py",
+      "kind": "source-contract",
+      "sha256": "57eb92fa22e059f825465ebf76e3925144944d813b418a573ca269df1536c4ee"
+    },
+    {
+      "path": "src/agentic_sidecar/core/decision.py",
+      "kind": "source-contract",
+      "sha256": "151c8b7978943dc9bb690fb17e7d488a1bed57a27a12509b04facff3372d3265"
+    },
+    {
+      "path": "src/agentic_sidecar/core/exceptions.py",
+      "kind": "source-contract",
+      "sha256": "14e8d42b9132942ba7efe73a4e5050a03dc86c83f6f47da800f7513549b22de6"
+    },
+    {
+      "path": "src/agentic_sidecar/core/operators.py",
+      "kind": "source-contract",
+      "sha256": "1249d33cf0ea5a15e684a79842b14212681e919e51733f5fdefa16205cec5fd3"
+    },
+    {
+      "path": "src/agentic_sidecar/core/provenance.py",
+      "kind": "source-contract",
+      "sha256": "e72e34c76c6d47b0c9eda35495b8fa9df8c36875b7fb8aa2d4f1e670ae86657b"
+    },
+    {
+      "path": "src/agentic_sidecar/core/sidecar.py",
+      "kind": "source-contract",
+      "sha256": "6ffeebb196f31d8ecf3bbc1a0a0b83aadedb2c5bf11036ce2a2ce89d1582df62"
+    },
+    {
+      "path": "src/agentic_sidecar/gate/policy.py",
+      "kind": "source-contract",
+      "sha256": "998bab2794dc8cdae4abddb380881e4b7bb171cbbeea5689ca976bc9f5e77434"
+    },
+    {
+      "path": "src/agentic_sidecar/gate/risk.py",
+      "kind": "source-contract",
+      "sha256": "56c2d9994e980563884860525d1ce3ac4510a57fbcabf10f85e05b3f58dd81e4"
+    },
+    {
+      "path": "schemas/v1/audit.schema.json",
+      "kind": "json-schema",
+      "sha256": "891da766e5d0847d25ab26776c464550a552bbe47e4fb70e846854e646d1fadc"
+    },
+    {
+      "path": "schemas/v1/decision.schema.json",
+      "kind": "json-schema",
+      "sha256": "0967741b0eefce4e3187436a5475945b338c0785b51dd0dcacdedcd31ca70703"
+    },
+    {
+      "path": "schemas/v1/intent.schema.json",
+      "kind": "json-schema",
+      "sha256": "684b091db5573908dcadc9512b9693c016859c8e3c873720711312f7b0be463a"
+    },
+    {
+      "path": "schemas/v1/scope.schema.json",
+      "kind": "json-schema",
+      "sha256": "6d404ba540f6516a9639321e59b77f9d3dad19e59e9351955b3d7f69a8939bc2"
+    },
+    {
+      "path": "schemas/v1/transfer.schema.json",
+      "kind": "json-schema",
+      "sha256": "baf9fd5fbf5c092ed3d14a64f5153129f0930793b2ada27e2a8692408e95d822"
+    },
+    {
+      "path": "website/docs/guide/examples/sidecar_quickstart.py",
+      "kind": "example",
+      "sha256": "d991884ab60bc7f709cbdfb34f1d0a07bbe7e22bfa2421bc2c322d21b882794f"
+    }
+  ]
+}
