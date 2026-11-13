@@ -1,59 +1,79 @@
-# Agentic Sidecar Documentation
+# Agentic Sidecar
 
-**Agentic Sidecar** is a companion intelligence and real-time decision supervision layer for autonomous AI agents. It attaches to your agent harness and evaluates every proposed tool call against policy, risk, intent, and budget limits *before* execution — without taking over the agent loop.
+## Agentic Sidecar overview
 
----
+Should this proposed action proceed under the declared policy and intent?
 
-## Package Information
+Proposed tool actions, policy rules, intent constraints, and recorded budgets. Decision records and adapter-mediated allow, block, or escalation behavior.
 
-| Field | Value |
-|---|---|
-| **Package** | `agentic-sidecar` |
-| **Checkout version** | `0.11.0` |
-| **Maturity** | Pre-Alpha |
-| **License** | MIT |
-| **Python** | ≥ 3.10 |
-| **PyPI** | [pypi.org/project/agentic-sidecar](https://pypi.org/project/agentic-sidecar/) |
-| **GitHub** | [DeepAgentLabs/agentic-sidecar](https://github.com/DeepAgentLabs/agentic-sidecar) |
+**When to start here**
 
----
+Compute a deny verdict, then demonstrate governed execution.
 
-## What it does
+## Inputs and outputs
 
-Agentic Sidecar evaluates agent decisions before they execute. Instead of hoping your agent behaves correctly, it provides a structured Decision Gate that:
+| You provide | You receive |
+| --- | --- |
+| Proposed tool actions, policy rules, intent constraints, and recorded budgets. | Decision records and adapter-mediated allow, block, or escalation behavior. |
 
-1. **Checks policy** — YAML-driven allow/deny rules matched against tool names
-2. **Classifies risk** — LOW / MEDIUM / HIGH based on argument patterns
-3. **Validates intent** — ensures tool arguments stay within user-declared constraints
-4. **Checks recorded budget** — suspends Govern dispatch at a ceiling or invokes an approval handler
-5. **Provides plan heuristics** — full-plan boundary checks goal, constraints and selected contradictions
-6. **Offers optional evaluators** — heuristic Critic plus explicit MockJudge and optional live SDK providers
+## Execution boundary
 
-All of this runs in either **Observe mode** (log decisions, never block) or **Govern mode** (only ALLOW/WARN proceed; other outcomes resolve or suspend).
+evaluate() produces a verdict. Actual enforcement requires the caller or a governed adapter; Observe mode does not block execution.
 
----
+[Start the Agentic Sidecar quickstart →](guide/quickstart.md)
 
-## Quick navigation
+## Capabilities
 
-| Page | What it covers |
-|---|---|
-| [Getting started](getting-started.md) | Install, minimal setup, first governed agent |
-| [Architecture](architecture.md) | Core design, Decision Gate pipeline, module boundaries |
-| [Governance](governance.md) | Approval flow, live providers and 0.8.0 validation evidence |
-| [Features](features.md) | Current capabilities and supported usage |
-| [Configuration](configuration.md) | `Sidecar` constructor, YAML policy/risk files, all options |
-| [API reference](api-reference.md) | Full Python API — classes, methods, types |
-| [CLI reference](cli-reference.md) | `agentic-sidecar status`, `version`, `demo` commands |
-| [Integrations](integrations.md) | LangGraph, CrewAI, AutoGen, OpenAI Agents, Google ADK |
-| [Examples](examples.md) | Runnable example scripts from `examples/` |
-| [Troubleshooting](troubleshooting.md) | Common errors and how to fix them |
-| [Limitations](limitations.md) | Known constraints and current boundaries |
-| [Roadmap](roadmap.md) | Release history and upcoming capability stages |
+Use these capabilities to address supervise tasks in your application.
 
-See [v0.9 authority, privacy and migration](v0.9.md) for the current lifecycle APIs.
+| Capability | What it provides |
+| --- | --- |
+| Policy and risk | Match tool names and argument patterns against deterministic rules. |
+| Intent constraints | Bind a declared task constraint to specific tool arguments. |
+| Budget tracking | Track recorded cost/tokens and react to configured ceilings. |
+| Plan, critic, and judge modules | Enable heuristic checks or explicitly configured live model evaluation. |
+| Governed dispatch | Resolve, block, or suspend actions at a tool boundary. |
+| Scoped supervision | Compose shared and exclusive context or guardrails according to declared scope. |
 
-## AIOS 0.8 operational artifacts
+## Supported scope
 
-See [optional operational artifact adoption](aios-0.8-operational-artifacts.md). Native decision and audit contracts remain unchanged.
+evaluate() produces a verdict. Actual enforcement requires the caller or a governed adapter; Observe mode does not block execution.
 
-See [coordinated readiness](coordinated-v1-readiness.md).
+## Core concepts
+
+| Concept | Meaning |
+| --- | --- |
+| DecisionContext | Describes the proposed action before execution. |
+| Observe | Records decisions while wrapped calls can still execute. |
+| Govern | Enforces decisions at dispatch: proceed, block, resolve, or suspend as configured. |
+| Role activation | Supplying a module is not sufficient if its role is not enabled. |
+| Failure policy | Explicitly decide whether an error in supervision fails open or closed. |
+| Intent lifecycle | Bind constraints to the current task, replace intent between tasks, and manage budgets separately. |
+
+## Recommended workflow
+
+## Start with an explicit policy
+
+Match the actual tool name and arguments. Verify allowed and denied examples before connecting the wrapper to an agent.
+
+## Enable the necessary roles
+
+The default roles cover policy and risk. Intent, budget, plan, critic, and judge modules must be configured and enabled explicitly.
+
+## Observe before enforcing
+
+Observe mode helps inspect verdicts, but it is not blocking. Use Govern when the result should control dispatch and verify that the underlying callable was not invoked on a blocked case.
+
+## Resolve approval outcomes
+
+Govern permits ALLOW/WARN, blocks BLOCK, and uses configured resolution for PAUSE/ESCALATE. Unresolved outcomes and CHALLENGE/REPLAN suspend execution. Do not interpret a pending approval as permission to run.
+
+## Manage task boundaries
+
+Update the active intent for the new task and record actual usage in the relevant budget. Inspect scoped context and guardrail delivery when multiple agents participate.
+
+## Next steps
+
+Compute a deny verdict, then demonstrate governed execution.
+
+[Open the developer quickstart →](guide/quickstart.md)
