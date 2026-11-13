@@ -38,6 +38,17 @@ validation:
   anchors: warn
 
 nav:
+  - Developer guide:
+      - Start here: developer-guide.md
+      - Overview: guide/overview.md
+      - Quickstart: guide/quickstart.md
+      - Capabilities: guide/capabilities.md
+      - Core concepts: guide/concepts.md
+      - Recommended workflow: guide/workflow.md
+      - Configuration: guide/configuration.md
+      - Approvals: guide/approvals.md
+      - Reference: guide/reference.md
+      - Troubleshooting: guide/troubleshooting.md
   - Coordinated v1 readiness: coordinated-v1-readiness.md
   - Chaos 0.11 ChaosHub: chaos-0.11-chaoshub.md
   - Tower 0.10 contract readiness: tower-0.10-compatibility.md
