@@ -65,7 +65,11 @@ jobs:
       - name: Set up Python
         run: uv python install 3.12
       - name: Install dependencies
-        run: uv sync --locked --extra dev --extra langgraph --python 3.12
+        run: uv sync --locked --extra dev --extra langgraph --extra docs --python 3.12
+      - name: Validate strict release documentation builds
+        run: |
+          uv run mkdocs build --strict -f website/mkdocs.yml --site-dir "$RUNNER_TEMP/site/docs"
+          uv run mkdocs build --strict -f website/mkdocs.usecases.yml --site-dir "$RUNNER_TEMP/site/usecases"
       - name: Build distributions
         run: |
           uv run python -m build
