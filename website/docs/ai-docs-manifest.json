@@ -2,7 +2,7 @@
   "product": "Agentic Sidecar",
   "repository": "agentic-sidecar",
   "distribution": "agentic-sidecar",
-  "document": "llms-full.txt",
+  "document": "llms-full.md",
   "content_type": "text/markdown; charset=utf-8",
   "sha256": "90d9cbe6f5d59a5592368eea34527304a732e2fda92c2b8b5a5d5bc39b5f4d54",
   "source_hash_normalization": "UTF-8 text with LF newlines",
