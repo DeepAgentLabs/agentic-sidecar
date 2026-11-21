@@ -347,7 +347,7 @@ optional durable JSONL persistence. See [Live operations](live-operations.md).
 
 ```python
 from agentic_sidecar import __version__
-print(__version__)  # "0.9.0"
+print(__version__)  # "1.0.3" in this checkout; use the installed value
 ```
 
 ## Runtime operations
@@ -373,3 +373,53 @@ included in audit policy fingerprints.
 versioned projections. See [integration contracts](integrations.md).
 
 See [v0.9 authority, privacy and migration](v0.9.md) for the current lifecycle APIs.
+
+
+## Capability modules
+
+| Module | Workflow and detailed contract |
+| --- | --- |
+| `agentic_sidecar.core`, `gate`, `intent` | [Decision outcomes, policy, risk, budgets, intent constraints and failure policy](configuration.md) |
+| `agentic_sidecar.evaluators` | [Plan/Critic review, Judge providers, time/cost accounting and approval flows](governance.md) |
+| `agentic_sidecar.adapters` | [Sync/async callable, LangGraph, AutoGen, CrewAI, OpenAI Agents, Google ADK and MCP boundaries](integrations.md) |
+| `agentic_sidecar.operations` | [TaskRuntime, EventJournal, OperatorServer, dispatch, controls and native events](live-operations.md) |
+| `agentic_sidecar.scopes` | [Shared/exclusive composition and mandatory checks](scoped-supervision.md) |
+| `agentic_sidecar.scopes.privacy` | [Reader authorization, context update/expiry/revocation and redacted summaries](v0.9.md#context-privacy-and-readers) |
+| `agentic_sidecar.intent.authority` | [AuthorityBinding/AuthorityRegistry, narrowed delegation and live ancestor revocation](v0.9.md#task-authority-and-delegation) |
+| `agentic_sidecar.contracts` | [Five native wrappers, schema accessors, scope import and validated intent transfer](v0.10.md) |
+| `agentic_sidecar.integrations.correlation`, `integrations.agenticlens` | [Native projections and exact Lens run/trace/span readback](integrations.md) |
+| `agentic_sidecar.integrations.agentic_chaos` | [Evaluate/enforce a fault-correlated recovery proposal without executing it](integrations.md#agentic-chaos-and-evals) |
+| `agentic_sidecar.integrations.aios` | [AIOS operational audit projection](aios-0.8-operational-artifacts.md) |
+| `agentic_sidecar.status`, `cli` | [Standalone/measured narration and six CLI commands](cli-reference.md) |
+
+The [AI Reference (robust)](https://deepagentlabs.io/agentic-sidecar/docs/llms-full.md) includes declarations from every package module and all five native JSON Schemas. Consult the [capability index](ai-reference-index.md) before selecting a workflow. Internal helpers stay internal; extraction does not promote them to public APIs.
+
+## Authority, privacy and transfer lifecycle
+
+`IntentGuardian.delegate(...)` narrows authority using its live `AuthorityRegistry`, and `revoke()` invalidates descendants for future dispatch reservations. `IntentTransfer.propose(...)` serializes a narrowed proposal; `IntentTransfer.receive(parent, *, agent_id)` validates it against the trusted live parent. Receive requires the host-authenticated agent identity and the same live registry, not an imported self-asserted grant. See [propagation and replay limits](v0.10.md#cross-instance-and-cross-agent-propagation).
+
+`BoundAgent.context(reader=...)` returns an authorized defensive copy; `update_context(values, *, actor)` and `revoke_context(*, actor)` require the owner. `evidence()` returns an allowlisted summary, not a native Decision or journal. `OperatorServer(reader_tokens=...)` binds reader credentials to redacted status only. See [privacy lifecycle](v0.9.md#context-privacy-and-readers).
+
+## AIOS operational audit export
+
+```python
+from datetime import datetime, timezone
+from agentic_sidecar import AuditRecord, DecisionRationale, DecisionTrigger
+from agentic_sidecar.integrations.aios import export_audit_event
+
+now = datetime.now(timezone.utc)
+record = AuditRecord(
+    decision_id="decision-demo", timestamp=now, outcome="BLOCK",
+    trigger=DecisionTrigger("tool_call", "delete_demo"),
+    rationale=DecisionRationale(reason="Local deny policy"),
+)
+artifact = export_audit_event(
+    record,
+    target={"id": "target-demo", "producer": "host", "artifact_id": "tool-demo", "format": "host.tool"},
+    created_at=now,
+)
+assert artifact["spec_version"] == "0.8-draft"
+assert artifact["outcome"] == "denied"
+```
+
+The host supplies a public native target and an aware recording time not earlier than the observation. The exporter withholds rationale/context, records an unknown actor rather than guessing identity, and preserves native outcomes/causal IDs. BLOCK maps to denied; other decisions are requested, never evidence of completed execution. It rejects malformed identity/target/timestamp inputs and self-causality. Native contract schema access does not validate this separate AIOS projection; use the specification-owned draft contract and the optional ecosystem validators. See [AIOS operational audit exports](aios-0.8-operational-artifacts.md).

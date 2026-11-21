@@ -20,4 +20,6 @@ Compute a deny verdict, then demonstrate governed execution.
 
 evaluate() produces a verdict. Actual enforcement requires the caller or a governed adapter; Observe mode does not block execution.
 
-[Read the detailed developer guide](developer-guide.md).
+[Developer Guide (simple)](developer-guide.md#capability-index) · [AI Reference (robust)](https://deepagentlabs.io/agentic-sidecar/docs/llms-full.md)
+
+Both include a capability index. The simple guide provides short workflows; the robust reference includes detailed guides, current declarations and native schemas.
