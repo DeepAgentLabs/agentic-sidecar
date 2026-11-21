@@ -19,6 +19,19 @@ agentic-sidecar --help
 
 ---
 
+## Complete command inventory
+
+All six commands are listed below. Use `agentic-sidecar COMMAND --help` for exact arguments/options. The robust reference includes their current source declarations.
+
+| Command | Purpose |
+| --- | --- |
+| `approval-demo` | Try the local approval prompt without executing a tool or changing a task. |
+| `approve` | Resolve one pending approval; modify_intent reads a complete JSON envelope. |
+| `control` | Pause, resume, stop, restart or request replanning for the connected task. |
+| `demo` | Run an interactive demo of the status narrator. |
+| `status` | Display sidecar status: current objective, decisions, risk, and budget. |
+| `version` | Show agentic-sidecar version. |
+
 ## Commands
 
 ### `status`
@@ -36,7 +49,7 @@ agentic-sidecar status [OPTIONS]
 |---|---|---|
 | `--follow` | `-f` | Repeat the local snapshot every `--interval` seconds |
 | `--json` | `-j` | Output as JSON instead of a human-readable table |
-| `--endpoint URL` | Runtime HTTP task endpoint (or SIDECAR_ENDPOINT) |
+| `--endpoint URL` | — | Runtime HTTP task endpoint (or SIDECAR_ENDPOINT) |
 | `--interval N` | `-i N` | Refresh interval in seconds when `--follow` is enabled (default: 1) |
 
 **Examples:**
@@ -86,7 +99,7 @@ Print the installed package version.
 
 ```bash
 agentic-sidecar version
-# agentic-sidecar 0.8.5
+# agentic-sidecar 1.0.3 (varies by installed version)
 ```
 
 ---
@@ -142,3 +155,18 @@ TaskRuntime/OperatorServer. Set `SIDECAR_OPERATOR_TOKEN` in the operator termina
 `approve DECISION_ID ACTION` resolves a pending request; `--intent-file FILE`
 supplies a complete JSON envelope for modify_intent. See
 [Live operations](live-operations.md) for setup, protocol and access scope.
+
+
+## `control` and `approve`
+
+```bash
+agentic-sidecar control ACTION --endpoint http://127.0.0.1:PORT/tasks/TASK_ID
+agentic-sidecar approve DECISION_ID ACTION --endpoint http://127.0.0.1:PORT/tasks/TASK_ID \
+  [--intent-file intent.json]
+```
+
+Replace the endpoint and decision ID with values from the running task. Both commands require an endpoint, supplied explicitly or through `SIDECAR_ENDPOINT`, and use `SIDECAR_OPERATOR_TOKEN` for bearer authentication. Control actions are `pause`, `resume`, `stop`, `restart` and `replan`. Approval actions are `approve_once`, `reject`, `modify_intent`, `ask_agent_to_replan` and `stop_agent`.
+
+`--intent-file` supplies a complete envelope for modify_intent. Pending approval IDs and proposal fingerprints must match the running task; replayed/consumed answers cannot authorize a dispatch. Reader tokens only expose redacted status and cannot use controls, approvals or events. See [operator protocol, identity, stop/restart and approval semantics](live-operations.md) and [reader-token access](v0.9.md#context-privacy-and-readers).
+
+No CLI command starts a provider judge or a framework agent automatically. Host the runtime/server in your application, then use these commands to connect. `status` with no endpoint remains the standalone narrator view.
