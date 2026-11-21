@@ -1,24 +1,50 @@
 # Agentic Sidecar developer guide
 
-Use this guide to set up Agentic Sidecar, run a local example, and apply it to your application. Optional provider and integration fragments identify the objects or services you must supply.
+Use this simple guide to choose a capability and connect it to an explicit tool boundary. The [AI Reference (robust)](https://deepagentlabs.io/agentic-sidecar/docs/llms-full.md) includes detailed topic guides, current package/CLI declarations and all five native schemas. Observe mode records decisions; Govern enforces them through the returned tools.
 
-[Quickstart](#quickstart) · [Usage](#usage) · [Configuration](#settings) · [Troubleshooting](#troubleshooting) · [Reference](#reference)
+[Capability index](#capability-index) · [Quickstart](#quickstart) · [Configuration](#settings) · [Troubleshooting](#troubleshooting) · [Reference](#reference)
+
+## Capability index
+
+Every row links to a short workflow below. Detailed references explain configuration, inputs, outputs and limitations.
+
+| Capability | What you can do |
+| --- | --- |
+| [Decision Gate and enforcement](#gate) | Evaluate seven outcomes, then enforce through governed dispatch. |
+| [Policy and risk rules](#policy-risk) | Apply ordered allow/deny policies and tool/argument risk classifications. |
+| [Intent constraints](#intent) | Bind user constraints to tool arguments and retain intent identity and expiry. |
+| [Budget accounting](#budget) | Track explicit cost/tokens and pause at configured ceilings. |
+| [Plan review and Critic](#plan-review) | Review supplied plans, unnecessary steps, contradictions and unsupported assumptions. |
+| [Offline and live judges](#judges) | Use MockJudge or optional OpenAI/Anthropic providers with limits and usage accounting. |
+| [Approvals and escalation](#approvals) | Approve once, reject, modify intent, replan or stop a suspended proposal. |
+| [Custom hooks and failure policies](#hooks) | Extend decision evaluation while preserving mandatory checks and explicit failure behavior. |
+| [Framework and MCP adapters](#adapters) | Govern sync/async tools in LangGraph, AutoGen, CrewAI, OpenAI Agents, Google ADK and MCP. |
+| [Task runtime and execution lifecycle](#runtime) | Track proposals, decisions, dispatch reservations, completion and failure. |
+| [Operator server and Control Room](#operators) | Connect authenticated local status, task controls and remote approval handling. |
+| [Stop, cancellation and revocation callbacks](#stop) | Latch local dispatch stop, invalidate old decisions and request host-owned access revocation. |
+| [Audit journal and restoration](#audit) | Persist immutable hash-chained events, verify snapshots and restore stopped state. |
+| [Shared/exclusive supervision](#scopes) | Compose agent-specific context and mandatory guardrails without weakening shared rules. |
+| [Context privacy and lifecycle](#privacy) | Authorize readers, deliver defensive copies, update, expire and revoke context. |
+| [Redacted evidence and operator readers](#evidence) | Expose allowlisted summaries separately from privileged native artifacts. |
+| [Task authority and delegation](#authority) | Require grants, narrow child permissions and enforce ancestor expiry/revocation at dispatch. |
+| [Native interchange contracts](#contracts) | Validate intent, decision, audit, scope and transfer wrappers against five candidate schemas. |
+| [Cross-agent intent transfer](#transfer) | Serialize narrowed proposals and receive them against a trusted live parent registry. |
+| [Native correlation and Lens](#lens) | Export correlated decisions and attach them to exact Lens run/trace/span identities. |
+| [Chaos recovery supervision](#chaos) | Evaluate recovery proposals linked to native fault events without executing the tool. |
+| [AIOS audit projections](#aios) | Project public native audit identifiers and outcomes into a draft operational artifact. |
+| [Narration and CLI](#narration) | Display standalone or measured runtime status and use six CLI commands. |
+| [Supervision benchmarks and acceptance](#validation) | Reproduce synthetic paired dispatch measurements with explicit validation limits. |
+| [Configuration and limitations](#settings) | Configure roles, optional integrations and trusted-host boundaries. |
 
 ## Quickstart
 
-Requires Python 3.10 or newer. Run commands in an activated virtual environment. Download referenced files into the same working directory before running them.
+Requires Python 3.10 or newer in an activated virtual environment:
 
-### Install
-
-```
+```bash
 python -m pip install agentic-sidecar
 ```
 
-### Check a decision, then enforce it
-
-This example uses a synthetic delete function that only appends to a list. The wrapper accepts plain callables; a running LangGraph agent is not required for this example.
-
-sidecar_quickstart.py · complete file
+Save this complete file as `sidecar_quickstart.py`. Its delete tool only appends to a list. The LangGraph adapter accepts plain callables here without requiring a running graph:
 
 ```python
 from agentic_sidecar import DecisionContext, Sidecar, SidecarBlockedError
@@ -47,71 +73,56 @@ print("Function calls:", len(calls))
 
 [Download sidecar_quickstart.py](guide/examples/sidecar_quickstart.py)
 
-```
+```bash
 python sidecar_quickstart.py
 ```
 
-**Expected:** a block verdict, a blocked governed dispatch, and zero calls to the synthetic delete function.
-
-### Connect your tools
-
-Define policy and intent constraints for proposed actions. Place interception before actual tool dispatch. Verify both the decision and whether the underlying tool executed. Configure approval handling for suspended or escalated actions explicitly.
-
-[Governance ↗](governance.md) · [Configure rules ↗](configuration.md)
+Expect a BLOCK verdict, blocked governed dispatch and zero calls. When connecting real tools, verify both the decision and actual execution evidence. Keep raw tools and runtime configuration in the trusted host.
 
 ## Usage
 
-<span id="approvals"></span>
+Examples under `examples/` or `scripts/` assume a source checkout and run from its root. Other named files, endpoints and IDs are inputs supplied by your host. See the linked topic before using a provider, SDK or operator fragment.
 
-### Handle approvals and plan review
+<span id="gate"></span>
 
-#### Local approval flow
+### Decision Gate and enforcement
 
-```
-from agentic_sidecar import Sidecar
-from agentic_sidecar.cli.approval import CLIApprovalHandler
+Sidecar supports `ALLOW`, `WARN`, `BLOCK`, `CHALLENGE`, `REPLAN`, `PAUSE` and `ESCALATE`. `evaluate()` returns a decision; it does not execute a tool. Governed adapters dispatch ALLOW/WARN, block BLOCK, return replanning/challenge outcomes to the loop, and resolve or suspend approval outcomes. Observe evaluates but calls through.
 
-sidecar = Sidecar(
-    on_sidecar_failure="fail_closed", mode="govern",
-    escalation_handler=CLIApprovalHandler(),
-)
-```
+Custom loops must evaluate, enforce, reserve dispatch with `runtime.dispatch(...)`, execute only after admission, and call `runtime.complete(...)` on success or failure. Prefer a supported adapter for this lifecycle. See [outcome and approval semantics](governance.md) and [dispatch freshness](v0.9.md#task-authority-and-delegation).
 
-Attach configured tools with `adapters.langgraph.attach()`. The handler prompts
+<span id="policy-risk"></span>
 
-when evaluation produces PAUSE/ESCALATE. Try `agentic-sidecar approval-demo`
+### Policy and risk rules
 
-without executing a tool. You can also register `on_escalation_required`.
+`PolicyAdvisor` evaluates ordered tool-name globs; first match wins, with an allow default unless configured otherwise. `RiskEvaluator` classifies tool/argument rules as LOW/MEDIUM/HIGH, and `risk_block_threshold` determines intervention. Load YAML or mapping definitions, or construct `PolicyRule`/`RiskRule` objects. The quickstart demonstrates a deny rule. See [rule fields, comparison operators and configuration](configuration.md).
 
-| Action | Result |
-| --- | --- |
-| approve_once | Authorizes this invocation; the next proposal is evaluated and approved separately |
-| reject | BLOCK for this proposal |
-| modify_intent | Validates a full IntentEnvelope, preserves bindings, reevaluates once; another intervention suspends |
-| ask_agent_to_replan | REPLAN; return control to the agent loop |
-| stop_agent | BLOCK and stop subsequent proposals on this Sidecar instance |
+<span id="intent"></span>
 
-Responses must reference the request's decision ID. Each resolution gets its
+### Intent constraints
 
-own ID and causal_link to the originating decision. BLOCK is never offered
+Create an `IntentEnvelope` containing the goal, requester, constraints and optional expiry. `ConstraintBinding` maps each enforced constraint to a tool argument; `IntentGuardian` checks the bound values. Supply it as `intent=` and enable the `intent_guardian` role. Goals alone are not deterministic constraints, and an authority dictionary requires explicit authority bindings to enforce grants. See [constraint setup](configuration.md) and [authority semantics](v0.9.md).
 
-for approval. Missing handlers suspend, independently of failure mode. Handler
+<span id="budget"></span>
 
-errors/malformed responses follow the configured failure policy.
+### Budget accounting
 
-Custom loops call `evaluate(context)` then `enforce(context, decision)` before
+```python
+from agentic_sidecar import BudgetGuardian, DecisionContext, Sidecar
 
-dispatch. Catch SidecarBlockedError/SidecarSuspendedError to handle outcomes;
-
-neither exception executes the proposed tool. Review the offline walkthrough:
-
-```
-uv run python examples/v0_6_1_governance.py
+budget = BudgetGuardian(max_cost=5.0, max_tokens=10000)
+sidecar = Sidecar(on_sidecar_failure="fail_closed", roles=["budget"], budget=budget)
+budget.record_invocation(cost=5.0, tokens=1200)
+assert sidecar.evaluate(DecisionContext(tool_name="read_order")).status == "PAUSE"
 ```
 
-#### Full-plan review
+Record actual external usage explicitly, and call `reset()` for the next task. Judge usage reaches a configured task budget once; other framework/tool usage is not inferred. Govern pauses dispatch until resolved. See [budget and Judge accounting](governance.md).
 
-```
+<span id="plan-review"></span>
+
+### Plan review and Critic
+
+```python
 from agentic_sidecar import PlanEvaluator, Sidecar
 
 sidecar = Sidecar(on_sidecar_failure="fail_closed", roles=["planner"], planner=PlanEvaluator())
@@ -122,218 +133,230 @@ decision = sidecar.evaluate_plan(
 assert decision.status == "REPLAN"
 ```
 
-An active envelope supplies the goal/constraints. Enabled deterministic gates
+Full-plan review runs enabled deterministic gates on each supplied step. `CriticEvaluator` challenges selected unsafe actions and assumptions; verification metadata must be step-scoped. These are scoped heuristics, not general semantic reasoning. See [plan review](governance.md#full-plan-review), [Critic behavior](features.md) and [migration details](v0.9.md#review-fixes-and-migration).
 
-check every plan step; evaluators receive goal, constraints, history, intent,
+<span id="judges"></span>
 
-plan, bindings and metadata. This boundary reviews a supplied plan without
+### Offline and live judges
 
-executing it. Planner/Critic remain scoped heuristics; see [Limitations](limitations.md).
+Configure `JudgeEvaluator(MockJudge(...))` for explicit offline responses. `OpenAIJudge` and `AnthropicJudge` use optional provider SDKs and never silently substitute mocks. Install `[openai]` or `[anthropic]`, supply credentials/model, and enable the `judge` role.
+
+Configure timeout, cost limit and caller-supplied token rates when accounting is required. Provider errors follow the explicit Sidecar failure policy; limits are not a hard cancellation mechanism for arbitrary blocking code. See [provider setup and smoke commands](governance.md#optional-live-judge-providers) and [Judge limits](limitations.md).
+
+<span id="approvals"></span>
+
+### Approvals and escalation
+
+```python
+from agentic_sidecar import Sidecar
+from agentic_sidecar.cli.approval import CLIApprovalHandler
+
+sidecar = Sidecar(
+    on_sidecar_failure="fail_closed", mode="govern",
+    escalation_handler=CLIApprovalHandler(),
+)
+```
+
+Use returned governed tools. PAUSE/ESCALATE can request `approve_once`, `reject`, `modify_intent`, `ask_agent_to_replan` or `stop_agent`. BLOCK is never offered for approval. Responses bind to the decision ID; approval authorizes one unchanged invocation. Missing handlers suspend. `TaskRuntime` supports connected operator approvals; `on_escalation_required` supports notification callbacks. See [approval transitions and malformed-response handling](governance.md#local-approval-flow).
+
+<span id="hooks"></span>
+
+### Custom hooks and failure policies
+
+`before_tool_call` installs a custom decision hook; `on_sidecar_failure` must explicitly be `fail_open` or `fail_closed`. Govern/fail_closed blocks when evaluation fails; fail_open can permit that failure path. Hooks receive copied proposals and cannot rewrite the enforced tool/arguments. Mandatory scope and authority checks still apply before optional evaluation. See [hook API](api-reference.md), [mandatory guardrails](scoped-supervision.md) and [failure limits](limitations.md).
+
+<span id="adapters"></span>
+
+### Framework and MCP adapters
+
+Start with `adapters.callable.attach()` or `adapters.langgraph.attach()` for plain typed sync/async functions. The optional framework adapters convert the returned supervised boundary to each SDK's tool object:
+
+| Module | Install extra / surface |
+| --- | --- |
+| `adapters.langgraph` | `[langgraph]` for real graphs; wrapped callables |
+| `adapters.autogen` | `[autogen]`; AutoGen Core FunctionTool |
+| `adapters.crewai` | `[crewai]`; CrewAI Tool |
+| `adapters.openai_agents` | `[openai-agents]`; OpenAI Agents FunctionTool |
+| `adapters.google_adk` | `[google-adk]`; ADK FunctionTool |
+| `adapters.mcp` | `[mcp]`; async wrappers for allowlisted tools on an initialized ClientSession |
+
+Most adapters use `attach(sidecar, tools)`; MCP uses `attach(sidecar, session, tool_names)`. Pass only the returned objects to the agent. Prebuilt SDK tools, automatic handoffs and arbitrary nested/raw calls are not automatically protected. See [SDK versions, Python requirements and examples](integrations.md#framework-adapters) and [MCP gateway boundaries](integrations.md#mcp).
+
+<span id="runtime"></span>
+
+### Task runtime and execution lifecycle
+
+`TaskRuntime` records proposed, evaluated, dispatched, completed and failed actions. Supply `runtime=` to Sidecar and use that runtime as `escalation_handler` for connected approvals. Inspect `runtime.snapshot()` and `runtime.journal.export(after=0)`. The guarded quickstart creates runtime evidence automatically. Evaluating a proposal alone is not evidence that it executed. See [runtime construction and lifecycle](live-operations.md).
+
+<span id="operators"></span>
+
+### Operator server and Control Room
+
+Host a configured task inside `OperatorServer(runtime, token=..., actor=...)`, using a locally generated secret of at least 32 characters. The server exposes a task-specific loopback endpoint and Control Room. Keep the server context alive for the task's lifetime, then connect an operator terminal:
+
+```bash
+export SIDECAR_ENDPOINT=http://127.0.0.1:PORT/tasks/TASK_ID
+# Set SIDECAR_OPERATOR_TOKEN securely in this terminal as well.
+agentic-sidecar status --json
+agentic-sidecar control pause
+agentic-sidecar control resume
+```
+
+Replace PORT/TASK_ID with the running server's values. Status/events/control/approval/intent API routes require the operator token. See [complete server setup, protocol and Control Room](live-operations.md#connect-a-real-task).
+
+<span id="stop"></span>
+
+### Stop, cancellation and revocation callbacks
+
+```bash
+agentic-sidecar control stop
+```
+
+Stop latches independently of evaluation mode and failure policy, blocks queued dispatch and invalidates old decisions. Already-dispatched sync work may finish; owned async tools receive cooperative cancellation requests. Configure named `TaskRuntime(revokers=...)` callbacks for host-owned credentials and delegated access; acknowledgement requires each issuer to return exactly `True` after revocation. Restart does not renew credentials or task authority. See [stop receipts, partial failures and restart rules](live-operations.md#stop-cancellation-and-access-revocation).
+
+<span id="audit"></span>
+
+### Audit journal and restoration
+
+`EventJournal(task_id, path)` can persist JSONL events with sequence, event identity, timestamp, previous hash and digest. `verify_events(events, task_id=...)` checks a complete native chain before replay/export. Reopen `EventJournal(task_id, path)` and pass it to `TaskRuntime` to restore supported snapshots in a stopped state; approvals are not silently reauthorized. This is distinct from serializing a caller-managed `AuditRecord`.
+
+Protect native records because they may contain arguments and reasons. Hash chaining detects alteration relative to the supplied chain; an external trusted anchor is needed to resist a full malicious rewrite. See [journal formats, restoration and replay](live-operations.md#audit-snapshots-and-restoration).
+
+<span id="scopes"></span>
+
+### Shared/exclusive supervision
+
+Configure `ScopedSystem` with declared agents, a shared `ScopeLayer`, and optional exclusive layers. `ContextSpec` carries goal/values, while `GuardrailSpec` carries explicit policies/constraint bindings. `bind(agent_id, on_sidecar_failure=...)` creates a separate supervised agent boundary.
+
+Shared and exclusive context conflicts fail validation; every applicable guardrail must pass. Exclusive allows cannot weaken shared denies. Context delivery is explicit through `context()`/`deliver()`, and private text is not automatically enforcement policy or evaluator input. See [composition, mandatory checks and trusted identities](scoped-supervision.md).
+
+<span id="privacy"></span>
+
+### Context privacy and lifecycle
+
+```python
+from agentic_sidecar import ContextSpec, ScopedSystem, ScopeLayer
+
+system = ScopedSystem(
+    system_id="support", task_id="ticket-42", agents=["refund"],
+    exclusive={"refund": ScopeLayer(
+        context=ContextSpec(values={"reference": "demo-1"}, readers={"auditor"}),
+    )},
+)
+refund = system.bind("refund", on_sidecar_failure="fail_closed")
+assert refund.context(reader="auditor")["values"]["reference"] == "demo-1"
+refund.update_context({"reference": "demo-2"}, actor="refund")
+refund.revoke_context(actor="refund")
+```
+
+Readers/actors come from the authenticated host. Owners update/revoke context; expiry/revocation blocks future reads but cannot retract delivered copies. Combined layers intersect extra readers and use the earliest expiry. See [reader authorization, delivery and lifecycle](v0.9.md#context-privacy-and-readers).
+
+<span id="evidence"></span>
+
+### Redacted evidence and operator readers
+
+`BoundAgent.evidence()` returns an allowlisted summary of identity, verdict/risk, counts and lifecycle state, excluding private arguments, goals, reasons, plans and pending approvals. `OperatorServer(reader_tokens={secret: "auditor"})` permits redacted GET `/status` only; those tokens cannot control, approve or read raw events. A summary cannot replace a native decision or verifiable journal. See [reader token and evidence contracts](v0.9.md#context-privacy-and-readers).
+
+<span id="authority"></span>
+
+### Task authority and delegation
+
+Configure an `IntentGuardian` with `AuthorityBinding` entries, trusted task/agent IDs and explicit grants. `delegate(agent_id=..., authority=...)` creates a child whose permissions may only narrow. Missing/denied grants block; expiry and ancestor revocation invalidate future dispatch reservations. Bindings and inherited constraints remain intact.
+
+Run the offline synthetic-tool example from the checkout:
+
+```bash
+uv run python examples/v0_9_authority_delegation.py
+```
+
+The parent registry and raw tools stay host-owned. Revocation does not undo already reserved execution. Observe records authority decisions without enforcing them; use the governed dispatch boundary. See [grants, narrowing, revocation and restart](v0.9.md#task-authority-and-delegation).
+
+<span id="contracts"></span>
+
+### Native interchange contracts
+
+```python
+from agentic_sidecar import Decision
+from agentic_sidecar.contracts import DecisionContract, contract_schema
+
+native = Decision(status="BLOCK", risk=None, reason="local example")
+wire = DecisionContract(schema_version="sidecar.decision/1", decision=native).model_dump_json()
+restored = DecisionContract.model_validate_json(wire)
+assert restored.decision.decision_id == native.decision_id
+assert contract_schema("decision")["properties"]["schema_version"]["const"] == "sidecar.decision/1"
+```
+
+The five families are intent, decision, audit, scope and transfer. Top-level wrappers require exact markers and reject unknown fields. `ScopeContract.build()` validates composition; `export_audit()` validates a native record including timezone-aware timestamps. Native contracts are candidate surfaces, independent of package and AIOS versions. See [schema policy and migration](v0.10.md#schema-and-migration-policy).
+
+<span id="transfer"></span>
+
+### Cross-agent intent transfer
+
+`IntentTransfer.propose(parent, agent_id=..., authority=...)` creates a narrowed serialized proposal. After transport, the trusted receiver validates it and calls `.receive(parent, agent_id=...)` against the live parent registry. Imported proposals cannot invent bindings, widen authority, extend expiry or bypass ancestor revocation.
+
+```bash
+uv run python examples/v0_10_contracts.py
+```
+
+A proposal is not a signed credential, approval or resumable task. Disconnected registry replication and one-time replay prevention are host responsibilities. See [cross-instance receive checks and limitations](v0.10.md#cross-instance-and-cross-agent-propagation).
+
+<span id="lens"></span>
+
+### Native correlation and Lens
+
+`Correlation(run_id=..., trace_id=..., span_id=...)` and `export_decisions()` emit `sidecar.correlation/1` projections after verifying the native journal. The host supplies exact IDs. Install `[agenticlens]` to use `integrations.agenticlens.attach_decisions(sidecar, run, span_id=...)` for Lens readback.
+
+BLOCK/ESCALATE remain supervision outcomes rather than failed deployments. Projections may retain sensitive reasons and are not independent execution evidence. See [correlation fields, Lens identity checks and access boundaries](integrations.md#versioned-native-decision-evidence).
+
+<span id="chaos"></span>
+
+### Chaos recovery supervision
+
+Install `[agentic-chaos]` for optional resilience experiments. `integrations.agentic_chaos.evaluate_recovery(sidecar, event, tool_name=..., arguments=...)` evaluates/enforces a recovery proposal linked to a native Chaos event ID; it does not execute the tool. Actual execution still passes through a supervised adapter. See [Chaos/Evals ownership and examples](integrations.md#agentic-chaos-and-evals).
+
+<span id="aios"></span>
+
+### AIOS audit projections
+
+`integrations.aios.export_audit_event(record, target=..., created_at=...)` projects a native `AuditRecord` into a `0.8-draft` operational audit artifact. The host supplies public target references and an aware recording timestamp. The projection withholds rationale/context, marks the actor unknown, and maps BLOCK to denied while other outcomes remain requested. Permission to proceed is not proof of execution. See [AIOS operational projection](aios-0.8-operational-artifacts.md) and [export API](api-reference.md#aios-operational-audit-export).
+
+<span id="narration"></span>
+
+### Narration and CLI
+
+`StatusNarrator` records supplied tool narratives and formats task status independently of a connected runtime:
+
+```bash
+agentic-sidecar version
+agentic-sidecar status --json
+```
+
+`demo` illustrates simulated narrator calls; `approval-demo` prompts without executing tools. `status --endpoint` reads measured task events; `--follow --json` is formatted display, not JSONL. `control` and `approve` operate on authenticated live tasks. See the [complete six-command inventory and flags](cli-reference.md).
+
+<span id="validation"></span>
+
+### Supervision benchmarks and acceptance
+
+```bash
+uv run python scripts/supervision_benchmark.py --output /tmp/sidecar-evidence.json
+```
+
+The fixed 24-run synthetic benchmark compares actual wrapped dispatches with and without supervision across unsafe and clean controls. Outage controls expose fail_closed availability costs. Optional `--ecosystem` validation uses Chaos and Evals through the `[validation]` extra. Synthetic zero token/cost values do not establish live-provider benefit, statistical confidence or economic savings. See [reproducible evidence and recorded limits](v0.9.md#reproducible-evidence) and [coordinated acceptance](coordinated-v1-readiness.md).
 
 <span id="settings"></span>
 
-## Configuration
+## Configuration and limitations
 
-### Configure supervision modules
+Choose `on_sidecar_failure` explicitly, choose Observe/Govern, supply modules and enable their roles. Defaults enable policy/risk; an empty policy allows actions. Supported optional roles include intent_guardian, budget, planner, critic and judge. Mandatory scope/authority checks retain their own semantics. See [constructor arguments, rules, bindings and module setup](configuration.md).
 
-#### `Sidecar` constructor
-
-```
-from agentic_sidecar import Sidecar
-
-sidecar = Sidecar(
-    on_sidecar_failure="fail_closed",
-    mode="observe",
-    roles=["policy", "risk"],
-)
-```
-
-The following table lists constructor arguments. Configure each optional module
-
-and include its role to enable it. See [Features](features.md) for evaluator
-
-and narrator examples.
-
-#### Parameters
-
-| Parameter | Default | Behavior |
-| --- | --- | --- |
-| `on_sidecar_failure` | Required | Choose `fail_open` or `fail_closed` explicitly. |
-| `mode` | `observe` | Use `govern` with an enforcement adapter to block or suspend dispatch. |
-| `roles` | `policy`, `risk` | Select which evaluation modules run. |
-| `policy` | Empty `PolicyAdvisor` | The empty policy allows actions. |
-| `risk` | Empty `RiskEvaluator` | Unmatched actions are classified as low risk. |
-| `risk_block_threshold` | `HIGH` | Risk at or above this level produces a block. |
-| `intent`, `budget`, `planner`, `critic`, `judge` | `None` | Supply the module and enable its role. Providing intent without the intent role is rejected. |
-| `escalation_handler` | `None` | Govern mode uses it to resolve paused or escalated actions. |
-
-Additional runtime and mandatory-check arguments are described in the [API reference](api-reference.md).
-
-#### `roles` — controlling which modules run
-
-The `roles` parameter is the main switch for enabling/disabling evaluation modules. Only modules listed in `roles` are consulted during `evaluate()`.
-
-**Supported roles:**
-
-| Role | Module |
-| --- | --- |
-| `"policy"` | Policy Advisor |
-| `"risk"` | Risk Evaluator |
-| `"intent_guardian"` | Intent Guardian |
-| `"budget"` | Budget Guardian |
-| `"planner"` | Plan Evaluator |
-| `"critic"` | Critic Evaluator |
-| `"judge"` | Judge Evaluator |
-
-**Default roles when `roles=None`:** `["policy", "risk"]`
-
-**Composition example — using the configured `policy`, `risk`, `guardian`, and `budget` objects below:**
-
-```
-sidecar = Sidecar(
-    on_sidecar_failure="fail_closed",
-    mode="govern",
-    policy=policy,
-    risk=risk,
-    intent=guardian,
-    budget=budget,
-    roles=["policy", "risk", "intent_guardian", "budget"],
-)
-```
-
-#### `PolicyAdvisor` configuration
-
-```
-from agentic_sidecar.gate.policy import PolicyAdvisor, PolicyRule
-
-# In-code rules
-policy = PolicyAdvisor(
-    rules=[PolicyRule(tool="delete_*", effect="deny")],
-    default_effect="allow",   # default when no rule matches
-)
-
-# From YAML file
-policy = PolicyAdvisor.from_yaml("policies/my_policy.yaml")
-
-# From a dict (useful in tests)
-policy = PolicyAdvisor.from_mapping({
-    "default": "allow",
-    "rules": [{"tool": "delete_*", "effect": "deny"}],
-})
-```
-
-**`PolicyRule` fields:**
-
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
-| `tool` | `str` | Required | `fnmatch` glob pattern matched against tool name |
-| `effect` | `"allow"` or `"deny"` | Required | Verdict when this rule matches |
-| `reason` | `str` or `None` | `None` | Human-readable explanation |
-
-#### `RiskEvaluator` configuration
-
-```
-from agentic_sidecar.gate.risk import RiskEvaluator, RiskRule
-
-risk = RiskEvaluator(
-    rules=[
-        RiskRule(tool="issue_refund", arg_name="amount", arg_op="gt", arg_value=500, risk="HIGH"),
-        RiskRule(tool="delete_*", risk="HIGH"),
-    ],
-    default_risk="LOW",
-)
-```
-
-**`RiskRule` fields:**
-
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
-| `tool` | `str` | Required | `fnmatch` glob pattern |
-| `risk` | `"LOW"`, `"MEDIUM"`, or `"HIGH"` | Required | Risk level when this rule matches |
-| `reason` | `str` or `None` | `None` | Human-readable explanation |
-| `arg_name` | `str` or `None` | `None` | Argument to check (optional) |
-| `arg_op` | `ArgOp` | `"eq"` | Comparison operator: `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `contains` |
-| `arg_value` | `Any` | `None` | Value to compare against |
-
-#### `BudgetGuardian` configuration
-
-```
-from agentic_sidecar.gate import BudgetGuardian
-
-budget = BudgetGuardian(
-    max_cost=5.00,       # USD ceiling
-    max_tokens=10_000,   # token ceiling (optional)
-)
-
-# Record usage manually after each LLM/tool invocation
-budget.record_invocation(cost=0.03, tokens=1200)
-
-# Reset for the next task
-budget.reset()
-```
-
-#### `IntentEnvelope` and `IntentGuardian` configuration
-
-```
-from agentic_sidecar.intent import (
-    IntentEnvelope, IntentGuardian, ConstraintBinding, Requester
-)
-from datetime import datetime, timezone
-
-envelope = IntentEnvelope(
-    goal="Assist customer dispute — refund up to $500",
-    requested_by=Requester(type="human", id="user_42"),
-    constraints={"maximum_refund": 500.0},
-    authority={"can_delete": False},
-    expires=datetime(2026, 12, 31, 23, 59, tzinfo=timezone.utc),  # optional
-)
-
-bindings = [
-    ConstraintBinding(
-        constraint="maximum_refund",
-        tool="issue_refund",
-        arg_name="amount",
-        op="lte",
-        severity="BLOCK",
-    )
-]
-
-guardian = IntentGuardian(envelope, bindings)
-```
-
-**`ConstraintBinding` fields:**
-
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
-| `constraint` | `str` | Required | Key in `envelope.constraints` |
-| `tool` | `str` | Required | `fnmatch` glob for tool name |
-| `arg_name` | `str` | Required | Argument to check |
-| `op` | `ArgOp` | `"lte"` | Comparison operator |
-| `severity` | `"WARN"` | `"BLOCK"` | `"BLOCK"` | Decision outcome when violated |
-| `reason` | `str` or `None` | `None` | Override the auto-generated reason |
-
-Budget counters are shared with the object passed to Sidecar. Record actual
-
-usage explicitly for external calls; Judge usage reaches this budget once.
-
-PAUSE suspends Govern dispatch or invokes the configured approval handler.
-
-See [Governance](governance.md) for provider rates and limit configuration.
+Core installation has no sibling dependency. Framework/provider integrations use their corresponding extras; `[agenticlens]`, `[agentic-chaos]` and `[validation]` add ecosystem dependencies. Semantica is reserved and has no implemented export. Protect raw tools, credentials, identity and runtime configuration at the host boundary. Wrappers do not sandbox hostile Python or automatically govern arbitrary memory, prompts, outputs or nested calls. See [limitations](limitations.md), [scoped boundaries](scoped-supervision.md) and [contract maturity](v0.10.md).
 
 ## Troubleshooting
 
-Check the failing boundary before changing application behavior.
-
-- A blocked verdict but a running tool: check whether you called `evaluate()` only or used Observe mode.
-- Wrong rule matched: inspect policy order and the callable's tool name.
-- Agent hangs on approval: inspect the approval handler and unresolved decision status.
-
-### Verify your environment
-
-Run commands from the environment where you installed the package. Confirm the input file exists and matches the expected artifact contract. Keep the original evidence when diagnosing a failure.
+If a denied tool still runs, check Observe/Govern, the returned tool object and actual dispatch evidence. If approval stalls, inspect the pending decision ID and handler/runtime. If an old ALLOW stops working, check intent epochs, consumed approvals, stop state and authority expiry/revocation. See [troubleshooting](troubleshooting.md).
 
 ## Reference
 
-Use the current product reference for exact method signatures, command options, and supported artifacts. The code fragments in configuration and how-to articles build on the quickstart; they are not all standalone scripts.
-
-- [Open API / CLI reference ↗](cli-reference.md)
+- [API reference](api-reference.md) and [CLI reference](cli-reference.md).
+- [AI Reference (robust)](https://deepagentlabs.io/agentic-sidecar/docs/llms-full.md) and [capability/source index](ai-reference-index.md).
+- [Source manifest and checksums](ai-docs-manifest.json).
