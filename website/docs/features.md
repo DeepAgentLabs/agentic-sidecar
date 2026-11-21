@@ -1,6 +1,6 @@
 # Features
 
-Current **0.8.0** capabilities and their supported usage. Upcoming extensions
+Core capabilities and their supported usage, with authority/privacy and native-contract extensions described in [v0.9](v0.9.md) and [v0.10](v0.10.md). Upcoming extensions
 are described in [Roadmap](roadmap.md); execution boundaries are summarized in
 [Limitations](limitations.md).
 
@@ -39,8 +39,8 @@ print(risk.evaluate(DecisionContext(tool_name="issue_refund", tool_args={"amount
 
 IntentEnvelope carries goal, requester, constraints, authority, expiry, and
 metadata. ConstraintBinding connects a declared constraint to a tool argument.
-Numeric/enum/allow-list checks produce WARN or BLOCK; expiry produces WARN.
-Authority bindings target 0.9. See the runnable [Getting Started](getting-started.md)
+Numeric/enum/allow-list checks produce WARN or BLOCK. Constraint-only expiry produces WARN; authority-bearing envelopes expire with BLOCK.
+[Authority bindings, narrowed delegation and ancestor revocation](v0.9.md) are implemented. See the runnable [Getting Started](getting-started.md)
 example and [Configuration](configuration.md).
 
 ## Budget Guardian
