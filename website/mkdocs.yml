@@ -38,6 +38,8 @@ validation:
   anchors: warn
 
 nav:
+  - Developer Guide (simple): developer-guide.md
+  - AI Reference capability index: ai-reference-index.md
   - Developer guide:
       - Start here: developer-guide.md
       - Overview: guide/overview.md
