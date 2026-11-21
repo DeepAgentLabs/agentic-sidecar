@@ -94,7 +94,7 @@ invalid/conflicting batches; duplicate records are idempotent. Diagnosis schema 
 adds supervision decisions to the timeline. BLOCK does not mark a span/run/deployment
 failed; actual dispatch/completion remains native journal evidence.
 
-The extra admits `agenticlens>=0.7.1,<1` since Sidecar 0.8.4, so it installs
+The extra admits `agenticlens>=0.7.1,<2` since Sidecar 0.8.4, so it installs
 alongside Lens 0.9.0 (ModelFit). ModelFit model recommendations carry no
 supervision decisions; correlation readback is unchanged.
 
@@ -103,11 +103,11 @@ supervision decisions; correlation readback is unchanged.
 `integrations.agentic_chaos.evaluate_recovery(sidecar, event, tool_name=..., arguments=...)`
 checks/enforces a recovery proposal with a native Chaos event ID. It does not execute
 it; actual dispatch still uses a supervised adapter. Tested against Chaos 0.5.3 and
-0.6.0; the optional `agentic-chaos` extra admits `>=0.5.3,<0.7` since Sidecar 0.8.1.
+0.6.0; the optional `agentic-chaos` extra admits `>=0.5.3,<2` since Sidecar 0.8.1.
 Chaos 0.6.0 event IDs and shape are unchanged; its contracts and pytest plugin stay in Chaos.
 Gate failure tests cover explicit fail_open/fail_closed; Chaos retains fault injection.
 Evals 0.7.2 retains scoring/report ownership; comparative supervision evidence and
-delegated authority remain v0.9 work. No core sibling dependency is introduced.
+delegated authority are described in the [v0.9 guide](v0.9.md). No core sibling dependency is introduced.
 
 ## Tower, AIOS and Semantica
 
@@ -133,3 +133,12 @@ See [compatibility and containment limits](chaos-0.7.md).
 
 For Chaos 0.8 workflows and experiments, install Sidecar 0.8.5 or later. The
 optional extra then admits `>=0.5.3,<0.9`. See [workflow evidence and limits](chaos-0.8.md).
+
+
+## Current native contracts and operational export
+
+The current checkout keeps optional Lens/Chaos dependencies within `<2`; SDK extras and Python markers are declared in `pyproject.toml`. Release-labelled compatibility sections above record the originally tested releases, not an independent certification of every newer installation.
+
+`agentic_sidecar.contracts` provides five candidate native wrapper families plus `contract_schema()` and validated `IntentTransfer` propagation. See [migration and receiving-host checks](v0.10.md). `agentic_sidecar.integrations.aios.export_audit_event()` separately projects public native audit identifiers/outcomes into an AIOS `0.8-draft` audit event, withholding rationale and context. See [operational projection details](aios-0.8-operational-artifacts.md) and the [export API](api-reference.md#aios-operational-audit-export). Native wrappers, `sidecar.correlation/1`, the hash-chained runtime journal and AIOS projections are distinct artifacts.
+
+Authority registries, task identity and raw tools stay owned by the trusted host. Historical references to authority as future work predate the implemented v0.9 lifecycle; shared contract maturity and independent acceptance remain separate release-policy gates. Semantica is reserved and remains unimplemented.
