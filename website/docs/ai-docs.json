@@ -3,39 +3,184 @@
   "scope": "Evaluate proposed actions and enforce decisions through configured adapters. Observe mode is not enforcement. Keep the failure policy, authority, and approval boundaries explicit.",
   "references": [
     {
+      "title": "AI Reference capability index",
+      "path": "website/docs/ai-reference-index.md"
+    },
+    {
       "title": "Setup and task workflows",
       "path": "website/docs/developer-guide.md"
     },
     {
-      "title": "Api Reference",
+      "title": "Core supervision features",
+      "path": "website/docs/features.md"
+    },
+    {
+      "title": "Architecture",
+      "path": "website/docs/architecture.md"
+    },
+    {
+      "title": "API reference",
       "path": "website/docs/api-reference.md"
     },
     {
-      "title": "Cli Reference",
+      "title": "CLI reference",
       "path": "website/docs/cli-reference.md"
     },
     {
-      "title": "Governance",
+      "title": "Configuration",
+      "path": "website/docs/configuration.md"
+    },
+    {
+      "title": "Governance and evaluator behavior",
       "path": "website/docs/governance.md"
     },
     {
-      "title": "Scoped Supervision",
+      "title": "Shared and exclusive supervision",
       "path": "website/docs/scoped-supervision.md"
     },
     {
-      "title": "Live Operations",
+      "title": "Live runtime and operator controls",
       "path": "website/docs/live-operations.md"
+    },
+    {
+      "title": "Authority, privacy and validation evidence",
+      "path": "website/docs/v0.9.md"
+    },
+    {
+      "title": "Native contracts and intent transfer",
+      "path": "website/docs/v0.10.md"
+    },
+    {
+      "title": "Framework and ecosystem integrations",
+      "path": "website/docs/integrations.md"
+    },
+    {
+      "title": "AIOS operational audit exports",
+      "path": "website/docs/aios-0.8-operational-artifacts.md"
+    },
+    {
+      "title": "Coordinated readiness",
+      "path": "website/docs/coordinated-v1-readiness.md"
+    },
+    {
+      "title": "Examples",
+      "path": "website/docs/examples.md"
+    },
+    {
+      "title": "Troubleshooting",
+      "path": "website/docs/troubleshooting.md"
     },
     {
       "title": "Limitations",
       "path": "website/docs/limitations.md"
+    },
+    {
+      "title": "Historical integration note: AIOS v0.6.1 compatibility",
+      "path": "website/docs/aios-0.6.1.md"
+    },
+    {
+      "title": "Historical integration note: AIOS repository v0.7.0 compatibility",
+      "path": "website/docs/aios-0.7.0.md"
+    },
+    {
+      "title": "Historical integration note: Chaos 0.11 ChaosHub compatibility",
+      "path": "website/docs/chaos-0.11-chaoshub.md"
+    },
+    {
+      "title": "Historical integration note: Chaos 0.7 compatibility",
+      "path": "website/docs/chaos-0.7.md"
+    },
+    {
+      "title": "Historical integration note: Chaos 0.8 compatibility",
+      "path": "website/docs/chaos-0.8.md"
+    },
+    {
+      "title": "Historical integration note: Chaos 0.9 compatibility",
+      "path": "website/docs/chaos-0.9.md"
+    },
+    {
+      "title": "Historical integration note: Control Tower 0.6.0 compatibility",
+      "path": "website/docs/control-tower-0.6.md"
+    },
+    {
+      "title": "Historical integration note: Evals 0.11 containment compatibility",
+      "path": "website/docs/evals-0.11-containment.md"
+    },
+    {
+      "title": "Historical integration note: Evals 0.12 API and report readiness",
+      "path": "website/docs/evals-0.12.md"
+    },
+    {
+      "title": "Historical integration note: Lens 0.13 readiness compatibility",
+      "path": "website/docs/lens-0.13.md"
+    },
+    {
+      "title": "Historical integration note: MCP Phase 6 coordinated containment release",
+      "path": "website/docs/phase6-containment.md"
+    },
+    {
+      "title": "Historical integration note: Tower 0.10 capability contract compatibility",
+      "path": "website/docs/tower-0.10-compatibility.md"
+    },
+    {
+      "title": "Additional ecosystem note: AIOS v0.6 compatibility",
+      "path": "docs/aios-v0.6.md"
+    },
+    {
+      "title": "Additional ecosystem note: Evals 0.10.0 evaluation evidence",
+      "path": "docs/evals-0.10-aios-evidence.md"
+    },
+    {
+      "title": "Additional ecosystem note: Evals 0.8.0 CLI interoperability",
+      "path": "docs/evals-0.8-cli.md"
+    },
+    {
+      "title": "Additional ecosystem note: Evals 0.9.0 judge reliability and live resilience",
+      "path": "docs/evals-0.9-judge-reliability.md"
+    },
+    {
+      "title": "Additional ecosystem note: Evals native contract compatibility",
+      "path": "docs/evals-report-contract.md"
+    },
+    {
+      "title": "Additional ecosystem note: Lens routing integration boundary",
+      "path": "docs/lens-0.10-routing.md"
+    },
+    {
+      "title": "Additional ecosystem note: Lens optimization and authority boundaries",
+      "path": "docs/lens-0.11-optimization.md"
+    },
+    {
+      "title": "Additional ecosystem note: MCP 0.4.0 unified workflows",
+      "path": "docs/mcp-0.4-unified-workflows.md"
+    },
+    {
+      "title": "Additional ecosystem note: MCP 0.5.0 hosted access control",
+      "path": "docs/mcp-0.5-access-control.md"
+    },
+    {
+      "title": "Additional ecosystem note: MCP 0.7 integration readiness \u2014 Sidecar 0.10.1",
+      "path": "docs/mcp-0.7-readiness.md"
+    },
+    {
+      "title": "Additional ecosystem note: Tower 0.7.0 integration compatibility",
+      "path": "docs/tower-0.7-fleet-operations.md"
+    },
+    {
+      "title": "Additional ecosystem note: Control Tower 0.8.0 live operations compatibility",
+      "path": "docs/tower-0.8-live-operations.md"
+    },
+    {
+      "title": "Additional ecosystem note: Control Tower 0.9.0 runbooks compatibility",
+      "path": "docs/tower-0.9-runbooks.md"
+    },
+    {
+      "title": "Additional ecosystem note: Sidecar 0.10 contracts",
+      "path": "docs/v0.10-contracts.md"
     }
   ],
   "contracts": [
-    "src/agentic_sidecar/__init__.py",
-    "src/agentic_sidecar/core/*.py",
-    "src/agentic_sidecar/gate/policy.py",
-    "src/agentic_sidecar/gate/risk.py"
+    "src/agentic_sidecar/**/*.py"
   ],
   "schemas": [
     "schemas/v1/*.schema.json"
