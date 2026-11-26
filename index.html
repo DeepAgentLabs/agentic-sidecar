@@ -421,10 +421,12 @@ authority revoked upstream
           <p class="pp-sub">Every proposal, decision, dispatch and completion lands in an immutable task journal. Follow it from the terminal or the built-in Control Room, and pause, stop, approve or change the intent while the agent runs.</p>
           <ul class="sc-cli" aria-label="CLI commands">
             <li><code>agentic-sidecar status --follow</code><span>Live narration of the running task</span></li>
-            <li><code>agentic-sidecar control pause</code><span>Also resume, stop, restart and replan</span></li>
+            <li><code>agentic-sidecar control pause</code><span>Also resume, restart and replan</span></li>
             <li><code>agentic-sidecar approve ID approve_once</code><span>Or reject, modify_intent, stop_agent, replan</span></li>
+            <li class="is-stop"><code>agentic-sidecar control stop</code><span><b>Emergency stop.</b> Latches before anything else runs, blocks every later dispatch, revokes the task's access and stays stopped after a restore.</span></li>
           </ul>
           <p class="sc-note">The operator server listens on 127.0.0.1 only, and every request needs a bearer token. Reader tokens see a redacted summary and can't control anything.</p>
+          <p class="pp-sub pp-more"><a href="docs/live-operations/">Live operations guide</a> · <a href="docs/control-tower-integration/">Emergency stop and Control Tower</a></p>
         </div>
         <div class="sc-room pp-rv" role="img" aria-label="Sidecar Control Room with a refund paused for approval (sample data)">
           <div class="pp-fc-bar"><i></i><i></i><i></i><span>Sidecar Control Room · tasks/refund-demo</span><em>sample run</em></div>
@@ -687,7 +689,7 @@ refund(amount=50)
             <tr><td><a href="https://deepagentlabs.io/agenticlens">AgenticLens</a></td><td>Sidecar decisions are correlated with Lens runs, so a trace shows what was allowed, paused or blocked</td></tr>
             <tr><td><a href="https://deepagentlabs.io/agentic-chaos">Agentic Chaos</a></td><td>Injects failures into the decision gate to prove fail-closed behavior; recovery proposals carry native event IDs</td></tr>
             <tr><td><a href="https://deepagentlabs.io/agentic-evals">Agentic Evals</a></td><td>Scores supervision evidence: the same scenarios run by the agent alone and with the Sidecar</td></tr>
-            <tr><td><a href="https://deepagentlabs.io/control-tower">Control Tower</a></td><td>Reads guard decisions and required escalations into its fleet evidence posture</td></tr>
+            <tr><td><a href="https://deepagentlabs.io/control-tower">Control Tower</a></td><td>Shows Sidecar decisions and escalations across the fleet, and can stop many deployments at once</td></tr>
             <tr><td><a href="https://deepagentlabs.io/mcp">MCP Server</a></td><td>Governed MCP tool calls, including a separate-process enforcing gateway</td></tr>
             <tr class="is-here"><td>Agentic Sidecar</td><td>Policy, risk, intent and budget decisions, approvals and the audit trail</td></tr>
           </tbody>
@@ -723,7 +725,7 @@ refund(amount=50)
         <li class="is-here"><time>Nov 5</time><b>1.0</b><span>Coordinated DeepAgentLabs milestone · 1.0.4 on Nov 20</span></li>
       </ol>
       <div class="pp-status pp-status-4 pp-rv-kids">
-        <div><p class="pp-status-title"><i class="ok"></i>Core runtime</p><ul><li>Policy, risk and Intent Guardian</li><li>Observe and Govern modes</li><li>Budget ceilings and human approvals</li><li>Audit trail, live status and CLI</li></ul></div>
+        <div><p class="pp-status-title"><i class="ok"></i>Core runtime</p><ul><li>Policy, risk and Intent Guardian</li><li>Observe and Govern modes</li><li>Budget ceilings and human approvals</li><li>Audit trail, live status and CLI</li><li>Emergency stop with access revocation</li></ul></div>
         <div><p class="pp-status-title"><i class="beta"></i>Integrations</p><ul><li>LangGraph, AutoGen, CrewAI</li><li>OpenAI Agents SDK and Google ADK</li><li>MCP enforcing gateway</li><li>Lens, Chaos, Evals and Tower evidence</li></ul></div>
         <div><p class="pp-status-title"><i class="warn"></i>Opt-in</p><ul><li>Plan review and Critic heuristics</li><li>OpenAI and Anthropic Judge providers</li><li>Live provider checks await credentials</li></ul></div>
         <div><p class="pp-status-title"><i class="unk"></i>Next</p><ul><li>Stable contract freeze with the AI Operations Spec</li><li>Independent review and implementations</li><li>Security and deployment acceptance</li></ul></div>

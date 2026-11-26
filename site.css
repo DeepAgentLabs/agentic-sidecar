@@ -189,3 +189,7 @@
 @media (max-width:560px){
   .sc-ev{grid-template-columns:minmax(0,1fr)}
 }
+
+/* Emergency stop in the live operations list */
+.sc-cli li.is-stop code{border-color:#ff6b5b;color:#ffb3a8;background:#2a1512}
+.sc-cli li.is-stop b{color:#fff;font-weight:700}
