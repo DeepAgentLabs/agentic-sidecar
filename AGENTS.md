@@ -53,7 +53,7 @@ practice, the package covers both supervision and governance.
 ### Current Roadmap Focus
 
 The checkout targets v0.11.0, including optional Chaos 0.10 compatibility for
-the coordinated MCP 0.6 containment release. Read website/docs/v0.10.md and docs/phase6-containment.md. Runtime code includes Decision Gate outcomes,
+the coordinated MCP 0.6 containment release. Read docs/v0.10.md and docs/phase6-containment.md. Runtime code includes Decision Gate outcomes,
 Intent Guardian, evaluator modules, budget/escalation handling, narration and
 CLI commands. Native AutoGen, CrewAI, OpenAI Agents, Google ADK and MCP boundaries are implemented;
 use the actual source and tests to distinguish implementation from roadmap
@@ -66,7 +66,7 @@ and authority, then v0.10 contract readiness; v1.0 is reserved for the coordinat
 completion. Governance outcomes, local approvals, full-plan context and judge
 limits/accounting are implemented in 0.6.1; explicit MockJudge is offline, and
 OpenAI/Anthropic providers use optional live SDKs. Live smoke evidence remains
-pending credentials. Read website/docs/governance.md for supported scope and validation.
+pending credentials. Read docs/governance.md for supported scope and validation.
 
 ### Before You Build Here
 

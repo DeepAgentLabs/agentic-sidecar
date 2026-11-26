@@ -4,123 +4,123 @@
   "references": [
     {
       "title": "AI Reference capability index",
-      "path": "website/docs/ai-reference-index.md"
+      "path": "docs/ai-reference-index.md"
     },
     {
       "title": "Setup and task workflows",
-      "path": "website/docs/developer-guide.md"
+      "path": "docs/developer-guide.md"
     },
     {
       "title": "Core supervision features",
-      "path": "website/docs/features.md"
+      "path": "docs/features.md"
     },
     {
       "title": "Architecture",
-      "path": "website/docs/architecture.md"
+      "path": "docs/architecture.md"
     },
     {
       "title": "API reference",
-      "path": "website/docs/api-reference.md"
+      "path": "docs/api-reference.md"
     },
     {
       "title": "CLI reference",
-      "path": "website/docs/cli-reference.md"
+      "path": "docs/cli-reference.md"
     },
     {
       "title": "Configuration",
-      "path": "website/docs/configuration.md"
+      "path": "docs/configuration.md"
     },
     {
       "title": "Governance and evaluator behavior",
-      "path": "website/docs/governance.md"
+      "path": "docs/governance.md"
     },
     {
       "title": "Shared and exclusive supervision",
-      "path": "website/docs/scoped-supervision.md"
+      "path": "docs/scoped-supervision.md"
     },
     {
       "title": "Live runtime and operator controls",
-      "path": "website/docs/live-operations.md"
+      "path": "docs/live-operations.md"
     },
     {
       "title": "Authority, privacy and validation evidence",
-      "path": "website/docs/v0.9.md"
+      "path": "docs/v0.9.md"
     },
     {
       "title": "Native contracts and intent transfer",
-      "path": "website/docs/v0.10.md"
+      "path": "docs/v0.10.md"
     },
     {
       "title": "Framework and ecosystem integrations",
-      "path": "website/docs/integrations.md"
+      "path": "docs/integrations.md"
     },
     {
       "title": "AIOS operational audit exports",
-      "path": "website/docs/aios-0.8-operational-artifacts.md"
+      "path": "docs/aios-0.8-operational-artifacts.md"
     },
     {
       "title": "Coordinated readiness",
-      "path": "website/docs/coordinated-v1-readiness.md"
+      "path": "docs/coordinated-v1-readiness.md"
     },
     {
       "title": "Examples",
-      "path": "website/docs/examples.md"
+      "path": "docs/examples.md"
     },
     {
       "title": "Troubleshooting",
-      "path": "website/docs/troubleshooting.md"
+      "path": "docs/troubleshooting.md"
     },
     {
       "title": "Limitations",
-      "path": "website/docs/limitations.md"
+      "path": "docs/limitations.md"
     },
     {
       "title": "Historical integration note: AIOS v0.6.1 compatibility",
-      "path": "website/docs/aios-0.6.1.md"
+      "path": "docs/aios-0.6.1.md"
     },
     {
       "title": "Historical integration note: AIOS repository v0.7.0 compatibility",
-      "path": "website/docs/aios-0.7.0.md"
+      "path": "docs/aios-0.7.0.md"
     },
     {
       "title": "Historical integration note: Chaos 0.11 ChaosHub compatibility",
-      "path": "website/docs/chaos-0.11-chaoshub.md"
+      "path": "docs/chaos-0.11-chaoshub.md"
     },
     {
       "title": "Historical integration note: Chaos 0.7 compatibility",
-      "path": "website/docs/chaos-0.7.md"
+      "path": "docs/chaos-0.7.md"
     },
     {
       "title": "Historical integration note: Chaos 0.8 compatibility",
-      "path": "website/docs/chaos-0.8.md"
+      "path": "docs/chaos-0.8.md"
     },
     {
       "title": "Historical integration note: Chaos 0.9 compatibility",
-      "path": "website/docs/chaos-0.9.md"
+      "path": "docs/chaos-0.9.md"
     },
     {
       "title": "Historical integration note: Control Tower 0.6.0 compatibility",
-      "path": "website/docs/control-tower-0.6.md"
+      "path": "docs/control-tower-0.6.md"
     },
     {
       "title": "Historical integration note: Evals 0.11 containment compatibility",
-      "path": "website/docs/evals-0.11-containment.md"
+      "path": "docs/evals-0.11-containment.md"
     },
     {
       "title": "Historical integration note: Evals 0.12 API and report readiness",
-      "path": "website/docs/evals-0.12.md"
+      "path": "docs/evals-0.12.md"
     },
     {
       "title": "Historical integration note: Lens 0.13 readiness compatibility",
-      "path": "website/docs/lens-0.13.md"
+      "path": "docs/lens-0.13.md"
     },
     {
       "title": "Historical integration note: MCP Phase 6 coordinated containment release",
-      "path": "website/docs/phase6-containment.md"
+      "path": "docs/phase6-containment.md"
     },
     {
       "title": "Historical integration note: Tower 0.10 capability contract compatibility",
-      "path": "website/docs/tower-0.10-compatibility.md"
+      "path": "docs/tower-0.10-compatibility.md"
     },
     {
       "title": "Additional ecosystem note: AIOS v0.6 compatibility",

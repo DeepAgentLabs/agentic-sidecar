@@ -4,7 +4,7 @@ supervision layer for autonomous AI agents.
     The Main Agent acts. The Sidecar observes, thinks, advises, and governs.
 
 0.10.0 adds candidate native interchange contracts and validated intent
-propagation. See website/docs/v0.10.md for migration and validation limits.
+propagation. See docs/v0.10.md for migration and validation limits.
 """
 
 from agentic_sidecar.core.context import DecisionContext

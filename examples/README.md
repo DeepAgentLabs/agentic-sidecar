@@ -39,7 +39,7 @@ reported state; it does not control an agent. Live CLI/runtime status is planned
 for 0.7, and additional adapters/integrations for 0.8.
 
 See the v0.8 scoped-agent, correlated-evidence and MCP gateway examples described
-in [the examples guide](../website/docs/examples.md).
+in [the examples guide](../docs/examples.md).
 
 ## v0.9 authority and privacy
 
@@ -53,5 +53,5 @@ paired offline dispatch evidence; add `--extra validation` before `python` and
 ## v0.10 contract readiness — 2026-11-04
 
 Candidate intent, decision, audit, scope and propagation contracts ship in 0.10.0.
-See [migration, supported versions and acceptance](../website/docs/v0.10.md).
+See [migration, supported versions and acceptance](../docs/v0.10.md).
 AIOS remains draft; coordinated ecosystem v1.0 acceptance remains open.

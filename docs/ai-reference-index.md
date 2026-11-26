@@ -43,7 +43,7 @@ This index opens the [AI Reference (robust)](https://deepagentlabs.io/agentic-si
 
 ## Maintaining coverage
 
-`website/docs/ai-docs.json` selects detailed topic/integration guides, every package Python module and all five native schemas. Keep both indexes and the CLI inventory aligned with new user-facing capabilities. From the repository root, regenerate using the shared sibling documentation checkout and Python 3.11 or newer:
+`docs/ai-docs.json` selects detailed topic/integration guides, every package Python module and all five native schemas. Keep both indexes and the CLI inventory aligned with new user-facing capabilities. From the repository root, regenerate using the shared sibling documentation checkout and Python 3.11 or newer:
 
 ```bash
 python3 ../deepagentlabs.github.io/scripts/build_ai_docs.py --sources .. --project agentic-sidecar

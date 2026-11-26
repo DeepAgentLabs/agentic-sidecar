@@ -27,11 +27,11 @@ See the [ecosystem release policy](https://github.com/DeepAgentLabs/.github/blob
 
 **0.6.1 governance implementation:** governance resolution, full-plan context, optional
 live providers, timeout/usage accounting and reproducible validation. See
-[usage and acceptance evidence](website/docs/governance.md). Authenticated provider smoke remains
+[usage and acceptance evidence](docs/governance.md). Authenticated provider smoke remains
 pending credentials by request. **0.7.0 implementation:** runtime events, audit,
-local operator interface and Control Room; see [live operations](website/docs/live-operations.md).
+local operator interface and Control Room; see [live operations](docs/live-operations.md).
 **0.8.1 compatibility patch:** the optional `agentic-chaos` extra admits Chaos 0.6
-(`>=0.5.3,<0.7`); no runtime change. See [Chaos integration](website/docs/integrations.md).
+(`>=0.5.3,<0.7`); no runtime change. See [Chaos integration](docs/integrations.md).
 **0.8.2 compatibility patch:** the optional `agenticlens` extra admits AgenticLens 0.8
 (`>=0.7.1,<0.9`); the lock tests 0.8.0. No runtime change.
 **0.8.4 compatibility patch:** the optional `agenticlens` extra admits AgenticLens 0.9
@@ -60,7 +60,7 @@ local operator interface and Control Room; see [live operations](website/docs/li
 The 0.6.1 validation includes outcome/approval/failure tests, real LangGraph
 execution boundaries, deterministic provider contracts, eight offline examples,
 a four-scenario Intent Guardian benchmark, strict docs and package metadata
-checks. See [acceptance evidence](website/docs/governance.md) for scope and live-smoke status.
+checks. See [acceptance evidence](docs/governance.md) for scope and live-smoke status.
 
 ## Shared & Exclusive Context and Guardrails
 
@@ -266,7 +266,7 @@ Native Tower readback is tested; Lens integrity integration remains v0.8.
 
 **Status: implemented in 0.8.0**, with SDK conformance, scoped-agent examples,
 verified native journal correlation and real MCP gateway evidence. See
-[usage and compatibility](website/docs/integrations.md) and [scope limits](website/docs/scoped-supervision.md).
+[usage and compatibility](docs/integrations.md) and [scope limits](docs/scoped-supervision.md).
 Semantica's module/extra is reserved; its export remains conditional on upstream
 API validation and is not claimed implemented.
 
@@ -313,7 +313,7 @@ scenarios and intervention measurements within Sidecar.
 - [ ] Conditional follow-up: model-backed plan/critic reasoning only if live
       benchmark evidence supports it. No such evidence is claimed in 0.9.0.
 
-Acceptance record: [v0.9 guide](website/docs/v0.9.md),
+Acceptance record: [v0.9 guide](docs/v0.9.md),
 [paired evidence](tests/validation/v0_9_supervision.json), authority/privacy tests,
 and native SDK authority conformance. No stable shared schema is introduced.
 
@@ -344,7 +344,7 @@ when scope changes; mark each capability complete when its acceptance criteria p
 There is no calendar commitment or week estimate in this plan.
 
 Update this canonical file when scope or status changes, then update
-[the docs summary](website/docs/roadmap.md), README, and relevant ecosystem profile
+[the docs summary](docs/roadmap.md), README, and relevant ecosystem profile
 statements in the same change. [concept.md](concept.md) contains the original
 architecture proposal.
 
@@ -400,7 +400,7 @@ Shared authority/event semantics belong in AI Operations Specification.
 Tower Phase 6 and 6A ship together in 0.6.0 with MCP 0.3.6: evidence-cited
 investigation, exact-preview human approval and verified deterministic staging
 recovery. Native producer outcomes and package ownership remain unchanged.
-See [compatibility, examples and dependency matrix](website/docs/control-tower-0.6.md).
+See [compatibility, examples and dependency matrix](docs/control-tower-0.6.md).
 This is documentation alignment; no package release or dependency bump is needed.
 
 ## Evals 0.7.2 report contract
@@ -693,20 +693,20 @@ no package patch release is needed. See [compatibility and offline example](docs
 
 ## Evals 0.12 readiness compatibility
 
-See [the candidate API, unchanged native schema and support matrix](website/docs/evals-0.12.md).
+See [the candidate API, unchanged native schema and support matrix](docs/evals-0.12.md).
 Existing compatible dependency ranges remain sufficient; coordinated ecosystem
 v1.0 acceptance remains open.
 
 ## v0.10 contract readiness — 2026-11-04
 
 Candidate intent, decision, audit, scope and propagation contracts ship in 0.10.0.
-See [migration, supported versions and acceptance](website/docs/v0.10.md).
+See [migration, supported versions and acceptance](docs/v0.10.md).
 AIOS remains draft; coordinated ecosystem v1.0 acceptance remains open.
 
 ## Lens 0.13 readiness compatibility — 2026-11-04
 
 The optional Lens extra `>=0.7.1,<1` already admits 0.13.0. Native sidecar.correlation/1 decisions and dispatch evidence stay unchanged. Lens roles govern stored artifacts, never Sidecar runtime authority, approvals or interception.
-See [compatibility, boundaries and offline operator example](website/docs/lens-0.13.md).
+See [compatibility, boundaries and offline operator example](docs/lens-0.13.md).
 
 ## Tower 0.10 capability contract readiness
 

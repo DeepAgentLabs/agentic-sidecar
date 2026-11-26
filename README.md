@@ -11,11 +11,11 @@ validation and the stable contract freeze remain tracked follow-up work.
 See the [ecosystem release policy](https://github.com/DeepAgentLabs/.github/blob/main/profile/RELEASE_POLICY.md).
 
 
-[Animated refund-policy walkthrough](website/usecases/prevent-unauthorized-refunds.md): see a blocked $850 request and an allowed $300 request at the governed tool boundary. The website animation is illustrative and makes no payment calls.
+[Animated refund-policy walkthrough](usecases/prevent-unauthorized-refunds.md): see a blocked $850 request and an allowed $300 request at the governed tool boundary. The website animation is illustrative and makes no payment calls.
 
-[Animated multi-gate support walkthrough](website/usecases/governed-customer-support-agent.md): follow Policy, Risk, Intent and Budget decisions, early returns, Observe versus Govern enforcement and illustrative audit provenance.
+[Animated multi-gate support walkthrough](usecases/governed-customer-support-agent.md): follow Policy, Risk, Intent and Budget decisions, early returns, Observe versus Govern enforcement and illustrative audit provenance.
 
-[Animated LangGraph adapter walkthrough](website/usecases/govern-langgraph-agent-workflows.md): see governed tool wrapping, an intent-based $850 block and the allowed $120 graph response. The animation executes no graph or payment API.
+[Animated LangGraph adapter walkthrough](usecases/govern-langgraph-agent-workflows.md): see governed tool wrapping, an intent-based $850 block and the allowed $120 graph response. The animation executes no graph or payment API.
 
 **A companion intelligence and real-time supervision layer for autonomous AI agents.**
 
@@ -42,13 +42,13 @@ and upcoming capability stages.
 | Task authority | Explicit tool bindings, narrowed delegation, ancestor revocation and dispatch-time expiry checks |
 | Supervision evidence | Offline paired dispatch fixtures, Chaos gate failure injection and optional Evals scoring |
 
-Live status, audit and Control Room: [usage and acceptance evidence](website/docs/live-operations.md).
+Live status, audit and Control Room: [usage and acceptance evidence](docs/live-operations.md).
 Authenticated provider smoke remains pending credentials.
 
 **0.9 adds task authority, narrowed delegation, context reader access and redacted
-summaries.** See the [v0.9 guide](website/docs/v0.9.md) for the APIs, migration
+summaries.** See the [v0.9 guide](docs/v0.9.md) for the APIs, migration
 notes and reproducible Agent Alone vs Sidecar evidence. Next: **v0.10 interoperability contract readiness**, ahead of the coordinated ecosystem v1.0 release.
-See [supported scope and limitations](website/docs/limitations.md) for operational details.
+See [supported scope and limitations](docs/limitations.md) for operational details.
 
 ### Installation & Usage
 ```bash
@@ -300,7 +300,7 @@ The diagram shows the supervision model. The current `Decision` type supports
 all seven outcomes. Govern permits ALLOW/WARN, raises `SidecarBlockedError`
 for BLOCK, invokes approvals for PAUSE/ESCALATE, and raises `SidecarSuspendedError`
 for unresolved outcomes, CHALLENGE and REPLAN before dispatch.
-See [supported scope](website/docs/limitations.md) and the [roadmap](ROADMAP.md#build-order).
+See [supported scope](docs/limitations.md) and the [roadmap](ROADMAP.md#build-order).
 
 ## Sidecar modules
 
@@ -400,13 +400,13 @@ print(result.status)  # REPLAN
 
 A `before_tool_call` hook replaces the optional built-in pipeline, including
 budget and evaluators. Mandatory scoped checks and task authority remain enforced;
-hooks cannot rewrite the proposed action. See [API reference](website/docs/api-reference.md),
-[configuration](website/docs/configuration.md), and [runnable examples](examples/README.md).
+hooks cannot rewrite the proposed action. See [API reference](docs/api-reference.md),
+[configuration](docs/configuration.md), and [runnable examples](examples/README.md).
 
 ## Planned Python API
 
 Live operations and v0.8 framework/scoped integrations are implemented. See
-[validated SDK versions and limits](website/docs/integrations.md).
+[validated SDK versions and limits](docs/integrations.md).
 Today `attach(sidecar, tools)` is adapter-specific and `evaluate()` accepts
 `DecisionContext`. Generic whole-agent attachment will be considered when
 multiple integrations demonstrate a useful shared boundary.
@@ -422,8 +422,8 @@ Catch `SidecarSuspendedError` to return control to your agent loop. Configure
 `escalation_handler=CLIApprovalHandler()` or register `on_escalation_required`
 for local approval. Approve-once applies to the current call; modify-intent
 reevaluates with a complete envelope; stop persists on that Sidecar instance.
-Use TaskRuntime and OperatorServer for [live operator controls](website/docs/live-operations.md).
-See [governance usage and validation](website/docs/governance.md).
+Use TaskRuntime and OperatorServer for [live operator controls](docs/live-operations.md).
+See [governance usage and validation](docs/governance.md).
 
 ## Long-term: an intent propagation layer
 
@@ -508,7 +508,7 @@ transport; this does not provide automatic prompt rewriting or process isolation
 
 See the [deliverables and acceptance criteria](ROADMAP.md#shared--exclusive-context-and-guardrails).
 
-See [scoped usage](website/docs/scoped-supervision.md) and the two-agent example
+See [scoped usage](docs/scoped-supervision.md) and the two-agent example
 [examples/v0_8_scoped_agents.py](examples/v0_8_scoped_agents.py).
 
 Original architecture proposal: [concept.md](concept.md).
@@ -542,7 +542,7 @@ requests and harness-revocation receipts alongside deterministic policy enforcem
 MCP and Tower support access enforcement and operator coordination.
 
 See [planned safety acceptance criteria](ROADMAP.md#operational-safety-acceptance-criteria) for responsibilities and
-dependencies. See [live operator scope](website/docs/live-operations.md) for implemented
+dependencies. See [live operator scope](docs/live-operations.md) for implemented
 controls and the remaining gateway-isolation and issuer responsibilities.
 
 ## Control Tower 0.6.0 integration
@@ -550,7 +550,7 @@ controls and the remaining gateway-isolation and issuer responsibilities.
 Tower Phase 6 and 6A ship together in 0.6.0 with MCP 0.3.6: evidence-cited
 investigation, exact-preview human approval and verified deterministic staging
 recovery. Native producer outcomes and package ownership remain unchanged.
-See [compatibility, examples and dependency matrix](website/docs/control-tower-0.6.md).
+See [compatibility, examples and dependency matrix](docs/control-tower-0.6.md).
 This is documentation alignment; no package release or dependency bump is needed.
 
 ## Evals 0.7.2 report contract
@@ -830,20 +830,20 @@ no package patch release is needed. See [compatibility and offline example](docs
 
 ## Evals 0.12 readiness compatibility
 
-See [the candidate API, unchanged native schema and support matrix](website/docs/evals-0.12.md).
+See [the candidate API, unchanged native schema and support matrix](docs/evals-0.12.md).
 Existing compatible dependency ranges remain sufficient; coordinated ecosystem
 v1.0 acceptance remains open.
 
 ## v0.10 contract readiness — 2026-11-04
 
 Candidate intent, decision, audit, scope and propagation contracts ship in 0.10.0.
-See [migration, supported versions and acceptance](website/docs/v0.10.md).
+See [migration, supported versions and acceptance](docs/v0.10.md).
 AIOS remains draft; coordinated ecosystem v1.0 acceptance remains open.
 
 ## Lens 0.13 readiness compatibility — 2026-11-04
 
 The optional Lens extra `>=0.7.1,<1` already admits 0.13.0. Native sidecar.correlation/1 decisions and dispatch evidence stay unchanged. Lens roles govern stored artifacts, never Sidecar runtime authority, approvals or interception.
-See [compatibility, boundaries and offline operator example](website/docs/lens-0.13.md).
+See [compatibility, boundaries and offline operator example](docs/lens-0.13.md).
 
 ## Tower 0.10 capability contract readiness
 
