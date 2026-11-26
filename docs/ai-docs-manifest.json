@@ -4,7 +4,7 @@
   "distribution": "agentic-sidecar",
   "document": "llms-full.md",
   "content_type": "text/markdown; charset=utf-8",
-  "sha256": "2db0db9fa70f8023b10ed98fd7df9d9d96b52ac32b3d192d40d93f8a3f64b390",
+  "sha256": "b0a6554c66b334a3efcb54addf5954509820f16c17146a72b827c17436a444b7",
   "source_hash_normalization": "UTF-8 text with LF newlines",
   "human_guide": "developer-guide.md",
   "sources": [
@@ -26,7 +26,7 @@
     {
       "path": "docs/index.md",
       "kind": "reference",
-      "sha256": "9c382c6a4cc60e3a2fff4bdd02e5e37a695997d26f034d4bbd55fd4859dc4678"
+      "sha256": "5ea4a02a0e1d2c08b4a0623761a2a968165b0c984099437a8eb3bef9ee55a15d"
     },
     {
       "path": "docs/developer-guide.md",
