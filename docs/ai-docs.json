@@ -7,6 +7,10 @@
       "path": "docs/ai-reference-index.md"
     },
     {
+      "title": "Capability overview",
+      "path": "docs/index.md"
+    },
+    {
       "title": "Setup and task workflows",
       "path": "docs/developer-guide.md"
     },
@@ -41,6 +45,10 @@
     {
       "title": "Live runtime and operator controls",
       "path": "docs/live-operations.md"
+    },
+    {
+      "title": "Control Tower integration and emergency stop",
+      "path": "docs/control-tower-integration.md"
     },
     {
       "title": "Authority, privacy and validation evidence",
@@ -159,7 +167,7 @@
       "path": "docs/mcp-0.5-access-control.md"
     },
     {
-      "title": "Additional ecosystem note: MCP 0.7 integration readiness \u2014 Sidecar 0.10.1",
+      "title": "Additional ecosystem note: MCP 0.7 integration readiness — Sidecar 0.10.1",
       "path": "docs/mcp-0.7-readiness.md"
     },
     {
