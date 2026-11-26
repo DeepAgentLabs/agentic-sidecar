@@ -534,6 +534,8 @@ See [Control Tower's evidence contract](https://github.com/DeepAgentLabs/agentic
 Tower 0.5 introduced pushed evidence posture; 0.6.0 adds cited investigation
 and approved deterministic staging recovery. Pull collection and production runtime adapters
 remain planned; native interoperability does not establish stable AIOS conformance.
+For live view, emergency stop and fleet-wide stop, see the
+[Control Tower integration guide](docs/control-tower-integration.md).
 
 ## Operational safety roadmap
 

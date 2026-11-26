@@ -65,6 +65,7 @@ nav:
   - CLI reference: cli-reference.md
   - Scoped supervision: scoped-supervision.md
   - Integrations: integrations.md
+  - Control Tower integration: control-tower-integration.md
   - Examples: examples.md
   - Use cases: https://deepagentlabs.io/agentic-sidecar/usecases/
   - Troubleshooting: troubleshooting.md
