@@ -4,6 +4,24 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-25
+
+### Changed
+
+- Move documentation to the AgenticLens layout: root `docs/`, `mkdocs.yml`,
+  `mkdocs.usecases.yml`, `usecases/` and the product landing page at the
+  repository root. The `website/` directory is removed.
+- Publish the 14 ecosystem compatibility notes that previously lived outside
+  the documentation site.
+- Add a Control Tower integration guide covering live view, emergency stop,
+  fleet-wide stop and runbooks.
+- Name human-in-the-loop approvals, emergency stop and intent drift in the
+  developer guide, API reference and AI capability index.
+- Replace the docs home page with a full capability overview, matching AgenticLens.
+- Rewrite the limitations page in the AgenticLens format for the 1.x releases.
+- Expand the API reference with `Sidecar` constructor parameters, runtime
+  controls and stop receipts, all framework adapters and ecosystem integrations.
+
 ## [1.0.4] - 2026-11-20
 
 ### Changed

@@ -23,7 +23,7 @@ See the [ecosystem release policy](https://github.com/DeepAgentLabs/.github/blob
 
 ## Status
 
-**Current checkout version: 1.0.0.** The runtime brings together deterministic
+**Current checkout version: 1.1.0.** The runtime brings together deterministic
 intent/policy/risk supervision, optional evaluators, budget accounting,
 narration, and the CLI. See the [roadmap](ROADMAP.md) for release history
 and upcoming capability stages.

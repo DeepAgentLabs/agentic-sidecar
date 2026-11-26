@@ -1,6 +1,6 @@
 # Limitations
 
-This page lists what the current Agentic Sidecar release (1.0.x) does not do,
+This page lists what the current Agentic Sidecar release (1.x) does not do,
 so you can plan around it. The package is early-stage (PyPI classifier:
 Pre-Alpha), and native contract schemas remain candidates. Planned improvements
 appear in [Roadmap](roadmap.md). Topic guides list further limits for their own

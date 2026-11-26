@@ -1,6 +1,6 @@
 # API Reference
 
-Python API for `agentic-sidecar` **1.0.x** (current release 1.0.4). Imports below identify the supported
+Python API for `agentic-sidecar` **1.x** (current release 1.1.0). Imports below identify the supported
 module for each symbol; intent and policy/risk types live in their subpackages.
 Native contract schemas keep their own candidate versions, independent of the package version.
 
@@ -390,7 +390,7 @@ optional durable JSONL persistence. See [Live operations](live-operations.md).
 
 ```python
 from agentic_sidecar import __version__
-print(__version__)  # the installed package version, e.g. "1.0.4"
+print(__version__)  # the installed package version, e.g. "1.1.0"
 ```
 
 ## Runtime operations
