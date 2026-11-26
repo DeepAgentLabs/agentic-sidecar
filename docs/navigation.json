@@ -1,0 +1,16 @@
+[
+  {
+    "Overview": "index.md"
+  },
+  {
+    "Developer Guide (simple)": "developer-guide.md"
+  },
+  {
+    "API Reference (detailed)": "api-reference.md",
+    "group": "Getting started"
+  },
+  {
+    "AI Readable Documentation": "ai-reference-index.md",
+    "group": "Getting started"
+  }
+]

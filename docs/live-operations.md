@@ -94,6 +94,11 @@ the operator replan control pauses further dispatch until explicit resume.
 
 ## Stop, cancellation and access revocation
 
+Stop is the task's emergency stop: use it when an agent must halt now, from the
+Control Room, `agentic-sidecar control stop`, `POST /control` or
+`runtime.control("stop", actor)`. For fleet-wide stop through Control Tower, see
+[Control Tower integration](control-tower-integration.md#fleet-wide-stop-from-control-tower).
+
 Pause/stop share a lock with dispatch reservations. Stop latches before writing
 the stop event or invoking external callbacks, independently of evaluation,
 approval and failure policy. Once the latch is effective, queued proposals,

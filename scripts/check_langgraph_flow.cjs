@@ -1,4 +1,4 @@
-// Build website/mkdocs.usecases.yml and serve it. Requires Playwright.
+// Build mkdocs.usecases.yml and serve it. Requires Playwright.
 const {chromium}=require('playwright');const assert=require('node:assert/strict');
 const base=process.env.REFUND_PREVIEW_URL||'http://localhost:8793/agentic-sidecar/usecases';
 (async()=>{const browser=await chromium.launch();try{

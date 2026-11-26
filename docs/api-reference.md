@@ -1,7 +1,18 @@
 # API Reference
 
-Python API for `agentic-sidecar` **0.9.0** (unchanged from 0.8.0). Imports below identify the supported
+Python API for `agentic-sidecar` **1.x** (current release 1.1.0). Imports below identify the supported
 module for each symbol; intent and policy/risk types live in their subpackages.
+Native contract schemas keep their own candidate versions, independent of the package version.
+
+| Area | Symbols |
+| --- | --- |
+| Decisions | [`Sidecar`](#sidecar), [`Decision`](#decision), [`DecisionContext`](#decisioncontext), [`SidecarBlockedError`](#sidecarblockederror) |
+| Guardrails | [`PolicyAdvisor`](#policyadvisor), [`RiskEvaluator`](#riskevaluator), [`BudgetGuardian`](#budgetguardian), [`IntentGuardian`](#intentguardian-intentenvelope-constraintbinding) |
+| Human in the loop | [`EscalationHandler`, `ApprovalAction`](#escalationhandler-escalationrequest-approvalresponse-approvalaction), [`CLIApprovalHandler`](#cliapprovalhandler) |
+| Live control and emergency stop | [`TaskRuntime`, `OperatorServer`, `EventJournal`](#runtime-operations) |
+| Adapters | [LangGraph](#attach-langgraph-adapter), [other frameworks and MCP](#other-framework-adapters) |
+| Scopes, authority, contracts | [Scoped supervision](#scoped-supervision-and-native-export-08), [authority and privacy](#authority-privacy-and-transfer-lifecycle) |
+| Ecosystem | [Lens, Chaos and Control Tower](#ecosystem-integrations), [AIOS export](#aios-operational-audit-export) |
 
 ```python
 import agentic_sidecar
@@ -19,7 +30,22 @@ The central class. Owns the Decision Gate and all evaluation module configuratio
 
 ### `__init__`
 
-See [Configuration](configuration.md) for the full parameter reference.
+All arguments are keyword-only. See [Configuration](configuration.md) for rule formats and examples.
+
+| Parameter | Default | Purpose |
+| --- | --- | --- |
+| `on_sidecar_failure` | required | `"fail_open"` or `"fail_closed"` when evaluation itself fails |
+| `mode` | `"observe"` | `"observe"` records verdicts; `"govern"` enforces them |
+| `policy` / `risk` | `None` | `PolicyAdvisor` / `RiskEvaluator` rule sets |
+| `intent` | `None` | `IntentGuardian` with the task's `IntentEnvelope` and bindings |
+| `budget` | `None` | `BudgetGuardian` cost/token ceilings |
+| `planner` / `critic` / `judge` | `None` | Optional evaluators |
+| `roles` | policy, risk | Which modules run, e.g. `["policy", "risk", "intent_guardian", "budget"]` |
+| `risk_block_threshold` | `"HIGH"` | Risk level at which the gate intervenes |
+| `escalation_handler` | `None` | Resolves PAUSE/ESCALATE (human in the loop); missing handlers suspend |
+| `runtime` | `None` | `TaskRuntime` for live status, controls, emergency stop and audit |
+| `mandatory_checks` | `()` | Trusted host checks that run before custom hooks |
+| `context_metadata` / `mandatory_configuration` | `None` | Trusted metadata and configuration recorded in audit fingerprints |
 
 ### `evaluate(context: DecisionContext) -> Decision`
 
@@ -225,6 +251,8 @@ from agentic_sidecar.gate import (
 
 **`ApprovalAction` values:** `APPROVE_ONCE`, `REJECT`, `MODIFY_INTENT`, `ASK_AGENT_TO_REPLAN`, `STOP_AGENT`
 
+This is the human-in-the-loop surface. In Govern mode, PAUSE and ESCALATE call the configured handler (a `CLIApprovalHandler`, a connected `TaskRuntime`, or your own `EscalationHandler`). The response binds to the decision ID; `APPROVE_ONCE` authorizes one unchanged invocation, `MODIFY_INTENT` reevaluates against a complete new envelope, and `STOP_AGENT` stops the whole task. BLOCK is never offered for approval. See [approval flow](governance.md#local-approval-flow).
+
 ---
 
 ## `StatusNarrator` / `StatusNarrative` / `ToolCallNarrative`
@@ -270,6 +298,21 @@ Wraps each tool in `tools` so calling it first runs `sidecar.evaluate()`. Return
 tools = attach(sidecar, [read_order, issue_refund, delete_customer])
 agent = create_react_agent(model, tools=tools)
 ```
+
+## Other framework adapters
+
+Each adapter runs the same Decision Gate and runtime lifecycle and returns the SDK's own tool type. Pass only the returned objects to the agent.
+
+| Import | Signature | Returns | Extra |
+| --- | --- | --- | --- |
+| `agentic_sidecar.adapters.callable` | `attach(sidecar, tools)` | Wrapped sync/async callables | none |
+| `agentic_sidecar.adapters.autogen` | `attach(sidecar, tools)` | AutoGen Core `FunctionTool` | `[autogen]` |
+| `agentic_sidecar.adapters.crewai` | `attach(sidecar, tools)` | CrewAI tools | `[crewai]` |
+| `agentic_sidecar.adapters.openai_agents` | `attach(sidecar, tools)` | OpenAI Agents `FunctionTool` | `[openai-agents]` |
+| `agentic_sidecar.adapters.google_adk` | `attach(sidecar, tools)` | Google ADK `FunctionTool` | `[google-adk]` |
+| `agentic_sidecar.adapters.mcp` | `attach(sidecar, session, tool_names)` | Async wrappers for allowlisted tools on an initialized `ClientSession` | `[mcp]` |
+
+Prebuilt SDK tools, automatic handoffs and raw nested calls are not protected automatically. See [integrations](integrations.md#framework-adapters).
 
 ---
 
@@ -347,14 +390,43 @@ optional durable JSONL persistence. See [Live operations](live-operations.md).
 
 ```python
 from agentic_sidecar import __version__
-print(__version__)  # "1.0.3" in this checkout; use the installed value
+print(__version__)  # the installed package version, e.g. "1.1.0"
 ```
 
 ## Runtime operations
 
-Public exports: `TaskRuntime`, `RuntimeEvent`, `EventJournal`, `OperatorServer`.
+Public exports: `TaskRuntime`, `RuntimeEvent`, `EventJournal`, `OperatorServer`
+(`verify_events` is imported from `agentic_sidecar.operations.events`).
 Supply `runtime=TaskRuntime(...)` to Sidecar and `escalation_handler=runtime`
-for remote approvals. Inspect `sidecar.runtime.snapshot()` and
+for remote approvals.
+
+```python
+from agentic_sidecar import EventJournal, OperatorServer, TaskRuntime
+```
+
+| Symbol | Signature | Purpose |
+| --- | --- | --- |
+| `TaskRuntime` | `TaskRuntime(task_id=None, *, journal=None, approval_timeout=300, revokers=None)` | Task lifecycle, approvals, controls and stop latch |
+| `TaskRuntime.control` | `control(action, actor) -> dict` | `action` is `pause`, `resume`, `replan`, `stop` or `restart`; returns a receipt |
+| `TaskRuntime.approve` | `approve(response, actor) -> None` | Resolve a pending human approval |
+| `TaskRuntime.modify_intent` | `modify_intent(envelope, actor) -> None` | Replace the task intent and invalidate earlier verdicts |
+| `TaskRuntime.snapshot` | `snapshot() -> dict` | Objective, plan, findings, budget, actions, pending approvals, running calls |
+| `TaskRuntime.stopped` / `epoch` | properties | Stop latch state and current decision epoch |
+| `TaskRuntime.dispatch` / `complete` | `dispatch(context, decision, *, cancel=None) -> str`, `complete(invocation_id, error=None)` | Custom-loop admission and completion |
+| `OperatorServer` | `OperatorServer(runtime, *, token, actor, port=0, reader_tokens=None)` | Loopback HTTP API and Control Room; use as a context manager, read `.url` |
+| `EventJournal` | `EventJournal(task_id, path=None)` | Hash-chained events, optional durable JSONL; `export(after=0)` |
+| `operations.events.verify_events` | `verify_events(events, task_id=...)` | Check a complete native chain before replay/export |
+
+**Emergency stop.** `runtime.control("stop", actor)` latches before writing the
+stop event or calling revokers, blocks all further dispatch, invalidates earlier
+decisions, requests cancellation of owned async calls and calls each named
+revoker (`revokers={"mcp": callback}`; each must return exactly `True` after
+revocation). The receipt contains `action`, `actor`, `epoch`, `effective_at`,
+`running`, `cancellations`, `revocations` and `access_revocation`
+(`acknowledged`, `partial_failure` or `not_configured`), plus `audit_error` if
+the stop event could not be persisted. `restart` requires a stopped, idle task
+with successful revocations. See [emergency stop](control-tower-integration.md#emergency-stop).
+ Inspect `sidecar.runtime.snapshot()` and
 `sidecar.runtime.journal.export(after=0)`. DecisionContext accepts
 `parent_decision_id` and `parent_plan_step` for supplied plan causality.
 See [Live operations](live-operations.md) for the full lifecycle and HTTP surface.
@@ -399,6 +471,20 @@ The [AI Reference (robust)](https://deepagentlabs.io/agentic-sidecar/docs/llms-f
 `IntentGuardian.delegate(...)` narrows authority using its live `AuthorityRegistry`, and `revoke()` invalidates descendants for future dispatch reservations. `IntentTransfer.propose(...)` serializes a narrowed proposal; `IntentTransfer.receive(parent, *, agent_id)` validates it against the trusted live parent. Receive requires the host-authenticated agent identity and the same live registry, not an imported self-asserted grant. See [propagation and replay limits](v0.10.md#cross-instance-and-cross-agent-propagation).
 
 `BoundAgent.context(reader=...)` returns an authorized defensive copy; `update_context(values, *, actor)` and `revoke_context(*, actor)` require the owner. `evidence()` returns an allowlisted summary, not a native Decision or journal. `OperatorServer(reader_tokens=...)` binds reader credentials to redacted status only. See [privacy lifecycle](v0.9.md#context-privacy-and-readers).
+
+## Ecosystem integrations
+
+| Import | Signature | Purpose | Extra |
+| --- | --- | --- | --- |
+| `agentic_sidecar.integrations.correlation` | `export_decisions(sidecar, correlation) -> list[DecisionEvidence]` | Verify the journal and project decisions with host-supplied `Correlation(run_id, trace_id, span_id)` | none |
+| `agentic_sidecar.integrations.agenticlens` | `attach_decisions(sidecar, run, *, span_id) -> None` | Attach correlated decisions to an exact Lens run | `[agenticlens]` |
+| `agentic_sidecar.integrations.agentic_chaos` | `evaluate_recovery(sidecar, event, *, tool_name, arguments) -> Decision` | Evaluate/enforce a recovery proposal linked to a Chaos fault event, without executing it | `[agentic-chaos]` |
+| `agentic_sidecar.integrations.aios` | `export_audit_event(record, *, target, created_at) -> dict` | Project an `AuditRecord` into a draft AIOS operational artifact | none |
+
+**Control Tower.** Tower's `SidecarContainmentAdapter(runtime)` wraps a
+`TaskRuntime` and calls `runtime.control(...)` for fleet-wide stop and restart;
+it ships in `agenticops-control-tower`, not in this package. See
+[Control Tower integration](control-tower-integration.md).
 
 ## AIOS operational audit export
 

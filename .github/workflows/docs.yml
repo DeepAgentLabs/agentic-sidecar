@@ -46,14 +46,14 @@ jobs:
         run: uv run --no-project --with-requirements _docs-theme/scripts/docs-requirements.txt python _docs-theme/scripts/build_docs.py --project agentic-sidecar --repo "$GITHUB_WORKSPACE" --output "$GITHUB_WORKSPACE/site/docs"
 
       - name: Build use cases
-        run: uv run mkdocs build --strict -f website/mkdocs.usecases.yml --site-dir "$GITHUB_WORKSPACE/site/usecases"
+        run: uv run mkdocs build --strict -f mkdocs.usecases.yml --site-dir "$GITHUB_WORKSPACE/site/usecases"
 
       - name: Add product website
         run: |
-          cp website/index.html site/index.html
-          cp website/site.css site/site.css
-          cp website/site.js site/site.js
-          cp website/og.png site/og.png
+          cp index.html site/index.html
+          cp site.css site/site.css
+          cp site.js site/site.js
+          cp og.png site/og.png
           touch site/.nojekyll
 
       - name: Check site layout

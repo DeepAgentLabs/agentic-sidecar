@@ -12,16 +12,17 @@ Every row links to a short workflow below. Detailed references explain configura
 | --- | --- |
 | [Decision Gate and enforcement](#gate) | Evaluate seven outcomes, then enforce through governed dispatch. |
 | [Policy and risk rules](#policy-risk) | Apply ordered allow/deny policies and tool/argument risk classifications. |
-| [Intent constraints](#intent) | Bind user constraints to tool arguments and retain intent identity and expiry. |
+| [Intent constraints](#intent) | Bind user constraints to tool arguments, catch intent drift and retain intent identity and expiry. |
 | [Budget accounting](#budget) | Track explicit cost/tokens and pause at configured ceilings. |
 | [Plan review and Critic](#plan-review) | Review supplied plans, unnecessary steps, contradictions and unsupported assumptions. |
 | [Offline and live judges](#judges) | Use MockJudge or optional OpenAI/Anthropic providers with limits and usage accounting. |
-| [Approvals and escalation](#approvals) | Approve once, reject, modify intent, replan or stop a suspended proposal. |
+| [Human in the loop: approvals and escalation](#approvals) | Approve once, reject, modify intent, replan or stop a suspended proposal. |
 | [Custom hooks and failure policies](#hooks) | Extend decision evaluation while preserving mandatory checks and explicit failure behavior. |
 | [Framework and MCP adapters](#adapters) | Govern sync/async tools in LangGraph, AutoGen, CrewAI, OpenAI Agents, Google ADK and MCP. |
 | [Task runtime and execution lifecycle](#runtime) | Track proposals, decisions, dispatch reservations, completion and failure. |
-| [Operator server and Control Room](#operators) | Connect authenticated local status, task controls and remote approval handling. |
-| [Stop, cancellation and revocation callbacks](#stop) | Latch local dispatch stop, invalidate old decisions and request host-owned access revocation. |
+| [Operator server and Control Room](#operators) | Watch a task live and pause, resume, replan, stop or restart it, with remote approvals. |
+| [Emergency stop, cancellation and revocation](#stop) | Latch dispatch stop, invalidate old decisions, cancel owned async calls and revoke host-owned access. |
+| [Control Tower fleet operations](#control-tower) | Join Sidecar evidence to fleet incidents and stop many deployments through one approved bulk action. |
 | [Audit journal and restoration](#audit) | Persist immutable hash-chained events, verify snapshots and restore stopped state. |
 | [Shared/exclusive supervision](#scopes) | Compose agent-specific context and mandatory guardrails without weakening shared rules. |
 | [Context privacy and lifecycle](#privacy) | Authorize readers, deliver defensive copies, update, expire and revoke context. |
@@ -101,7 +102,7 @@ Custom loops must evaluate, enforce, reserve dispatch with `runtime.dispatch(...
 
 ### Intent constraints
 
-Create an `IntentEnvelope` containing the goal, requester, constraints and optional expiry. `ConstraintBinding` maps each enforced constraint to a tool argument; `IntentGuardian` checks the bound values. Supply it as `intent=` and enable the `intent_guardian` role. Goals alone are not deterministic constraints, and an authority dictionary requires explicit authority bindings to enforce grants. See [constraint setup](configuration.md) and [authority semantics](v0.9.md).
+Create an `IntentEnvelope` containing the goal, requester, constraints and optional expiry. `ConstraintBinding` maps each enforced constraint to a tool argument; `IntentGuardian` checks the bound values. Supply it as `intent=` and enable the `intent_guardian` role. A step that breaks a bound constraint (intent drift, such as a refund above the authorized amount) is blocked even when the tool itself is permitted. Goals alone are not deterministic constraints, and an authority dictionary requires explicit authority bindings to enforce grants. See [constraint setup](configuration.md) and [authority semantics](v0.9.md).
 
 <span id="budget"></span>
 
@@ -145,7 +146,7 @@ Configure timeout, cost limit and caller-supplied token rates when accounting is
 
 <span id="approvals"></span>
 
-### Approvals and escalation
+### Human in the loop: approvals and escalation
 
 ```python
 from agentic_sidecar import Sidecar
@@ -202,17 +203,23 @@ agentic-sidecar control pause
 agentic-sidecar control resume
 ```
 
-Replace PORT/TASK_ID with the running server's values. Status/events/control/approval/intent API routes require the operator token. See [complete server setup, protocol and Control Room](live-operations.md#connect-a-real-task).
+The Control Room and `POST /control` accept `pause`, `resume`, `replan`, `stop` and `restart`. Pause and replan hold new dispatches until resume; restart is allowed only after a clean stop. Replace PORT/TASK_ID with the running server's values. Status/events/control/approval/intent API routes require the operator token. See [complete server setup, protocol and Control Room](live-operations.md#connect-a-real-task).
 
 <span id="stop"></span>
 
-### Stop, cancellation and revocation callbacks
+### Emergency stop, cancellation and revocation
 
 ```bash
 agentic-sidecar control stop
 ```
 
-Stop latches independently of evaluation mode and failure policy, blocks queued dispatch and invalidates old decisions. Already-dispatched sync work may finish; owned async tools receive cooperative cancellation requests. Configure named `TaskRuntime(revokers=...)` callbacks for host-owned credentials and delegated access; acknowledgement requires each issuer to return exactly `True` after revocation. Restart does not renew credentials or task authority. See [stop receipts, partial failures and restart rules](live-operations.md#stop-cancellation-and-access-revocation).
+Stop is the emergency stop. It latches before audit writes or callbacks, independently of evaluation mode and failure policy, blocks queued dispatch and invalidates old decisions. Already-dispatched sync work may finish; owned async tools receive cooperative cancellation requests. Configure named `TaskRuntime(revokers=...)` callbacks for host-owned credentials and delegated access; acknowledgement requires each issuer to return exactly `True` after revocation. A broken audit sink cannot prevent revocation, and a restored runtime comes back stopped. Restart does not renew credentials or task authority. See [stop receipts, partial failures and restart rules](live-operations.md#stop-cancellation-and-access-revocation) and the [emergency stop guide](control-tower-integration.md#emergency-stop).
+
+<span id="control-tower"></span>
+
+### Control Tower fleet operations
+
+AgenticOps Control Tower reads explicitly linked Sidecar decisions into its inventory, alerts and incident console. For a fleet-wide stop, the trusted host installs a `SidecarContainmentAdapter(runtime)` per deployment; a writer previews a `runtime.stop` bulk action, a separate approver approves it, and each target reports acknowledged, incomplete, failed, unsupported or timed_out. The runtime needs an issuer-backed `mcp` revoker. Sidecar keeps dispatch blocking and pre-action decisions; Tower coordinates targeting, approvals, runbooks and incidents. See [Control Tower integration](control-tower-integration.md).
 
 <span id="audit"></span>
 
