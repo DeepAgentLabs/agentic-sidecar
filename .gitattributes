@@ -1,1 +1,2 @@
-website/docs/llms-full.txt text eol=lf
+docs/llms-full.md text eol=lf
+docs/ai-docs-manifest.json text eol=lf

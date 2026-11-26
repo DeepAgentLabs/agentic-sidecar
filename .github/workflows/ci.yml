@@ -68,8 +68,8 @@ jobs:
         run: uv sync --locked --extra dev --extra langgraph --extra docs --python 3.12
       - name: Validate strict release documentation builds
         run: |
-          uv run mkdocs build --strict -f website/mkdocs.yml --site-dir "$RUNNER_TEMP/site/docs"
-          uv run mkdocs build --strict -f website/mkdocs.usecases.yml --site-dir "$RUNNER_TEMP/site/usecases"
+          uv run mkdocs build --strict -f mkdocs.yml --site-dir "$RUNNER_TEMP/site/docs"
+          uv run mkdocs build --strict -f mkdocs.usecases.yml --site-dir "$RUNNER_TEMP/site/usecases"
       - name: Build distributions
         run: |
           uv run python -m build
